@@ -1,0 +1,3 @@
+db.url=jdbc:sqlserver://localhost:1433;databaseName= ;encrypt=true;trustServerCertificate=true
+db.user=
+db.password=

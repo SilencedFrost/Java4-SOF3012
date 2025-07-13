@@ -1,12 +1,16 @@
-import Managers.UserManager;
+import entity.User;
+import service.UserService;
 import config.ConfigLoader;
+
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-
         ConfigLoader.loadDatabaseConfig();
-
-        UserManager userMng = new UserManager();
-        userMng.findall();
+        UserService userService = new UserService();
+        List<User> users = userService.getAll();
+        for(User user : users) {
+            user.printInfo();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package Models;
+package entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,4 +27,13 @@ public class User {
     String email;
     @Column(name = "admin")
     Boolean admin = false;
+
+    public void printInfo() {
+        System.out.println("-------------------------");
+        System.out.println("ID: " + this.id);
+        System.out.println("Password: " + this.password);
+        System.out.println("Full Name: " + this.fullname);
+        System.out.println("Email: " + this.email);
+        System.out.println("Admin: " + (this.admin ? "Yes" : "No"));
+    }
 }

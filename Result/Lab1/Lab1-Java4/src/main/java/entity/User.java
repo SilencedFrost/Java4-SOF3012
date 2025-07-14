@@ -1,9 +1,6 @@
 package entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +8,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "Users")
 public class User {
     @Id
@@ -27,6 +24,14 @@ public class User {
     String email;
     @Column(name = "admin")
     Boolean admin = false;
+
+    @PrePersist
+    @PreUpdate
+    private void ensureAdminNotNull() {
+        if (admin == null) {
+            admin = false;
+        }
+    }
 
     public void printInfo() {
         System.out.println("-------------------------");

@@ -17,8 +17,6 @@ dependencies {
     // JPA + Hibernate
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
     implementation("org.hibernate:hibernate-core:6.2.7.Final")
-
-    // Annotation processing
     annotationProcessor("org.hibernate:hibernate-jpamodelgen:6.2.7.Final")
 
     // MSSQL JDBC driver

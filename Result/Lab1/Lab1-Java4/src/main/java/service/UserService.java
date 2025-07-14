@@ -2,41 +2,36 @@ package service;
 
 import entity.User;
 import jakarta.persistence.*;
-
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserService {
-    private EntityManagerFactory emf;
-    private EntityManager em;
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
+
+    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("PolyOE");;
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (emf != null && emf.isOpen()) {
+                emf.close();
+                logger.info("EntityManagerFactory closed.");
+            }
+        }));
+    }
 
     public UserService() {
-        emf = Persistence.createEntityManagerFactory("PolyOE");
-        em = emf.createEntityManager();
-    }
-
-    private void openEntityManager() {
-        if (!em.isOpen() || em == null) {
-            em = emf.createEntityManager();
-        }
-    }
-
-    private void closeEntityManager() {
-        if (em.isOpen() || em != null) {
-            em.close();
-        }
     }
 
     public List<User> getAll() {
-        List<User> listUser = null;
-        openEntityManager();
-        try {
-            listUser = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+        List<User> userList = null;
+        try (EntityManager em = emf.createEntityManager()) {
+            userList = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+            logger.info("Fetched all users: " + userList.size() + " users found.");
         } catch (PersistenceException e) {
-            e.printStackTrace();
-        } finally {
-            closeEntityManager();
+            logger.log(Level.SEVERE, "Error fetching users", e);
         }
-        return listUser;
+        return userList != null ? userList : List.of();
     }
 
     public User findById(String id) {
@@ -45,114 +40,137 @@ public class UserService {
         }
 
         User user = null;
-        openEntityManager();
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
             user = em.find(User.class, id);
+            logger.info("User with id " + id + (user != null ? " found." : " not found."));
         } catch (PersistenceException e) {
-            e.printStackTrace();
-        }
-        finally {
-            closeEntityManager();
+            logger.log(Level.SEVERE, "Error finding user by ID", e);
         }
         return user;
     }
 
+    // Manual creation method
     public void create(String id, String password, String email, String fullname, boolean isAdmin) {
-        User user = new User(id, password, email, fullname, isAdmin);
-        openEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try{
-           tx.begin();
-           em.persist(user);
-           tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) {
-                tx.rollback();
+        create(new User(id, password, email, fullname, isAdmin));
+    }
+
+    // Object creation method
+    public void create(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        try (EntityManager em = emf.createEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                em.persist(user);
+                tx.commit();
+                logger.info("User created: " + user);
+            } catch (PersistenceException e) {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+                logger.log(Level.SEVERE, "Error creating user", e);
             }
-            e.printStackTrace();
-        } finally {
-            closeEntityManager();
         }
     }
 
-    // Selective update method
+    /**
+     * Updates a user with the given values. Only non-null fields will be applied to the existing user.
+     * <p>
+     * This method allows partial updates: if a field is {@code null}, it will be ignored and the existing value will be preserved.
+     * </p>
+     *
+     * @param id        the ID of the user to update (must not be null or blank)
+     * @param password  the new password, or {@code null} to leave unchanged
+     * @param fullname  the new full name, or {@code null} to leave unchanged
+     * @param email     the new email, or {@code null} to leave unchanged
+     * @param isAdmin   the new admin status, or {@code null} to leave unchanged
+     * @throws IllegalArgumentException if {@code id} is null or blank
+     */
     public void update(String id, String password, String fullname, String email, Boolean isAdmin) {
-        openEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            User user = em.find(User.class, id);
-
-            if (user != null) {
-                if (password != null) {
-                    user.setPassword(password);
-                }
-                if (fullname != null) {
-                    user.setFullname(fullname);
-                }
-                if (email != null) {
-                    user.setEmail(email);
-                }
-                if (isAdmin != null) {
-                    user.setAdmin(isAdmin);
-                }
-
-                em.merge(user);
-            }
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            closeEntityManager();
-        }
+        update(new User(id, password, email, fullname, isAdmin));
     }
 
     // Object update method
     public void update(User updatedUser) {
-        openEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            User existingUser = em.find(User.class, updatedUser.getId());
+        if (updatedUser == null || updatedUser.getId() == null || updatedUser.getId().trim().isEmpty()) {
+            throw new IllegalArgumentException("User and ID cannot be null or empty");
+        }
 
-            if (existingUser != null) {
-                existingUser.setFullname(updatedUser.getFullname());
-                existingUser.setEmail(updatedUser.getEmail());
-                existingUser.setPassword(updatedUser.getPassword());
-                existingUser.setAdmin(updatedUser.getAdmin());
+        try (EntityManager em = emf.createEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                User existingUser = em.find(User.class, updatedUser.getId());
 
-                em.merge(existingUser);
+                if (existingUser != null) {
+                    if (updatedUser.getFullname() != null) {
+                        existingUser.setFullname(updatedUser.getFullname());
+                    }
+                    if (updatedUser.getPassword() != null) {
+                        existingUser.setPassword(updatedUser.getPassword());
+                    }
+                    if (updatedUser.getEmail() != null) {
+                        existingUser.setEmail(updatedUser.getEmail());
+                    }
+                    if (updatedUser.getAdmin() != null) {
+                        existingUser.setAdmin(updatedUser.getAdmin());
+                    }
+
+                    em.merge(existingUser);
+                } else {
+                    logger.warning("User with id " + updatedUser.getId() + " not found for update.");
+                }
+
+                tx.commit();
+            } catch (Exception e) {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+                logger.log(Level.SEVERE, "Error updating user", e);
             }
-
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            closeEntityManager();
         }
     }
 
-    public void deleteById() {
-        openEntityManager();
-        User user = em.find(User.class, "U01");
-        EntityTransaction tx = em.getTransaction();
-        try{
-            tx.begin();
-            em.remove(user);
-            tx.commit();
-        } catch (Exception e) {
-            if(tx.isActive()) {
-                tx.rollback();
+    //Manual delete method
+    public void deleteById(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
+        try(EntityManager em = emf.createEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            User user = em.find(User.class, id);
+            if (user == null) {
+                logger.warning("User with id " + id + " not found. Deletion skipped.");
+                return;
             }
-            e.printStackTrace();
-        } finally {
-            closeEntityManager();
+
+            try {
+                tx.begin();
+                em.remove(user);
+                tx.commit();
+            } catch (Exception e) {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+                logger.log(Level.SEVERE, "Error deleting user with id " + id, e);
+            }
+        }
+    }
+
+    // Object delete method
+    public void delete(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        deleteById(user.getId());
+    }
+
+    public void close() {
+        if (emf != null && emf.isOpen()) {
+            emf.close();
         }
     }
 }

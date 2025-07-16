@@ -14,25 +14,13 @@ import java.util.logging.Logger;
 @Entity
 @Table(name = "Users")
 public class User {
-    private static final Logger logger = Logger.getLogger(User.class.getName());
-    
     @Id
-    @Column(name = "id")
+    @Column(name = "userid")
     String id;
-    @Column(name = "password")
+    @Column(name = "passwordhash")
     String password;
     @Column(name = "fullname")
     String fullname;
     @Column(name = "email")
     String email;
-    @Column(name = "admin")
-    Boolean admin = false;
-
-    @PrePersist
-    @PreUpdate
-    private void ensureAdminNotNull() {
-        if (admin == null) {
-            admin = false;
-        }
-    }
 }

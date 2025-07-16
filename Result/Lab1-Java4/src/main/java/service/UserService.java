@@ -2,30 +2,22 @@ package service;
 
 import entity.User;
 import jakarta.persistence.*;
+import util.EntityManagerUtil;
+
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UserService {
+public class UserService implements Service<User>{
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
-
-    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("PolyOE");;
-
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (emf != null && emf.isOpen()) {
-                emf.close();
-                logger.info("EntityManagerFactory closed.");
-            }
-        }));
-    }
 
     public UserService() {
     }
 
+    @Override
     public List<User> getAll() {
         List<User> userList = null;
-        try (EntityManager em = emf.createEntityManager()) {
+        try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             userList = em.createQuery("SELECT u FROM User u", User.class).getResultList();
             logger.info("Fetched all users: " + userList.size() + " users found.");
         } catch (PersistenceException e) {
@@ -39,7 +31,7 @@ public class UserService {
         }
 
         User user = null;
-        try (EntityManager em = emf.createEntityManager()) {
+        try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             user = em.find(User.class, id);
             logger.info("User with id " + id + (user != null ? " found." : " not found."));
         } catch (PersistenceException e) {
@@ -49,8 +41,8 @@ public class UserService {
     }
 
     // Manual creation method
-    public void create(String id, String password, String email, String fullname, boolean isAdmin) {
-        create(new User(id, password, email, fullname, isAdmin));
+    public void create(String id, String password, String email, String fullname) {
+        create(new User(id, password, email, fullname));
     }
 
     // Object creation method
@@ -59,7 +51,7 @@ public class UserService {
             throw new IllegalArgumentException("User cannot be null");
         }
 
-        try (EntityManager em = emf.createEntityManager()) {
+        try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
@@ -85,11 +77,10 @@ public class UserService {
      * @param password  the new password, or {@code null} to leave unchanged
      * @param fullname  the new full name, or {@code null} to leave unchanged
      * @param email     the new email, or {@code null} to leave unchanged
-     * @param isAdmin   the new admin status, or {@code null} to leave unchanged
      * @throws IllegalArgumentException if {@code id} is null or blank
      */
-    public void update(String id, String password, String fullname, String email, Boolean isAdmin) {
-        update(new User(id, password, email, fullname, isAdmin));
+    public void update(String id, String password, String fullname, String email) {
+        update(new User(id, password, email, fullname));
     }
 
     // Object update method
@@ -98,7 +89,7 @@ public class UserService {
             throw new IllegalArgumentException("User and ID cannot be null or empty");
         }
 
-        try (EntityManager em = emf.createEntityManager()) {
+        try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
@@ -113,9 +104,6 @@ public class UserService {
                     }
                     if (updatedUser.getEmail() != null) {
                         existingUser.setEmail(updatedUser.getEmail());
-                    }
-                    if (updatedUser.getAdmin() != null) {
-                        existingUser.setAdmin(updatedUser.getAdmin());
                     }
 
                     em.merge(existingUser);
@@ -138,7 +126,7 @@ public class UserService {
         if (id == null) {
             throw new IllegalArgumentException("ID cannot be null");
         }
-        try(EntityManager em = emf.createEntityManager()) {
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             User user = em.find(User.class, id);
             if (user == null) {
@@ -165,11 +153,5 @@ public class UserService {
             throw new IllegalArgumentException("User cannot be null");
         }
         deleteById(user.getId());
-    }
-
-    public void close() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
-        }
     }
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.logging.Logger;
 
 @Getter
 @Setter
@@ -13,6 +14,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "Users")
 public class User {
+    private static final Logger logger = Logger.getLogger(User.class.getName());
+    
     @Id
     @Column(name = "id")
     String id;
@@ -31,14 +34,5 @@ public class User {
         if (admin == null) {
             admin = false;
         }
-    }
-
-    public void printInfo() {
-        System.out.println("-------------------------");
-        System.out.println("ID: " + this.id);
-        System.out.println("Password: " + this.password);
-        System.out.println("Full Name: " + this.fullname);
-        System.out.println("Email: " + this.email);
-        System.out.println("Admin: " + (this.admin ? "Yes" : "No"));
     }
 }

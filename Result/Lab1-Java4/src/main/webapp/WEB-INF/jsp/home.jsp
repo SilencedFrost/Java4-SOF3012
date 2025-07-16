@@ -1,5 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +8,30 @@
     <title>Table data pouring</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    Hello baby!
-    Hello Tuan
+<body class="container-fluid">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Password</th>
+                <th>Email</th>
+                <th>Admin</th>
+            </tr>
+        </thead>
+        <tbody>
+            <c:forEach var="user" items="${userList}">
+                <tr>
+                    <td><c:out value="${user.id}"/></td>
+                    <td><c:out value="${user.fullname}"/></td>
+                    <td><c:out value="${user.password}"/></td>
+                    <td><c:out value="${user.email}"/></td>
+                    <td><c:out value="${user.admin ? Yes : No}"/></td>
+                </tr>
+            </c:forEach>
+        </tbody>
+    </table>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

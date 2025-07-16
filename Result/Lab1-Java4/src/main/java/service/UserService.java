@@ -33,7 +33,6 @@ public class UserService {
         }
         return userList != null ? userList : List.of();
     }
-
     public User findById(String id) {
         if (id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("ID cannot be null or empty");

@@ -1,9 +1,9 @@
-package service;
+package com.service;
 
-import entity.Role;
+import com.entity.Role;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
-import util.EntityManagerUtil;
+import com.util.EntityManagerUtil;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;

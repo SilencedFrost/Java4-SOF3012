@@ -1,11 +1,10 @@
-package entity;
+package com.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.logging.Logger;
 
 @Getter
 @Setter
@@ -18,7 +17,7 @@ public class User {
     @Column(name = "userid")
     String id;
     @Column(name = "passwordhash")
-    String password;
+    String passwordHash;
     @Column(name = "fullname")
     String fullname;
     @Column(name = "email")

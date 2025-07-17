@@ -25,13 +25,13 @@ gretty {
 }
 
 dependencies {
-    // Jakarta servlet API
-    compileOnly("jakarta.servlet:jakarta.servlet-api:6.0.0")
-    annotationProcessor("jakarta.servlet:jakarta.servlet-api:6.0.0")
+    // Jakarta com.servlet API
+    compileOnly("jakarta.com.servlet:jakarta.com.servlet-api:6.0.0")
+    annotationProcessor("jakarta.com.servlet:jakarta.com.servlet-api:6.0.0")
 
     // Add JSTL for Jakarta EE (Tomcat 10)
-    implementation("org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1")
-    implementation("jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0")
+    implementation("org.glassfish.web:jakarta.com.servlet.jsp.jstl:3.0.1")
+    implementation("jakarta.com.servlet.jsp.jstl:jakarta.com.servlet.jsp.jstl-api:3.0.0")
 
 
     // JPA + Hibernate
@@ -45,6 +45,9 @@ dependencies {
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
+
+    // JBcrypt
+    implementation("org.mindrot:jbcrypt:0.4")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

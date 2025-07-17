@@ -6,7 +6,7 @@ go
 
 create table Users(
 	UserId nvarchar(20) NOT NULL,
-	PasswordHash nvarchar(50) not null,
+	PasswordHash nvarchar(60) not null,
 	FullName nvarchar(50) not null,
 	Email nvarchar(50) not null,
 	primary key(UserId)

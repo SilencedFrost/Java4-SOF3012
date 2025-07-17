@@ -25,7 +25,7 @@
                 <tr>
                     <td><c:out value="${user.id}"/></td>
                     <td><c:out value="${user.fullname}"/></td>
-                    <td><c:out value="${user.password}"/></td>
+                    <td><c:out value="${user.passwordHash}"/></td>
                     <td><c:out value="${user.email}"/></td>
                 </tr>
             </c:forEach>

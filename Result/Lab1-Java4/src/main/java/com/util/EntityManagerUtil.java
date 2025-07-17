@@ -1,4 +1,4 @@
-package util;
+package com.util;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

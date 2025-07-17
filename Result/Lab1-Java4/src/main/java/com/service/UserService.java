@@ -1,8 +1,8 @@
-package service;
+package com.service;
 
-import entity.User;
+import com.entity.User;
 import jakarta.persistence.*;
-import util.EntityManagerUtil;
+import com.util.EntityManagerUtil;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -74,7 +74,7 @@ public class UserService implements Service<User>{
      * </p>
      *
      * @param id        the ID of the user to update (must not be null or blank)
-     * @param password  the new password, or {@code null} to leave unchanged
+     * @param password  the new passwordHash, or {@code null} to leave unchanged
      * @param fullname  the new full name, or {@code null} to leave unchanged
      * @param email     the new email, or {@code null} to leave unchanged
      * @throws IllegalArgumentException if {@code id} is null or blank
@@ -99,8 +99,8 @@ public class UserService implements Service<User>{
                     if (updatedUser.getFullname() != null) {
                         existingUser.setFullname(updatedUser.getFullname());
                     }
-                    if (updatedUser.getPassword() != null) {
-                        existingUser.setPassword(updatedUser.getPassword());
+                    if (updatedUser.getPasswordHash() != null) {
+                        existingUser.setPasswordHash(updatedUser.getPasswordHash());
                     }
                     if (updatedUser.getEmail() != null) {
                         existingUser.setEmail(updatedUser.getEmail());

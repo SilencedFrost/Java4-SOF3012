@@ -1,34 +1,35 @@
-package servlet;
+package com.servlet;
 
-import config.ConfigLoader;
-import entity.User;
+import com.config.ConfigLoader;
+import com.entity.Role;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.UserService;
+import com.service.RoleService;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
 @WebServlet (
-    name = "UserServlet",
-    urlPatterns = {"/user"}
+    name = "RoleServlet",
+    urlPatterns = {"/role"}
 )
-public class UserServlet extends HttpServlet {
-    private static final Logger logger = Logger.getLogger(UserServlet.class.getName());
+public class RoleServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(RoleServlet.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/jsp/user.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/jsp/role.jsp");
 
         ConfigLoader.loadDatabaseConfig();
 
-        List<User> userList = new UserService().getAll();
+        List<Role> roleList = new RoleService().getAll();
 
-        req.setAttribute("userList", userList);
+        req.setAttribute("roleList", roleList);
 
         requestDispatcher.forward(req, res);
     }

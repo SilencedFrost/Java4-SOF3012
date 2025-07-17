@@ -8,32 +8,8 @@
     <title>Table data pouring</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container-fluid">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <!-- Toggler/collapsing button -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Navbar links -->
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav">
-                    <li class="nav-item d-flex align-items-center">
-                        <div class="d-flex align-items-center p-2">
-
-                            <a class="nav-link d-inline p-0" href="user">User</a>
-                        </div>
-                    </li>
-                    <li class="nav-item d-flex align-items-center">
-                        <div class="d-flex align-items-center p-2">
-                            <a class="nav-link d-inline p-0" href="role">Role</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body class="container-fluid p-0">
+    <%@ include file="navbar.jsp" %>
     <h2 class="text-center my-4">Role List</h2>
     <table class="table table-striped table-bordered">
             <thead>

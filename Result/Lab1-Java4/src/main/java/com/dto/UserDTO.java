@@ -14,10 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-    String userId;
-    String passwordHash;
-    String fullName;
-    String email;
+    private String userId;
+    private String passwordHash;
+    private String fullName;
+    private String email;
 
     public UserDTO(String userId, String email, String fullName) {
         this.userId = userId;
@@ -48,6 +48,6 @@ public class UserDTO {
     }
 
     public static List<String> getHeaders() {
-        return List.of("ID", "Full Name", "Password", "Email");
+        return List.of("ID", "Password Hash", "Full Name", "Email");
     }
 }

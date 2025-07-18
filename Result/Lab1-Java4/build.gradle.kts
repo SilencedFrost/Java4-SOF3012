@@ -18,7 +18,11 @@ gretty {
     httpPort = 8080
     httpsPort = 8443
 
-    jvmArgs = listOf("-Xmx2048m")
+    jvmArgs = listOf(
+        "-Xmx2048m",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED"
+    )
 
     managedClassReload = false
 }

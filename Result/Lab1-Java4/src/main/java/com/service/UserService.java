@@ -3,6 +3,7 @@ package com.service;
 import com.dto.UserDTO;
 import com.entity.User;
 import com.mapper.UserMapper;
+import com.util.ValidationUtils;
 import jakarta.persistence.*;
 import com.util.EntityManagerUtil;
 import java.util.List;
@@ -30,7 +31,7 @@ public class UserService implements Service<UserDTO>{
 
     @Override
     public UserDTO getById(String id) {
-        if (id == null || id.trim().isEmpty()) {
+        if (ValidationUtils.isNullOrBlank(id)) {
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
 
@@ -46,8 +47,8 @@ public class UserService implements Service<UserDTO>{
     }
 
     // Manual creation method
-    public boolean create(String id, String password, String email, String fullname) {
-        return create(new UserDTO(id, password, email, fullname));
+    public boolean create(String id, String password, String fullname, String email) {
+        return create(new UserDTO(id, password, fullname, email));
     }
 
     // Object creation method
@@ -78,13 +79,13 @@ public class UserService implements Service<UserDTO>{
     }
 
     public boolean update(String id, String password, String fullname, String email) {
-        return update(new UserDTO(id, password, email, fullname));
+        return update(new UserDTO(id, password, fullname, email));
     }
 
     // Object update method
     @Override
     public boolean update(UserDTO updatedUser) {
-        if (updatedUser == null || updatedUser.getUserId() == null || updatedUser.getUserId().trim().isEmpty()) {
+        if (updatedUser == null || ValidationUtils.isNullOrBlank(updatedUser.getUserId())) {
             logger.warning("User or User ID cannot be null or empty");
             return false;
         }

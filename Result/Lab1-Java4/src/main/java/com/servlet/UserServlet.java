@@ -1,20 +1,24 @@
 package com.servlet;
 
-import com.config.ConfigLoader;
+import com.constants.UserFormFields;
+import com.constants.UserValidationError;
 import com.dto.UserDTO;
-import jakarta.servlet.RequestDispatcher;
+import com.security.PasswordHasher;
+import com.util.ValidationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @WebServlet (
-    name = "UserServlet",
     urlPatterns = {"/user"}
 )
 public class UserServlet extends HttpServlet {
@@ -24,14 +28,183 @@ public class UserServlet extends HttpServlet {
 
     @Override
     public void init() {
-        this.userService = new UserService(); // ideally injected or loaded
+        this.userService = new UserService();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String searchUserId = req.getParameter("searchUserId");
+        HttpSession session = req.getSession();
+        List<UserDTO> users = null;
 
+        // Session data extraction
+        Map<String, String> errors = (Map<String, String>) session.getAttribute("errors");
+        session.removeAttribute("errors");
+        Map<String, String> pageData = (Map<String, String>) session.getAttribute("pageData");
+        session.removeAttribute("pageData");
+
+        if(!ValidationUtils.isNullOrBlank(searchUserId)) {
+            UserDTO user = userService.getById(searchUserId);
+            if(user != null)
+            {
+                users = List.of(user);
+            } else {
+                users = List.of();
+            }
+        } else {
+            users = userService.getAll();
+        }
+
+        setErrors(req, errors);
+        setFieldData(req, pageData);
+        req.setAttribute("searchUserId", searchUserId);
+        setTableData(req, users);
+        req.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Map<String, String> pageData = getFieldData(req);
+        Map<String, String> errors = new HashMap<>();
+        String action = req.getParameter("action");
+        HttpSession session = req.getSession();
+
+        if("create".equals(action)){
+            logger.info("Create action triggered");
+            validateFormFields(pageData, errors);
+            logger.info("Data validation completed");
+
+            if(errors.isEmpty()) {
+                userService.create(
+                        pageData.get(UserFormFields.USER_ID.fieldKey()),
+                        PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.fieldKey())),
+                        pageData.get(UserFormFields.FULL_NAME.fieldKey()),
+                        pageData.get(UserFormFields.EMAIL.fieldKey()));
+                clearFieldData(pageData);
+            }
+
+        } else if("delete".equals(action)) {
+            logger.info("Delete action triggered");
+            validateFormFields(pageData, errors, List.of(UserFormFields.USER_ID));
+            logger.info("Data validation completed");
+
+            if(errors.isEmpty()) userService.delete(pageData.get(UserFormFields.USER_ID.fieldKey()));
+
+        } else if("update".equals(action)) {
+            logger.info("Update action triggered");
+            validateFormFields(pageData, errors, List.of(UserFormFields.USER_ID));
+            if(!ValidationUtils.isNullOrBlank(pageData.get(UserFormFields.PASSWORD.fieldKey()))){
+                validateFormFields(pageData, errors, List.of(UserFormFields.PASSWORD));
+            } else {
+                pageData.put(UserFormFields.PASSWORD.fieldKey(), null);
+            }
+
+            if(ValidationUtils.isNullOrBlank(pageData.get(UserFormFields.FULL_NAME.fieldKey()))) pageData.put(UserFormFields.FULL_NAME.fieldKey(), null);
+
+            if(!ValidationUtils.isNullOrBlank(pageData.get(UserFormFields.EMAIL.fieldKey()))){
+                validateFormFields(pageData, errors, List.of(UserFormFields.EMAIL));
+            } else {
+                pageData.put(UserFormFields.EMAIL.fieldKey(), null);
+            }
+            logger.info("Data validation completed");
+
+            if(errors.isEmpty()) {
+                userService.update(
+                        pageData.get(UserFormFields.USER_ID.fieldKey()),
+                        PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.fieldKey())),
+                        pageData.get(UserFormFields.FULL_NAME.fieldKey()),
+                        pageData.get(UserFormFields.EMAIL.fieldKey()));
+                clearFieldData(pageData);
+            }
+
+        } else if("reset".equals((action))) {
+            clearFieldData(pageData);
+        }
+
+        session.setAttribute("errors", errors);
+        session.setAttribute("pageData", pageData);
+        resp.sendRedirect("/user");
+    }
+
+    private Map<String, String> getFieldData(HttpServletRequest req) {
+        List<String> fieldNames = List.of(UserFormFields.USER_ID.fieldKey(), UserFormFields.PASSWORD.fieldKey(), UserFormFields.FULL_NAME.fieldKey(), UserFormFields.EMAIL.fieldKey());
+        Map<String, String> fieldData = new HashMap<>();
+
+        for(String fieldName : fieldNames) {
+            String value = req.getParameter(fieldName);
+            if (value != null) {
+                fieldData.put(fieldName, value);
+            } else {
+                logger.warning("Field " + fieldName + " is null.");
+                fieldData.put(fieldName, null);
+            }
+        }
+        return fieldData;
+    }
+
+    private void setFieldData(HttpServletRequest req, Map<String, String> fieldData) {
+        if(fieldData != null) {
+            for (Map.Entry<String, String> entry : fieldData.entrySet()) {
+                if(entry.getValue() != null) {
+                    req.setAttribute(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+    }
+
+    private void setTableData(HttpServletRequest req) {
         req.setAttribute("tableHeaders", UserDTO.getHeaders());
         req.setAttribute("tableData", UserDTO.toListOfLists(userService.getAll()));
-        req.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(req, resp);
+    }
+
+    private void setTableData(HttpServletRequest req, List<UserDTO> users) {
+        req.setAttribute("tableHeaders", UserDTO.getHeaders());
+        req.setAttribute("tableData", UserDTO.toListOfLists(users));
+    }
+
+    private void setErrors(HttpServletRequest req, Map<String, String> errors) {
+        if(errors != null) {
+            for (Map.Entry<String, String> entry : errors.entrySet()) {
+                if(!ValidationUtils.isNullOrBlank(entry.getValue())) {
+                    req.setAttribute(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+    }
+
+    private void validateFormFields(Map<String, String> pageData, Map<String, String> errors) {
+        validateFormFields(pageData, errors, List.of(UserFormFields.values()));
+    }
+
+    private void validateFormFields(Map<String, String> pageData, Map<String, String> errors, List<UserFormFields> fieldsToValidate) {
+        for (UserFormFields field : fieldsToValidate) {
+            String value = pageData.get(field.fieldKey());
+
+            if (field.getRequiredError() != null && ValidationUtils.isNullOrBlank(value)) {
+                errors.put(field.errorKey(), field.getRequiredError().getMessage());
+                continue;
+            }
+
+            if (field.getFormatError() != null) {
+                boolean formatInvalid = switch (field) {
+                    case PASSWORD -> !ValidationUtils.isValidPassword(value);
+                    case EMAIL -> !ValidationUtils.isValidEmail(value);
+                    default -> false;
+                };
+
+                if (formatInvalid) {
+                    errors.put(field.errorKey(), field.getFormatError().getMessage());
+                }
+            }
+        }
+    }
+
+    private void clearFieldData(Map<String, String> pageData) {
+        clearFieldData(pageData, List.of(UserFormFields.values()));
+    }
+    private void clearFieldData(Map<String, String> pageData, List<UserFormFields> fields) {
+        for(UserFormFields field : fields) {
+            pageData.put(field.fieldKey(), "");
+        }
     }
 }

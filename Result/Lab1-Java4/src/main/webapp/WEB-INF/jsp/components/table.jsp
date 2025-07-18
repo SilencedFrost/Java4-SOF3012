@@ -9,8 +9,16 @@
     <tbody>
         <c:forEach var="userRow" items="${tableData}">
             <tr>
-                <c:forEach var="field" items="${userRow}">
-                    <td><c:out value="${field}"/></td>
+                <c:forEach var="field" items="${userRow}" varStatus="status">
+                <!-- If match breakindex, apply text-break -->
+                    <c:choose>
+                            <c:when test="${status.index == breakIndex}">
+                                <td class="text-break"><c:out value="${field}"/></td>
+                            </c:when>
+                            <c:otherwise>
+                                <td><c:out value="${field}"/></td>
+                            </c:otherwise>
+                        </c:choose>
                 </c:forEach>
             </tr>
         </c:forEach>

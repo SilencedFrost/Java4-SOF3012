@@ -6,7 +6,7 @@ import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 
 @WebListener
-public class JPAContextCleanupListener implements ServletContextListener {
+public class EntityManagerCleanupListener implements ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         EntityManagerUtil.close();

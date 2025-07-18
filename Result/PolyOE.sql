@@ -17,7 +17,7 @@ create table Roles(
 	RoleId int identity(1,1) primary key,
 	UserId nvarchar(20) NOT NULL UNIQUE,
 	RoleType nvarchar(20) NOT NULL,
-	FOREIGN KEY (UserId) REFERENCES Users(UserId)
+	FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE
 )
 go
 

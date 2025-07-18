@@ -1,33 +1,35 @@
 package com.service;
 
+import com.dto.UserDTO;
 import com.entity.User;
+import com.mapper.UserMapper;
 import jakarta.persistence.*;
 import com.util.EntityManagerUtil;
-
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UserService implements Service<User>{
+public class UserService implements Service<UserDTO>{
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     public UserService() {
     }
 
     @Override
-    public List<User> getAll() {
+    public List<UserDTO> getAll() {
         List<User> userList = null;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             userList = em.createQuery("SELECT u FROM User u", User.class).getResultList();
             logger.info("Fetched all users: " + userList.size() + " users found.");
+            return UserMapper.toDTOList(userList);
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error fetching users", e);
+            return List.of();
         }
-        return userList != null ? userList : List.of();
     }
 
     @Override
-    public User getById(String id) {
+    public UserDTO getById(String id) {
         if (id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
@@ -36,23 +38,26 @@ public class UserService implements Service<User>{
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             user = em.find(User.class, id);
             logger.info("User with id " + id + (user != null ? " found." : " not found."));
+            return user != null ? UserMapper.toDTO(user) : null;
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error finding user by ID", e);
+            return null;
         }
-        return user;
     }
 
     // Manual creation method
-    public void create(String id, String password, String email, String fullname) {
-        create(new User(id, password, email, fullname));
+    public boolean create(String id, String password, String email, String fullname) {
+        return create(new UserDTO(id, password, email, fullname));
     }
 
     // Object creation method
     @Override
-    public boolean create(User user) {
-        if (user == null) {
+    public boolean create(UserDTO userDTO) {
+        if (userDTO == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
+
+        User user = UserMapper.toEntity(userDTO);
 
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
@@ -61,6 +66,7 @@ public class UserService implements Service<User>{
                 em.persist(user);
                 tx.commit();
                 logger.info("User created: " + user);
+                return true;
             } catch (PersistenceException e) {
                 if (tx.isActive()) {
                     tx.rollback();
@@ -69,29 +75,16 @@ public class UserService implements Service<User>{
                 return false;
             }
         }
-        return true;
     }
 
-    /**
-     * Updates a user with the given values. Only non-null fields will be applied to the existing user.
-     * <p>
-     * This method allows partial updates: if a field is {@code null}, it will be ignored and the existing value will be preserved.
-     * </p>
-     *
-     * @param id        the ID of the user to update (must not be null or blank)
-     * @param password  the new passwordHash, or {@code null} to leave unchanged
-     * @param fullname  the new full name, or {@code null} to leave unchanged
-     * @param email     the new email, or {@code null} to leave unchanged
-     * @throws IllegalArgumentException if {@code id} is null or blank
-     */
-    public void update(String id, String password, String fullname, String email) {
-        update(new User(id, password, email, fullname));
+    public boolean update(String id, String password, String fullname, String email) {
+        return update(new UserDTO(id, password, email, fullname));
     }
 
     // Object update method
     @Override
-    public boolean update(User updatedUser) {
-        if (updatedUser == null || updatedUser.getId() == null || updatedUser.getId().trim().isEmpty()) {
+    public boolean update(UserDTO updatedUser) {
+        if (updatedUser == null || updatedUser.getUserId() == null || updatedUser.getUserId().trim().isEmpty()) {
             logger.warning("User or User ID cannot be null or empty");
             return false;
         }
@@ -99,11 +92,11 @@ public class UserService implements Service<User>{
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             try {
-                User existingUser = em.find(User.class, updatedUser.getId());
-                tx.begin();
+                User existingUser = em.find(User.class, updatedUser.getUserId());
                 if (existingUser != null) {
-                    if (updatedUser.getFullname() != null) {
-                        existingUser.setFullname(updatedUser.getFullname());
+                    tx.begin();
+                    if (updatedUser.getFullName() != null) {
+                        existingUser.setFullName(updatedUser.getFullName());
                     }
                     if (updatedUser.getPasswordHash() != null) {
                         existingUser.setPasswordHash(updatedUser.getPasswordHash());
@@ -111,13 +104,13 @@ public class UserService implements Service<User>{
                     if (updatedUser.getEmail() != null) {
                         existingUser.setEmail(updatedUser.getEmail());
                     }
-                    em.merge(existingUser);
+                    tx.commit();
+                    logger.info("User with id " + updatedUser.getUserId() + " updated successfully.");
+                    return true;
                 } else {
-                    logger.warning("User with id " + updatedUser.getId() + " not found for update.");
+                    logger.warning("User with id " + updatedUser.getUserId() + " not found for update.");
                     return false;
                 }
-                tx.commit();
-                return true;
             } catch (Exception e) {
                 if (tx.isActive()) {
                     tx.rollback();
@@ -159,11 +152,11 @@ public class UserService implements Service<User>{
     }
 
     // Object delete method
-    public boolean delete(User user) {
+    public boolean delete(UserDTO user) {
         if (user == null) {
             logger.warning("User cannot be null");
             return false;
         }
-        return delete(user.getId());
+        return delete(user.getUserId());
     }
 }

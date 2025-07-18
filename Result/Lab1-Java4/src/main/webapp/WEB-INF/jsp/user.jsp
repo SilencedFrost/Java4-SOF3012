@@ -11,15 +11,16 @@
 <body class="container-fluid p-0">
     <%@ include file="components/navbar.jsp" %>
     <h2 class="text-center my-4">User Menu</h1>
-    <div class="row g-2 p-2">
-        <div class="col-md-4">
-            <%@ include file="components/userform.jsp" %>
-        </div>
-        <div class="col-md-8">
-            <%@ include file="components/usertable.jsp" %>
+    <div class="container-fluid">
+        <div class="row g-2 p-2">
+            <div class="col-md-4">
+                <%@ include file="components/userform.jsp" %>
+            </div>
+            <div class="col-md-8">
+                <%@ include file="components/table.jsp" %>
+            </div>
         </div>
     </div>
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

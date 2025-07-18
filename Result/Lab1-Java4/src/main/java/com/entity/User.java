@@ -15,11 +15,20 @@ import lombok.Setter;
 public class User {
     @Id
     @Column(name = "userid")
-    String id;
+    String userId;
     @Column(name = "passwordhash")
     String passwordHash;
     @Column(name = "fullname")
-    String fullname;
+    String fullName;
     @Column(name = "email")
     String email;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

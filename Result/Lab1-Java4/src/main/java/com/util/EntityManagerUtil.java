@@ -1,5 +1,6 @@
 package com.util;
 
+import com.config.ConfigLoader;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -12,6 +13,7 @@ public class EntityManagerUtil {
 
     static {
         try {
+            ConfigLoader.loadDatabaseConfig();
             emf = Persistence.createEntityManagerFactory("PolyOE");
             logger.info("EntityManagerFactory created successfully");
 

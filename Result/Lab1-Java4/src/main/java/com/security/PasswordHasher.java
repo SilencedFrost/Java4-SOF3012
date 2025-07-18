@@ -7,12 +7,12 @@ public class PasswordHasher {
     private static final int COST = 12;
 
     // Return hashed password
-    public String hash(String rawPassword) {
+    public static String hash(String rawPassword) {
         return BCrypt.hashpw(rawPassword, BCrypt.gensalt(COST));
     }
 
     // Return password verification result
-    public boolean verify(String rawPassword, String hashedPassword) {
+    public static boolean verify(String rawPassword, String hashedPassword) {
         if (rawPassword == null || hashedPassword == null) {
             return false;
         }

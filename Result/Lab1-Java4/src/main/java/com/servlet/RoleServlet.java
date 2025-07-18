@@ -22,15 +22,12 @@ public class RoleServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(RoleServlet.class.getName());
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/jsp/role.jsp");
-
-        ConfigLoader.loadDatabaseConfig();
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         List<Role> roleList = new RoleService().getAll();
 
         req.setAttribute("roleList", roleList);
 
-        requestDispatcher.forward(req, res);
+        req.getRequestDispatcher("/WEB-INF/jsp/role.jsp").forward(req, resp);
     }
 }

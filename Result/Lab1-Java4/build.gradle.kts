@@ -18,10 +18,9 @@ gretty {
     httpPort = 8080
     httpsPort = 8443
 
-    // Optional configurations
-    jvmArgs = listOf("-Xmx1024m")
-    debugPort = 5005
-    debugSuspend = false
+    jvmArgs = listOf("-Xmx2048m")
+
+    managedClassReload = false
 }
 
 dependencies {

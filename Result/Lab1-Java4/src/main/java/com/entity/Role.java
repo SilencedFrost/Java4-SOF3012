@@ -1,7 +1,6 @@
 package com.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,10 +23,10 @@ public class Role {
 
     public Role(String userId, String role) {
         this.userId = userId;
-        if(role == null || role.trim().isEmpty()) {
-            this.role = "User";
-        } else {
-            this.role = role;
-        }
+        setRole(role);
+    }
+
+    public void setRole(String role) {
+        this.role = (role == null || role.trim().isEmpty()) ? "User" : role;
     }
 }

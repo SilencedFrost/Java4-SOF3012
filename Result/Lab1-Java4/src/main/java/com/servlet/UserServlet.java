@@ -1,7 +1,7 @@
 package com.servlet;
 
 import com.config.ConfigLoader;
-import com.entity.User;
+import com.dto.UserDTO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,16 +20,18 @@ import java.util.logging.Logger;
 public class UserServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(UserServlet.class.getName());
 
+    private UserService userService;
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/jsp/user.jsp");
+    public void init() {
+        this.userService = new UserService(); // ideally injected or loaded
+    }
 
-        ConfigLoader.loadDatabaseConfig();
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        List<User> userList = new UserService().getAll();
-
-        req.setAttribute("userList", userList);
-
-        requestDispatcher.forward(req, res);
+        req.setAttribute("tableHeaders", UserDTO.getHeaders());
+        req.setAttribute("tableData", UserDTO.toListOfLists(userService.getAll()));
+        req.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(req, resp);
     }
 }

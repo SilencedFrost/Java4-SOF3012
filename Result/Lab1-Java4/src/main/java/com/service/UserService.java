@@ -25,7 +25,9 @@ public class UserService implements Service<User>{
         }
         return userList != null ? userList : List.of();
     }
-    public User findById(String id) {
+
+    @Override
+    public User getById(String id) {
         if (id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
@@ -46,7 +48,8 @@ public class UserService implements Service<User>{
     }
 
     // Object creation method
-    public void create(User user) {
+    @Override
+    public boolean create(User user) {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
@@ -63,8 +66,10 @@ public class UserService implements Service<User>{
                     tx.rollback();
                 }
                 logger.log(Level.SEVERE, "Error creating user", e);
+                return false;
             }
         }
+        return true;
     }
 
     /**
@@ -84,17 +89,18 @@ public class UserService implements Service<User>{
     }
 
     // Object update method
-    public void update(User updatedUser) {
+    @Override
+    public boolean update(User updatedUser) {
         if (updatedUser == null || updatedUser.getId() == null || updatedUser.getId().trim().isEmpty()) {
-            throw new IllegalArgumentException("User and ID cannot be null or empty");
+            logger.warning("User or User ID cannot be null or empty");
+            return false;
         }
 
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             try {
-                tx.begin();
                 User existingUser = em.find(User.class, updatedUser.getId());
-
+                tx.begin();
                 if (existingUser != null) {
                     if (updatedUser.getFullname() != null) {
                         existingUser.setFullname(updatedUser.getFullname());
@@ -105,53 +111,59 @@ public class UserService implements Service<User>{
                     if (updatedUser.getEmail() != null) {
                         existingUser.setEmail(updatedUser.getEmail());
                     }
-
                     em.merge(existingUser);
                 } else {
                     logger.warning("User with id " + updatedUser.getId() + " not found for update.");
+                    return false;
                 }
-
                 tx.commit();
+                return true;
             } catch (Exception e) {
                 if (tx.isActive()) {
                     tx.rollback();
                 }
                 logger.log(Level.SEVERE, "Error updating user", e);
+                return false;
             }
         }
     }
 
     //Manual delete method
-    public void deleteById(String id) {
+    @Override
+    public boolean delete(String id) {
         if (id == null) {
-            throw new IllegalArgumentException("ID cannot be null");
+            logger.warning("ID cannot be null");
+            return false;
         }
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             User user = em.find(User.class, id);
             if (user == null) {
                 logger.warning("User with id " + id + " not found. Deletion skipped.");
-                return;
+                return false;
             }
 
             try {
                 tx.begin();
                 em.remove(user);
                 tx.commit();
+                return true;
             } catch (Exception e) {
                 if (tx.isActive()) {
                     tx.rollback();
                 }
                 logger.log(Level.SEVERE, "Error deleting user with id " + id, e);
+                return false;
             }
         }
     }
 
     // Object delete method
-    public void delete(User user) {
+    public boolean delete(User user) {
         if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
+            logger.warning("User cannot be null");
+            return false;
         }
-        deleteById(user.getId());
+        return delete(user.getId());
     }
 }

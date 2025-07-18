@@ -11,7 +11,8 @@
 <body class="container-fluid p-0">
     <%@ include file="navbar.jsp" %>
     <h2 class="text-center my-4">Role List</h2>
-    <table class="table table-striped table-bordered">
+    <div class="container">
+        <table class="table table-striped table-bordered">
             <thead>
                 <tr>
                     <th>RoleID</th>
@@ -29,6 +30,7 @@
                 </c:forEach>
             </tbody>
         </table>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

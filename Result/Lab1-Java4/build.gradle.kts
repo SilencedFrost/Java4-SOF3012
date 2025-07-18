@@ -26,25 +26,22 @@ gretty {
 
 dependencies {
     // Jakarta com.servlet API
-    compileOnly("jakarta.com.servlet:jakarta.com.servlet-api:6.0.0")
-    annotationProcessor("jakarta.com.servlet:jakarta.com.servlet-api:6.0.0")
+    compileOnly("jakarta.servlet:jakarta.servlet-api:6.1.0")
 
     // Add JSTL for Jakarta EE (Tomcat 10)
-    implementation("org.glassfish.web:jakarta.com.servlet.jsp.jstl:3.0.1")
-    implementation("jakarta.com.servlet.jsp.jstl:jakarta.com.servlet.jsp.jstl-api:3.0.0")
-
+    implementation("org.eclipse.jetty:glassfish-jstl:11.0.25")
 
     // JPA + Hibernate
-    implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
-    implementation("org.hibernate:hibernate-core:6.2.7.Final")
-    annotationProcessor("org.hibernate:hibernate-jpamodelgen:6.2.7.Final")
+    implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
+    implementation("org.hibernate:hibernate-core:7.0.6.Final")
+    annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:7.0.6.Final")
 
     // MSSQL JDBC driver
-    implementation("com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11")
+    implementation("com.microsoft.sqlserver:mssql-jdbc:12.10.1.jre11")
 
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    compileOnly("org.projectlombok:lombok:1.18.38")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
 
     // JBcrypt
     implementation("org.mindrot:jbcrypt:0.4")

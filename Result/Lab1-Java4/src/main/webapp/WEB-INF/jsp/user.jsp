@@ -11,26 +11,28 @@
 <body class="container-fluid p-0">
     <%@ include file="navbar.jsp" %>
     <h2 class="text-center my-4">User List</h1>
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Full Name</th>
-                <th>Password</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="user" items="${userList}">
+    <div class="container">
+        <table class="table table-striped table-bordered">
+            <thead>
                 <tr>
-                    <td><c:out value="${user.id}"/></td>
-                    <td><c:out value="${user.fullname}"/></td>
-                    <td><c:out value="${user.passwordHash}"/></td>
-                    <td><c:out value="${user.email}"/></td>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Password</th>
+                    <th>Email</th>
                 </tr>
-            </c:forEach>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <c:forEach var="user" items="${userList}">
+                    <tr>
+                        <td><c:out value="${user.id}"/></td>
+                        <td><c:out value="${user.fullname}"/></td>
+                        <td><c:out value="${user.passwordHash}"/></td>
+                        <td><c:out value="${user.email}"/></td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

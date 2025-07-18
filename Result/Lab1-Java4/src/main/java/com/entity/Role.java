@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "Roles")
@@ -22,4 +21,13 @@ public class Role {
     private String userId;
     @Column(name = "roletype")
     private String role;
+
+    public Role(String userId, String role) {
+        this.userId = userId;
+        if(role == null || role.trim().isEmpty()) {
+            this.role = "User";
+        } else {
+            this.role = role;
+        }
+    }
 }

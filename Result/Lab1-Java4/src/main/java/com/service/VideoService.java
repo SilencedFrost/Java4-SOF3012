@@ -1,11 +1,13 @@
-package com.service;
+/* package com.service;
 
 import com.dto.UserDTO;
 import com.entity.User;
 import com.mapper.UserMapper;
-import com.util.ValidationUtils;
-import jakarta.persistence.*;
 import com.util.EntityManagerUtil;
+import com.util.ValidationUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceException;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -13,8 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @NoArgsConstructor
-public class UserService implements Service<UserDTO>{
-    private static final Logger logger = Logger.getLogger(UserService.class.getName());
+public class VideoService implements Service<UserDTO>{
+    private static final Logger logger = Logger.getLogger(VideoService.class.getName());
 
     @Override
     public List<UserDTO> findAll() {
@@ -43,29 +45,6 @@ public class UserService implements Service<UserDTO>{
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error finding user by ID", e);
             return null;
-        }
-    }
-
-    @Override
-    public List<UserDTO> findByIdLike(String partialId){
-        if (ValidationUtils.isNullOrBlank(partialId)) {
-            throw new IllegalArgumentException("Partial ID cannot be null or empty");
-        }
-
-        List<User> userList = null;
-        try (EntityManager em = EntityManagerUtil.getEntityManager()) {
-            userList = em.createQuery(
-                            "SELECT u FROM User u WHERE u.userId LIKE :partialId",
-                            User.class
-                    )
-                    .setParameter("partialId", "%" + partialId + "%")
-                    .getResultList();
-
-            logger.info("Found " + userList.size() + " users with ID containing: " + partialId);
-            return UserMapper.toDTOList(userList);
-        } catch (PersistenceException e) {
-            logger.log(Level.SEVERE, "Error finding users by partial ID: " + partialId, e);
-            return List.of();
         }
     }
 
@@ -183,4 +162,4 @@ public class UserService implements Service<UserDTO>{
         }
         return delete(user.getUserId());
     }
-}
+} */

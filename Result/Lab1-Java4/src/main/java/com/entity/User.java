@@ -1,10 +1,8 @@
 package com.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,11 +20,42 @@ public class User {
     String fullName;
     @Column(name = "email")
     String email;
+    @Column(name = "IsAdmin")
+    Boolean admin = false;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Favorite> favorites;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Share> shares;
+
+    public void addFavourite(Favorite favorite){
+        this.favorites.add(favorite);
+        favorite.setUser(this);
+    }
+
+    public void addShare(Share share){
+        this.shares.add(share);
+        share.setUser(this);
+    }
+
+    public User(String userId,String passwordHash,String fullName, String email){
+        this.userId = userId;
+        this.passwordHash = passwordHash;
+        this.fullName = fullName;
+        this.email = email;
+    }
+
+    public User(String userId,String passwordHash,String fullName, String email, Boolean admin){
+        this.userId = userId;
+        this.passwordHash = passwordHash;
+        this.fullName = fullName;
+        this.email = email;
+        this.admin = admin;
+    }
 
     @Override
     public String toString() {
         return "User{" +
-                "userId='" + userId + '\'' +
+                "user='" + userId + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
                 '}';

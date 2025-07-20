@@ -2,10 +2,10 @@ package com.mapper;
 
 import com.dto.UserDTO;
 import com.entity.User;
+import com.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserMapper {
 
@@ -17,7 +17,8 @@ public class UserMapper {
                 user.getUserId(),
                 user.getPasswordHash(),
                 user.getFullName(),
-                user.getEmail()
+                user.getEmail(),
+                user.getAdmin()
         );
     }
 
@@ -25,11 +26,13 @@ public class UserMapper {
         if (userDTO == null) {
             return null;
         }
+
         return new User(
                 userDTO.getUserId(),
                 userDTO.getPasswordHash(),
                 userDTO.getFullName(),
-                userDTO.getEmail()
+                userDTO.getEmail(),
+                userDTO.getAdmin()
         );
     }
 

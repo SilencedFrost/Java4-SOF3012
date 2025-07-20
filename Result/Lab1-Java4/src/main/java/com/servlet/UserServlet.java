@@ -1,7 +1,6 @@
 package com.servlet;
 
 import com.constants.UserFormFields;
-import com.constants.UserValidationError;
 import com.dto.UserDTO;
 import com.security.PasswordHasher;
 import com.util.ValidationUtils;
@@ -44,15 +43,13 @@ public class UserServlet extends HttpServlet {
         session.removeAttribute("pageData");
 
         if(!ValidationUtils.isNullOrBlank(searchUserId)) {
-            UserDTO user = userService.getById(searchUserId);
-            if(user != null)
+            users = userService.findByIdLike(searchUserId);
+            if(users == null)
             {
-                users = List.of(user);
-            } else {
                 users = List.of();
             }
         } else {
-            users = userService.getAll();
+            users = userService.findAll();
         }
 
         setErrors(req, errors);
@@ -152,14 +149,23 @@ public class UserServlet extends HttpServlet {
         }
     }
 
+    private void setTableData(HttpServletRequest req, List<UserDTO> users, UserFormFields... fields) {
+        UserFormFields[] fieldsToUse = (fields.length == 0) ? UserFormFields.values() : fields;
+
+        req.setAttribute("userFields", fieldsToUse);
+        req.setAttribute("users", users);
+    }
+
     private void setTableData(HttpServletRequest req) {
-        req.setAttribute("tableHeaders", UserDTO.getHeaders());
-        req.setAttribute("tableData", UserDTO.toListOfLists(userService.getAll()));
+        setTableData(req, userService.findAll());
     }
 
     private void setTableData(HttpServletRequest req, List<UserDTO> users) {
-        req.setAttribute("tableHeaders", UserDTO.getHeaders());
-        req.setAttribute("tableData", UserDTO.toListOfLists(users));
+        setTableData(req, users, new UserFormFields[0]); // Empty array = use all fields
+    }
+
+    private void setTableData(HttpServletRequest req, UserFormFields... fields) {
+        setTableData(req, userService.findAll(), fields);
     }
 
     private void setErrors(HttpServletRequest req, Map<String, String> errors) {

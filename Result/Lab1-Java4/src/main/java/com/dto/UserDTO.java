@@ -1,13 +1,9 @@
 package com.dto;
 
-import com.security.PasswordHasher;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,36 +14,22 @@ public class UserDTO {
     private String passwordHash;
     private String fullName;
     private String email;
+    private Boolean admin = false;
 
-    public UserDTO(String userId, String email, String fullName) {
+    public UserDTO(String userId, String passwordHash, String fullName, String email){
         this.userId = userId;
-        this.email = email;
+        this.passwordHash = passwordHash;
         this.fullName = fullName;
+        this.email = email;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "userId='" + userId + '\'' +
+                "user='" + userId + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
+                ", role=" + (admin ? "Admin" : "User") + '\'' +
                 '}';
-    }
-
-    public static List<List<String>> toListOfLists(List<UserDTO> users) {
-        List<List<String>> result = new ArrayList<>();
-        for (UserDTO user : users) {
-            List<String> row = new ArrayList<>();
-            row.add(user.getUserId());
-            row.add(user.getPasswordHash());
-            row.add(user.getFullName());
-            row.add(user.getEmail());
-            result.add(row);
-        }
-        return result;
-    }
-
-    public static List<String> getHeaders() {
-        return List.of("ID", "Password Hash", "Full Name", "Email");
     }
 }

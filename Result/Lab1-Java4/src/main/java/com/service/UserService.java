@@ -70,8 +70,8 @@ public class UserService implements Service<UserDTO>{
     }
 
     // Manual creation method
-    public boolean create(String id, String password, String fullname, String email) {
-        return create(new UserDTO(id, password, fullname, email));
+    public boolean create(String id, String password, String fullname, String email, String roleName) {
+        return create(new UserDTO(id, password, fullname, email, roleName));
     }
 
     // Object creation method
@@ -81,7 +81,7 @@ public class UserService implements Service<UserDTO>{
             throw new IllegalArgumentException("User cannot be null");
         }
 
-        User user = UserMapper.toEntity(userDTO);
+        User user = UserMapper.toEntity(userDTO, new roleService().findByRoleName(userDTO.getRoleName()));
 
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
@@ -101,8 +101,8 @@ public class UserService implements Service<UserDTO>{
         }
     }
 
-    public boolean update(String id, String password, String fullname, String email) {
-        return update(new UserDTO(id, password, fullname, email));
+    public boolean update(String id, String password, String fullname, String email, String roleName) {
+        return update(new UserDTO(id, password, fullname, email, roleName));
     }
 
     // Object update method
@@ -127,6 +127,9 @@ public class UserService implements Service<UserDTO>{
                     }
                     if (updatedUser.getEmail() != null) {
                         existingUser.setEmail(updatedUser.getEmail());
+                    }
+                    if (updatedUser.getRoleName() != null) {
+                        existingUser.setRole(new roleService().findByRoleName(updatedUser.getRoleName()));
                     }
                     tx.commit();
                     logger.info("User with id " + updatedUser.getUserId() + " updated successfully.");

@@ -4,12 +4,19 @@ go
 use PolyOE
 go
 
+create table Roles(
+	RoleId int PRIMARY KEY IDENTITY(1, 1),
+	RoleName nvarchar(20) UNIQUE not null,
+)
+go
+
 create table Users(
 	UserId nvarchar(20) PRIMARY KEY not null,
 	PasswordHash nvarchar(60) not null,
 	Email nvarchar(50) not null,
 	FullName nvarchar(50) not null,
-	IsAdmin bit not null,
+	RoleId int,
+	foreign key (RoleId) references Roles(RoleId)
 )
 go
 
@@ -24,7 +31,7 @@ create table Video(
 go
 
 create table Favourite (
-	FavouriteId bigint PRIMARY KEY IDENTITY(1, 1) not null,
+	FavouriteId bigint PRIMARY KEY IDENTITY(1, 1),
 	UserId nvarchar(20) not null,
 	VideoId nvarchar(20) not null,
 	LikeDate Date,
@@ -45,13 +52,23 @@ create table Share (
 )
 go
 
-insert into Users(UserId, PasswordHash, FullName, Email, IsAdmin) values ('SD001', '$2a$12$rnfhc4D/Wxd7jnUSWdpEUeF6wlusVXdOjb/u1QwCnwtec/t6GeYX2', 'Nguyen Quoc Minh', 'minhnqSD@gmail.com ', 1)
+insert into Roles(RoleName) values ('User')
 go
-insert into Users(UserId, PasswordHash, FullName, Email, IsAdmin) values ('SD002', '$2a$12$6Lneezy3jribVCUJpYzV/uwJ8kay1ZGjE2adnzs6g0M9RbqEJpZEC', 'Trinh Thi Linh'  , 'linhttSD@gmail.com ', 0) 
+insert into Roles(RoleName) values ('Employee')
 go
-insert into Users(UserId, PasswordHash, FullName, Email, IsAdmin) values ('SD003', '$2a$12$LpW4G3snr1.auHyur8T6LekqQpJG3Y.jQrCuz7bc0a8xAnM5iUVOu', 'Vo Anh Tuan'     , 'tuanvaSD@gmail.com ', 0) 
+insert into Roles(RoleName) values ('Manager')
 go
-insert into Users(UserId, PasswordHash, FullName, Email, IsAdmin) values ('SD004', '$2a$12$2ETrqO7JiV9tkkjxd/VaWe2OD1Xl90M2.O2h3oT9TJvPcA44vqoP2', 'Nguyen Tan Thanh', 'thanhntSD@gmail.com', 1) 
+insert into Roles(RoleName) values ('Admin')
+go
+
+
+insert into Users(UserId, PasswordHash, FullName, Email, RoleId) values ('SD001', '$2a$12$rnfhc4D/Wxd7jnUSWdpEUeF6wlusVXdOjb/u1QwCnwtec/t6GeYX2', 'Nguyen Quoc Minh', 'minhnqSD@gmail.com ', 4)
+go
+insert into Users(UserId, PasswordHash, FullName, Email, RoleId) values ('SD002', '$2a$12$6Lneezy3jribVCUJpYzV/uwJ8kay1ZGjE2adnzs6g0M9RbqEJpZEC', 'Trinh Thi Linh'  , 'linhttSD@gmail.com ', 1) 
+go
+insert into Users(UserId, PasswordHash, FullName, Email, RoleId) values ('SD003', '$2a$12$LpW4G3snr1.auHyur8T6LekqQpJG3Y.jQrCuz7bc0a8xAnM5iUVOu', 'Vo Anh Tuan'     , 'tuanvaSD@gmail.com ', 1) 
+go
+insert into Users(UserId, PasswordHash, FullName, Email, RoleId) values ('SD004', '$2a$12$2ETrqO7JiV9tkkjxd/VaWe2OD1Xl90M2.O2h3oT9TJvPcA44vqoP2', 'Nguyen Tan Thanh', 'thanhntSD@gmail.com', 3) 
 go
 
 insert into Video(VideoId, Title, Poster, ViewCount, Descript, Active) values ('VD001', 'Video 1', 'poster1', 0, 'Basic video desc', 1)

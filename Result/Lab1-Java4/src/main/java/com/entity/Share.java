@@ -13,13 +13,16 @@ import lombok.*;
 public class Share {
 
 	@Id
+	@Column(name = "ShareId")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long shareId;
+
 	@ManyToOne
 	@JoinColumn(name = "UserId")
 	private User user;
 	@ManyToOne
 	@JoinColumn(name = "VideoId")
+
 	private Video video;
     @Column(name = "Emails")
 	private String email;

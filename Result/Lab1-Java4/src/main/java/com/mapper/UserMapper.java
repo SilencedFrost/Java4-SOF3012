@@ -1,6 +1,7 @@
 package com.mapper;
 
 import com.dto.UserDTO;
+import com.entity.Role;
 import com.entity.User;
 import com.service.UserService;
 
@@ -18,11 +19,11 @@ public class UserMapper {
                 user.getPasswordHash(),
                 user.getFullName(),
                 user.getEmail(),
-                user.getAdmin()
+                user.getRole().getRoleName()
         );
     }
 
-    public static User toEntity(UserDTO userDTO) {
+    public static User toEntity(UserDTO userDTO, Role role) {
         if (userDTO == null) {
             return null;
         }
@@ -32,16 +33,8 @@ public class UserMapper {
                 userDTO.getPasswordHash(),
                 userDTO.getFullName(),
                 userDTO.getEmail(),
-                userDTO.getAdmin()
+                role
         );
-    }
-
-    public static List<User> toEntityList(List<UserDTO> dtoList) {
-        List<User> entityList = new ArrayList<>();
-        for (UserDTO userDTO : dtoList) {
-            entityList.add(UserMapper.toEntity(userDTO));
-        }
-        return entityList;
     }
 
     public static List<UserDTO> toDTOList(List<User> entityList) {

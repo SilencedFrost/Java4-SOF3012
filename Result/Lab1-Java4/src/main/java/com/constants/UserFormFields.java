@@ -11,7 +11,7 @@ public enum UserFormFields {
     PASSWORD("passwordHash", "password", "Password", UserValidationError.PASSWORD_REQUIRED, UserValidationError.PASSWORD_INCORRECT_FORMAT),
     FULL_NAME("fullName", "fullName", "Full Name", UserValidationError.FULL_NAME_REQUIRED, null),
     EMAIL("email", "email", "Email", UserValidationError.EMAIL_REQUIRED, UserValidationError.EMAIL_INCORRECT_FORMAT),
-    ROLE("admin", "admin", "Admin", UserValidationError.ROLE_REQUIRED, null);
+    ROLE("roleName", "role", "Role Name", UserValidationError.ROLE_REQUIRED, null);
 
     private final String propertyName;
     private final String fieldKey;
@@ -31,13 +31,13 @@ public enum UserFormFields {
     }
     private static List<String> initializeFieldKeys() {
         UserFormFields[] values = values();
-        List<String> colNames = new ArrayList<>(values.length);
+        List<String> fieldKeys = new ArrayList<>(values.length);
 
         for (UserFormFields field : values) {
-            colNames.add(field.getColName());
+            fieldKeys.add(field.getFieldKey());
         }
 
-        return List.copyOf(colNames); // Immutable copy
+        return List.copyOf(fieldKeys); // Immutable copy
     }
 
     public static List<String> getAllFieldKeys() {

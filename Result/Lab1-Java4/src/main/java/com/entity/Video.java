@@ -27,13 +27,13 @@ public class Video {
     @Column(name = "Active")
     private boolean active;
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
-    private List<Favorite> favorites;
+    private List<Favourite> favourites;
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
     private List<Share> shares;
 
-    public void addFavourite(Favorite favorite){
-        this.favorites.add(favorite);
-        favorite.setVideo(this);
+    public void addFavourite(Favourite favourite){
+        this.favourites.add(favourite);
+        favourite.setVideo(this);
     }
 
     public void addShare(Share share){

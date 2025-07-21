@@ -10,8 +10,9 @@
 
         <class>com.entity.User</class>
         <class>com.entity.Video</class>
-        <class>com.entity.Favorite</class>
+        <class>com.entity.Favourite</class>
         <class>com.entity.Share</class>
+        <class>com.entity.Role</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>

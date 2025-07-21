@@ -12,7 +12,7 @@ public enum UserValidationError {
     FULL_NAME_REQUIRED("Full name is required"),
     EMAIL_REQUIRED("Email is required."),
     EMAIL_INCORRECT_FORMAT("Please input a valid email."),
-    ROLE_REQUIRED("ROLE is required.");
+    ROLE_REQUIRED("Role is required");
 
     private final String message;
 

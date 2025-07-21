@@ -1,10 +1,10 @@
 <form method="post" action="/user" novalidate>
     <div class="mb-3">
-        <label for="userId" class="form-label">User ID</label>
-        <input type="text" class="form-control shadow-sm" id="userId" name="userId"
-            placeholder="Enter your user ID" value="${userId}" required>
-        <div id="userIdError" class="form-text ps-2 text-danger ${empty userIdError ? 'd-none' : ''}">
-            ${userIdError}
+        <label for="user" class="form-label">User ID</label>
+        <input type="text" class="form-control shadow-sm" id="user" name="user"
+            placeholder="Enter your user ID" value="${user}" required>
+        <div id="userError" class="form-text ps-2 text-danger ${empty userError ? 'd-none' : ''}">
+            ${userError}
         </div>
     </div>
 
@@ -29,9 +29,18 @@
     <div class="mb-3">
         <label for="email" class="form-label">Email</label>
         <input type="email" class="form-control shadow-sm" id="email" name="email"
-            value="${email}" placeholder="Enter your email address">
+            value="${email}" placeholder="Enter email address">
         <div id="emailError" class="form-text ps-2 text-danger ${empty emailError ? 'd-none' : ''}">
             ${emailError}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="role" class="form-label">Role</label>
+        <input type="text" class="form-control shadow-sm" id="role" name="role"
+            value="${role}" placeholder="Enter role">
+        <div id="roleError" class="form-text ps-2 text-danger ${empty roleError ? 'd-none' : ''}">
+            ${roleError}
         </div>
     </div>
 

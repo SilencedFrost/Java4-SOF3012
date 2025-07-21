@@ -76,7 +76,8 @@ public class UserServlet extends HttpServlet {
                         pageData.get(UserFormFields.USER_ID.fieldKey()),
                         PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.fieldKey())),
                         pageData.get(UserFormFields.FULL_NAME.fieldKey()),
-                        pageData.get(UserFormFields.EMAIL.fieldKey()));
+                        pageData.get(UserFormFields.EMAIL.fieldKey()),
+                        pageData.get(UserFormFields.ROLE.fieldKey()));
                 clearFieldData(pageData);
             }
 
@@ -86,6 +87,7 @@ public class UserServlet extends HttpServlet {
             logger.info("Data validation completed");
 
             if(errors.isEmpty()) userService.delete(pageData.get(UserFormFields.USER_ID.fieldKey()));
+            logger.info(pageData.get(UserFormFields.USER_ID.fieldKey()));
 
         } else if("update".equals(action)) {
             logger.info("Update action triggered");
@@ -110,7 +112,8 @@ public class UserServlet extends HttpServlet {
                         pageData.get(UserFormFields.USER_ID.fieldKey()),
                         PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.fieldKey())),
                         pageData.get(UserFormFields.FULL_NAME.fieldKey()),
-                        pageData.get(UserFormFields.EMAIL.fieldKey()));
+                        pageData.get(UserFormFields.EMAIL.fieldKey()),
+                        pageData.get(UserFormFields.ROLE.fieldKey()));
                 clearFieldData(pageData);
             }
 
@@ -124,9 +127,8 @@ public class UserServlet extends HttpServlet {
     }
 
     private Map<String, String> getFieldData(HttpServletRequest req) {
-        List<String> fieldNames = List.of(UserFormFields.USER_ID.fieldKey(), UserFormFields.PASSWORD.fieldKey(), UserFormFields.FULL_NAME.fieldKey(), UserFormFields.EMAIL.fieldKey());
+        List<String> fieldNames = UserFormFields.getAllFieldKeys();
         Map<String, String> fieldData = new HashMap<>();
-
         for(String fieldName : fieldNames) {
             String value = req.getParameter(fieldName);
             if (value != null) {

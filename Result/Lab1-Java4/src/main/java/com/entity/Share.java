@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Shares")
+@Table(name = "Share")
 public class Share {
 
 	@Id

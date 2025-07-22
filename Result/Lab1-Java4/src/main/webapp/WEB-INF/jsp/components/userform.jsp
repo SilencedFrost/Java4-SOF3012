@@ -1,19 +1,19 @@
 <form method="post" action="/user" novalidate>
     <div class="mb-3">
-        <label for="user" class="form-label">User ID</label>
-        <input type="text" class="form-control shadow-sm" id="user" name="user"
-            placeholder="Enter your user ID" value="${user}" required>
-        <div id="userError" class="form-text ps-2 text-danger ${empty userError ? 'd-none' : ''}">
-            ${userError}
+        <label for="userId" class="form-label">User ID</label>
+        <input type="text" class="form-control shadow-sm" id="userId" name="userId"
+            placeholder="Enter your user ID" value="${userId}" required>
+        <div id="userIdError" class="form-text ps-2 text-danger ${empty userIdError ? 'd-none' : ''}">
+            ${userIdError}
         </div>
     </div>
 
     <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control shadow-sm" id="password" name="password"
-            value="${password}" placeholder="Enter a password" required>
-        <div id="passwordError" class="form-text ps-2 text-danger ${empty passwordError ? 'd-none' : ''}">
-            ${passwordError}
+        <label for="passwordHash" class="form-label">Password</label>
+        <input type="password" class="form-control shadow-sm" id="passwordHash" name="passwordHash"
+            value="${passwordHash}" placeholder="Enter a password" required>
+        <div id="passwordHashError" class="form-text ps-2 text-danger ${empty passwordHashError ? 'd-none' : ''}">
+            ${passwordHashError}
         </div>
     </div>
 
@@ -36,11 +36,11 @@
     </div>
 
     <div class="mb-3">
-        <label for="role" class="form-label">Role</label>
-        <input type="text" class="form-control shadow-sm" id="role" name="role"
-            value="${role}" placeholder="Enter role">
-        <div id="roleError" class="form-text ps-2 text-danger ${empty roleError ? 'd-none' : ''}">
-            ${roleError}
+        <label for="roleName" class="form-label">Role</label>
+        <input type="text" class="form-control shadow-sm" id="roleName" name="roleName"
+            value="${roleName}" placeholder="Enter role">
+        <div id="roleNameError" class="form-text ps-2 text-danger ${empty roleNameError ? 'd-none' : ''}">
+            ${roleNameError}
         </div>
     </div>
 

@@ -65,6 +65,7 @@ public class UserServlet extends HttpServlet {
         Map<String, String> errors = new HashMap<>();
         String action = req.getParameter("action");
         HttpSession session = req.getSession();
+        logger.info(pageData.get(UserFormFields.ROLE.propertyKey()));
 
         if("create".equals(action)){
             logger.info("Create action triggered");
@@ -73,11 +74,12 @@ public class UserServlet extends HttpServlet {
 
             if(errors.isEmpty()) {
                 userService.create(
-                        pageData.get(UserFormFields.USER_ID.fieldKey()),
-                        PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.fieldKey())),
-                        pageData.get(UserFormFields.FULL_NAME.fieldKey()),
-                        pageData.get(UserFormFields.EMAIL.fieldKey()),
-                        pageData.get(UserFormFields.ROLE.fieldKey()));
+                        pageData.get(UserFormFields.USER_ID.propertyKey()),
+                        PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.propertyKey())),
+                        pageData.get(UserFormFields.FULL_NAME.propertyKey()),
+                        pageData.get(UserFormFields.EMAIL.propertyKey()),
+                        pageData.get(UserFormFields.ROLE.propertyKey())
+                );
                 clearFieldData(pageData);
             }
 
@@ -86,34 +88,34 @@ public class UserServlet extends HttpServlet {
             validateFormFields(pageData, errors, List.of(UserFormFields.USER_ID));
             logger.info("Data validation completed");
 
-            if(errors.isEmpty()) userService.delete(pageData.get(UserFormFields.USER_ID.fieldKey()));
-            logger.info(pageData.get(UserFormFields.USER_ID.fieldKey()));
+            if(errors.isEmpty()) userService.delete(pageData.get(UserFormFields.USER_ID.propertyKey()));
+            logger.info(pageData.get(UserFormFields.USER_ID.propertyKey()));
 
         } else if("update".equals(action)) {
             logger.info("Update action triggered");
             validateFormFields(pageData, errors, List.of(UserFormFields.USER_ID));
-            if(!ValidationUtils.isNullOrBlank(pageData.get(UserFormFields.PASSWORD.fieldKey()))){
+            if(!ValidationUtils.isNullOrBlank(pageData.get(UserFormFields.PASSWORD.propertyKey()))){
                 validateFormFields(pageData, errors, List.of(UserFormFields.PASSWORD));
             } else {
-                pageData.put(UserFormFields.PASSWORD.fieldKey(), null);
+                pageData.put(UserFormFields.PASSWORD.propertyKey(), null);
             }
 
-            if(ValidationUtils.isNullOrBlank(pageData.get(UserFormFields.FULL_NAME.fieldKey()))) pageData.put(UserFormFields.FULL_NAME.fieldKey(), null);
+            if(ValidationUtils.isNullOrBlank(pageData.get(UserFormFields.FULL_NAME.propertyKey()))) pageData.put(UserFormFields.FULL_NAME.propertyKey(), null);
 
-            if(!ValidationUtils.isNullOrBlank(pageData.get(UserFormFields.EMAIL.fieldKey()))){
+            if(!ValidationUtils.isNullOrBlank(pageData.get(UserFormFields.EMAIL.propertyKey()))){
                 validateFormFields(pageData, errors, List.of(UserFormFields.EMAIL));
             } else {
-                pageData.put(UserFormFields.EMAIL.fieldKey(), null);
+                pageData.put(UserFormFields.EMAIL.propertyKey(), null);
             }
             logger.info("Data validation completed");
 
             if(errors.isEmpty()) {
                 userService.update(
-                        pageData.get(UserFormFields.USER_ID.fieldKey()),
-                        PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.fieldKey())),
-                        pageData.get(UserFormFields.FULL_NAME.fieldKey()),
-                        pageData.get(UserFormFields.EMAIL.fieldKey()),
-                        pageData.get(UserFormFields.ROLE.fieldKey()));
+                        pageData.get(UserFormFields.USER_ID.propertyKey()),
+                        PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.propertyKey())),
+                        pageData.get(UserFormFields.FULL_NAME.propertyKey()),
+                        pageData.get(UserFormFields.EMAIL.propertyKey()),
+                        pageData.get(UserFormFields.ROLE.propertyKey()));
                 clearFieldData(pageData);
             }
 
@@ -127,7 +129,7 @@ public class UserServlet extends HttpServlet {
     }
 
     private Map<String, String> getFieldData(HttpServletRequest req) {
-        List<String> fieldNames = UserFormFields.getAllFieldKeys();
+        List<String> fieldNames = UserFormFields.getAllPropertyKeys();
         Map<String, String> fieldData = new HashMap<>();
         for(String fieldName : fieldNames) {
             String value = req.getParameter(fieldName);
@@ -186,7 +188,7 @@ public class UserServlet extends HttpServlet {
 
     private void validateFormFields(Map<String, String> pageData, Map<String, String> errors, List<UserFormFields> fieldsToValidate) {
         for (UserFormFields field : fieldsToValidate) {
-            String value = pageData.get(field.fieldKey());
+            String value = pageData.get(field.propertyKey());
 
             if (field.getRequiredError() != null && ValidationUtils.isNullOrBlank(value)) {
                 errors.put(field.errorKey(), field.getRequiredError().getMessage());
@@ -212,7 +214,7 @@ public class UserServlet extends HttpServlet {
     }
     private void clearFieldData(Map<String, String> pageData, List<UserFormFields> fields) {
         for(UserFormFields field : fields) {
-            pageData.put(field.fieldKey(), "");
+            pageData.put(field.propertyKey(), "");
         }
     }
 }

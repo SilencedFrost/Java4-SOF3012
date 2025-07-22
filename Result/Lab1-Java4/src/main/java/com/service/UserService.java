@@ -1,6 +1,7 @@
 package com.service;
 
 import com.dto.UserDTO;
+import com.entity.Role;
 import com.entity.User;
 import com.mapper.UserMapper;
 import com.util.ValidationUtils;
@@ -13,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @NoArgsConstructor
-public class UserService implements Service<UserDTO>{
+public class UserService implements Service<UserDTO, String>{
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     @Override
@@ -30,15 +31,15 @@ public class UserService implements Service<UserDTO>{
     }
 
     @Override
-    public UserDTO findById(String id) {
-        if (ValidationUtils.isNullOrBlank(id)) {
+    public UserDTO findById(String userId) {
+        if (ValidationUtils.isNullOrBlank(userId)) {
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
 
         User user = null;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
-            user = em.find(User.class, id);
-            logger.info("User with id " + id + (user != null ? " found." : " not found."));
+            user = em.find(User.class, userId);
+            logger.info("User with id " + userId + (user != null ? " found." : " not found."));
             return user != null ? UserMapper.toDTO(user) : null;
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error finding user by ID", e);
@@ -46,7 +47,6 @@ public class UserService implements Service<UserDTO>{
         }
     }
 
-    @Override
     public List<UserDTO> findByIdLike(String partialId){
         if (ValidationUtils.isNullOrBlank(partialId)) {
             throw new IllegalArgumentException("Partial ID cannot be null or empty");
@@ -70,8 +70,8 @@ public class UserService implements Service<UserDTO>{
     }
 
     // Manual creation method
-    public boolean create(String id, String password, String fullname, String email, String roleName) {
-        return create(new UserDTO(id, password, fullname, email, roleName));
+    public boolean create(String userId, String password, String fullName, String email, String roleName) {
+        return create(new UserDTO(userId, password, fullName, email, roleName));
     }
 
     // Object creation method
@@ -81,9 +81,8 @@ public class UserService implements Service<UserDTO>{
             throw new IllegalArgumentException("User cannot be null");
         }
 
-        User user = UserMapper.toEntity(userDTO, new roleService().findByRoleName(userDTO.getRoleName()));
-
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
+            User user = UserMapper.toEntity(userDTO, RoleService.findByRoleName(em, userDTO.getRoleName()));
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
@@ -101,14 +100,14 @@ public class UserService implements Service<UserDTO>{
         }
     }
 
-    public boolean update(String id, String password, String fullname, String email, String roleName) {
-        return update(new UserDTO(id, password, fullname, email, roleName));
+    public boolean update(String userId, String password, String fullName, String email, String roleName) {
+        return update(new UserDTO(userId, password, fullName, email, roleName));
     }
 
     // Object update method
     @Override
-    public boolean update(UserDTO updatedUser) {
-        if (updatedUser == null || ValidationUtils.isNullOrBlank(updatedUser.getUserId())) {
+    public boolean update(UserDTO userDTO) {
+        if (userDTO == null || ValidationUtils.isNullOrBlank(userDTO.getUserId())) {
             logger.warning("User or User ID cannot be null or empty");
             return false;
         }
@@ -116,26 +115,20 @@ public class UserService implements Service<UserDTO>{
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             try {
-                User existingUser = em.find(User.class, updatedUser.getUserId());
+                User existingUser = em.find(User.class, userDTO.getUserId());
                 if (existingUser != null) {
                     tx.begin();
-                    if (updatedUser.getFullName() != null) {
-                        existingUser.setFullName(updatedUser.getFullName());
-                    }
-                    if (updatedUser.getPasswordHash() != null) {
-                        existingUser.setPasswordHash(updatedUser.getPasswordHash());
-                    }
-                    if (updatedUser.getEmail() != null) {
-                        existingUser.setEmail(updatedUser.getEmail());
-                    }
-                    if (updatedUser.getRoleName() != null) {
-                        existingUser.setRole(new roleService().findByRoleName(updatedUser.getRoleName()));
-                    }
+                    if (userDTO.getFullName() != null) existingUser.setFullName(userDTO.getFullName());
+                    if (userDTO.getPasswordHash() != null) existingUser.setPasswordHash(userDTO.getPasswordHash());
+                    if (userDTO.getEmail() != null) existingUser.setEmail(userDTO.getEmail());
+                    Role role = RoleService.findByRoleName(em, userDTO.getRoleName());
+                    if (role == null) role = em.find(Role.class, 1);
+                    role.addUser(existingUser);
                     tx.commit();
-                    logger.info("User with id " + updatedUser.getUserId() + " updated successfully.");
+                    logger.info("User with id " + userDTO.getUserId() + " updated successfully.");
                     return true;
                 } else {
-                    logger.warning("User with id " + updatedUser.getUserId() + " not found for update.");
+                    logger.warning("User with id " + userDTO.getUserId() + " not found for update.");
                     return false;
                 }
             } catch (Exception e) {
@@ -150,16 +143,16 @@ public class UserService implements Service<UserDTO>{
 
     //Manual delete method
     @Override
-    public boolean delete(String id) {
-        if (id == null) {
+    public boolean delete(String userId) {
+        if (userId == null) {
             logger.warning("ID cannot be null");
             return false;
         }
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
-            User user = em.find(User.class, id);
+            User user = em.find(User.class, userId);
             if (user == null) {
-                logger.warning("User with id " + id + " not found. Deletion skipped.");
+                logger.warning("User with id " + userId + " not found. Deletion skipped.");
                 return false;
             }
 
@@ -172,18 +165,18 @@ public class UserService implements Service<UserDTO>{
                 if (tx.isActive()) {
                     tx.rollback();
                 }
-                logger.log(Level.SEVERE, "Error deleting user with id " + id, e);
+                logger.log(Level.SEVERE, "Error deleting user with id " + userId, e);
                 return false;
             }
         }
     }
 
     // Object delete method
-    public boolean delete(UserDTO user) {
-        if (user == null) {
+    public boolean delete(UserDTO userDTO) {
+        if (userDTO == null) {
             logger.warning("User cannot be null");
             return false;
         }
-        return delete(user.getUserId());
+        return delete(userDTO.getUserId());
     }
 }

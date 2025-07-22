@@ -19,7 +19,7 @@ public class UserMapper {
                 user.getPasswordHash(),
                 user.getFullName(),
                 user.getEmail(),
-                user.getRole().getRoleName()
+                user.getRole() != null ? user.getRole().getRoleName() : "null"
         );
     }
 

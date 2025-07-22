@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <c:forEach var="field" items="${userFields}">
-                <th><c:out value="${field.colName}"/></th>
+                <th><c:out value="${field.label}"/></th>
             </c:forEach>
         </tr>
     </thead>
@@ -13,12 +13,12 @@
                     <c:choose>
                         <c:when test="${status.index == breakIndex}">
                             <td class="text-break">
-                                <c:out value="${user[field.propertyName]}"/>
+                                <c:out value="${user[field.propertyKey]}"/>
                             </td>
                         </c:when>
                         <c:otherwise>
                             <td>
-                                <c:out value="${user[field.propertyName]}"/>
+                                <c:out value="${user[field.propertyKey]}"/>
                             </td>
                         </c:otherwise>
                     </c:choose>

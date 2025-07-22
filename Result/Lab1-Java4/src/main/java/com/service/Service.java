@@ -2,11 +2,10 @@ package com.service;
 
 import java.util.List;
 
-public interface Service<T> {
-    List<T> findAll();
-    T findById(String id);
-    List<T> findByIdLike(String partialId);
-    boolean create(T entity);
-    boolean update(T entity);
-    boolean delete(String id);
+public interface Service<DTO, PK> {
+    List<DTO> findAll();
+    DTO findById(PK id);
+    boolean create(DTO entity);
+    boolean update(DTO entity);
+    boolean delete(PK id);
 }

@@ -1,5 +1,8 @@
 package com.constants;
 
+import lombok.Getter;
+
+@Getter
 public enum UserValidationError {
     USER_ID_REQUIRED("User ID is required."),
     PASSWORD_REQUIRED("Password is required."),
@@ -20,7 +23,4 @@ public enum UserValidationError {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

@@ -159,6 +159,7 @@ public class UserService implements Service<UserDTO, String>{
             try {
                 tx.begin();
                 em.remove(user);
+                new Role().removeUser(user);
                 tx.commit();
                 return true;
             } catch (Exception e) {

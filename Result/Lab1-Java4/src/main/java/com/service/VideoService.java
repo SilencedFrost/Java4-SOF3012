@@ -1,8 +1,8 @@
-/* package com.service;
+package com.service;
 
-import com.dto.UserDTO;
-import com.entity.User;
-import com.mapper.UserMapper;
+import com.dto.VideoDTO;
+import com.entity.Video;
+import com.mapper.VideoMapper;
 import com.util.EntityManagerUtil;
 import com.util.ValidationUtils;
 import jakarta.persistence.EntityManager;
@@ -15,110 +15,126 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @NoArgsConstructor
-public class VideoService implements Service<UserDTO>{
+public class VideoService implements Service<VideoDTO, String>{
     private static final Logger logger = Logger.getLogger(VideoService.class.getName());
 
     @Override
-    public List<UserDTO> findAll() {
-        List<User> userList = null;
+    public List<VideoDTO> findAll() {
+        List<Video> videoList = null;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
-            userList = em.createQuery("SELECT u FROM User u", User.class).getResultList();
-            logger.info("Fetched all users: " + userList.size() + " users found.");
-            return UserMapper.toDTOList(userList);
+            videoList = em.createQuery("SELECT v FROM Video v", Video.class).getResultList();
+            logger.info("Fetched all videos: " + videoList.size() + " videos found.");
+            return VideoMapper.toDTOList(videoList);
         } catch (PersistenceException e) {
-            logger.log(Level.SEVERE, "Error fetching users", e);
+            logger.log(Level.SEVERE, "Error fetching videos", e);
             return List.of();
         }
     }
 
     @Override
-    public UserDTO findById(String id) {
-        if (ValidationUtils.isNullOrBlank(id)) {
+    public VideoDTO findById(String videoId) {
+        if (ValidationUtils.isNullOrBlank(videoId)) {
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
 
-        User user = null;
+        Video video = null;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
-            user = em.find(User.class, id);
-            logger.info("User with id " + id + (user != null ? " found." : " not found."));
-            return user != null ? UserMapper.toDTO(user) : null;
+            video = em.find(Video.class, videoId);
+            logger.info("Video with id " + videoId + (video != null ? " found." : " not found."));
+            return video != null ? VideoMapper.toDTO(video) : null;
         } catch (PersistenceException e) {
-            logger.log(Level.SEVERE, "Error finding user by ID", e);
+            logger.log(Level.SEVERE, "Error finding video by ID", e);
             return null;
         }
     }
 
+    public List<VideoDTO> findByIdLike(String partialId){
+        if (ValidationUtils.isNullOrBlank(partialId)) {
+            throw new IllegalArgumentException("Partial ID cannot be null or empty");
+        }
+
+        List<Video> videoList = null;
+        try (EntityManager em = EntityManagerUtil.getEntityManager()) {
+            videoList = em.createQuery(
+                            "SELECT u FROM Video u WHERE u.videoId LIKE :partialId",
+                            Video.class
+                    )
+                    .setParameter("partialId", "%" + partialId + "%")
+                    .getResultList();
+
+            logger.info("Found " + videoList.size() + " videos with ID containing: " + partialId);
+            return VideoMapper.toDTOList(videoList);
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Error finding videos by partial ID: " + partialId, e);
+            return List.of();
+        }
+    }
+
     // Manual creation method
-    public boolean create(String id, String password, String fullname, String email) {
-        return create(new UserDTO(id, password, fullname, email));
+    public boolean create(String videoId, String title, String poster, long views, String description, Boolean active) {
+        return create(new VideoDTO(videoId, title, poster, views, description, active));
     }
 
     // Object creation method
     @Override
-    public boolean create(UserDTO userDTO) {
-        if (userDTO == null) {
-            throw new IllegalArgumentException("User cannot be null");
+    public boolean create(VideoDTO videoDTO) {
+        if (videoDTO == null) {
+            throw new IllegalArgumentException("Video cannot be null");
         }
 
-        User user = UserMapper.toEntity(userDTO);
-
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
+            Video video = VideoMapper.toEntity(videoDTO);
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
-                em.persist(user);
+                em.persist(video);
                 tx.commit();
-                logger.info("User created: " + user);
+                logger.info("Video created: " + video);
                 return true;
             } catch (PersistenceException e) {
                 if (tx.isActive()) {
                     tx.rollback();
                 }
-                logger.log(Level.SEVERE, "Error creating user", e);
+                logger.log(Level.SEVERE, "Error creating video", e);
                 return false;
             }
         }
     }
 
-    public boolean update(String id, String password, String fullname, String email) {
-        return update(new UserDTO(id, password, fullname, email));
+    public boolean update(String videoId, String title, String poster, long views, String description, Boolean active) {
+        return update(new VideoDTO(videoId, title, poster, views, description, active));
     }
 
     // Object update method
     @Override
-    public boolean update(UserDTO updatedUser) {
-        if (updatedUser == null || ValidationUtils.isNullOrBlank(updatedUser.getUserId())) {
-            logger.warning("User or User ID cannot be null or empty");
+    public boolean update(VideoDTO videoDTO) {
+        if (videoDTO == null || ValidationUtils.isNullOrBlank(videoDTO.getVideoId())) {
+            logger.warning("Video or Video ID cannot be null or empty");
             return false;
         }
 
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             try {
-                User existingUser = em.find(User.class, updatedUser.getUserId());
-                if (existingUser != null) {
+                Video existingVideo = em.find(Video.class, videoDTO.getVideoId());
+                if (existingVideo != null) {
                     tx.begin();
-                    if (updatedUser.getFullName() != null) {
-                        existingUser.setFullName(updatedUser.getFullName());
-                    }
-                    if (updatedUser.getPasswordHash() != null) {
-                        existingUser.setPasswordHash(updatedUser.getPasswordHash());
-                    }
-                    if (updatedUser.getEmail() != null) {
-                        existingUser.setEmail(updatedUser.getEmail());
-                    }
+                    if (videoDTO.getTitle()!= null) existingVideo.setTitle(videoDTO.getTitle());
+                    if (videoDTO.getPoster() != null) existingVideo.setPoster(videoDTO.getPoster());
+                    if (videoDTO.getViews() != null) existingVideo.setViews(videoDTO.getViews());
+                    if (videoDTO.getActive() != null) existingVideo.setActive(videoDTO.getActive());
                     tx.commit();
-                    logger.info("User with id " + updatedUser.getUserId() + " updated successfully.");
+                    logger.info("Video with id " + videoDTO.getVideoId() + " updated successfully.");
                     return true;
                 } else {
-                    logger.warning("User with id " + updatedUser.getUserId() + " not found for update.");
+                    logger.warning("Video with id " + videoDTO.getVideoId() + " not found for update.");
                     return false;
                 }
             } catch (Exception e) {
                 if (tx.isActive()) {
                     tx.rollback();
                 }
-                logger.log(Level.SEVERE, "Error updating user", e);
+                logger.log(Level.SEVERE, "Error updating video", e);
                 return false;
             }
         }
@@ -126,40 +142,40 @@ public class VideoService implements Service<UserDTO>{
 
     //Manual delete method
     @Override
-    public boolean delete(String id) {
-        if (id == null) {
+    public boolean delete(String videoId) {
+        if (videoId == null) {
             logger.warning("ID cannot be null");
             return false;
         }
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
-            User user = em.find(User.class, id);
-            if (user == null) {
-                logger.warning("User with id " + id + " not found. Deletion skipped.");
+            Video video = em.find(Video.class, videoId);
+            if (video == null) {
+                logger.warning("Video with id " + videoId + " not found. Deletion skipped.");
                 return false;
             }
 
             try {
                 tx.begin();
-                em.remove(user);
+                em.remove(video);
                 tx.commit();
                 return true;
             } catch (Exception e) {
                 if (tx.isActive()) {
                     tx.rollback();
                 }
-                logger.log(Level.SEVERE, "Error deleting user with id " + id, e);
+                logger.log(Level.SEVERE, "Error deleting video with id " + videoId, e);
                 return false;
             }
         }
     }
 
     // Object delete method
-    public boolean delete(UserDTO user) {
-        if (user == null) {
-            logger.warning("User cannot be null");
+    public boolean delete(VideoDTO videoDTO) {
+        if (videoDTO == null) {
+            logger.warning("Video cannot be null");
             return false;
         }
-        return delete(user.getUserId());
+        return delete(videoDTO.getVideoId());
     }
-} */
+}

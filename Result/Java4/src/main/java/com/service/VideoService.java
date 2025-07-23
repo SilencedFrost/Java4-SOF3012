@@ -71,8 +71,8 @@ public class VideoService implements Service<VideoDTO, String>{
     }
 
     // Manual creation method
-    public boolean create(String videoId, String title, String poster, long views, String description, Boolean active) {
-        return create(new VideoDTO(videoId, title, poster, views, description, active));
+    public boolean create(String videoId, String title, String poster, String link, long views, String description, Boolean active) {
+        return create(new VideoDTO(videoId, title, poster, link, views, description, active));
     }
 
     // Object creation method
@@ -101,8 +101,8 @@ public class VideoService implements Service<VideoDTO, String>{
         }
     }
 
-    public boolean update(String videoId, String title, String poster, long views, String description, Boolean active) {
-        return update(new VideoDTO(videoId, title, poster, views, description, active));
+    public boolean update(String videoId, String title, String poster, String link, long views, String description, Boolean active) {
+        return update(new VideoDTO(videoId, title, poster, link, views, description, active));
     }
 
     // Object update method

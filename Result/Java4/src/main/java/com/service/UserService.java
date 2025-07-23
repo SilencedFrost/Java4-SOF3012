@@ -82,7 +82,12 @@ public class UserService implements Service<UserDTO, String>{
         }
 
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
-            User user = UserMapper.toEntity(userDTO, RoleService.findByRoleName(em, userDTO.getRoleName()));
+            Role role = RoleService.findByRoleName(em, userDTO.getRoleName());
+            if(role == null) {
+                logger.warning("Role not found");
+                return false;
+            }
+            User user = UserMapper.toEntity(userDTO, role);
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
@@ -118,12 +123,14 @@ public class UserService implements Service<UserDTO, String>{
                 User existingUser = em.find(User.class, userDTO.getUserId());
                 if (existingUser != null) {
                     tx.begin();
-                    if (userDTO.getFullName() != null) existingUser.setFullName(userDTO.getFullName());
-                    if (userDTO.getPasswordHash() != null) existingUser.setPasswordHash(userDTO.getPasswordHash());
-                    if (userDTO.getEmail() != null) existingUser.setEmail(userDTO.getEmail());
+                    if (!ValidationUtils.isNullOrBlank(userDTO.getFullName())) existingUser.setFullName(userDTO.getFullName());
+                    if (!ValidationUtils.isNullOrBlank(userDTO.getPasswordHash())) existingUser.setPasswordHash(userDTO.getPasswordHash());
+                    if (!ValidationUtils.isNullOrBlank(userDTO.getEmail()) || ValidationUtils.isValidEmail(userDTO.getEmail())) existingUser.setEmail(userDTO.getEmail());
+
                     Role role = RoleService.findByRoleName(em, userDTO.getRoleName());
                     if (role == null) role = em.find(Role.class, 1);
                     role.addUser(existingUser);
+
                     tx.commit();
                     logger.info("User with id " + userDTO.getUserId() + " updated successfully.");
                     return true;
@@ -170,14 +177,5 @@ public class UserService implements Service<UserDTO, String>{
                 return false;
             }
         }
-    }
-
-    // Object delete method
-    public boolean delete(UserDTO userDTO) {
-        if (userDTO == null) {
-            logger.warning("User cannot be null");
-            return false;
-        }
-        return delete(userDTO.getUserId());
     }
 }

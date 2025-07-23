@@ -26,8 +26,8 @@ public class Favourite {
 	private User user;
 	@ManyToOne 
 	@JoinColumn(name = "VideoId")
-
 	private Video video;
+
 	@Column(name = "LikeDate")
 	private Date likeDate;
 	}

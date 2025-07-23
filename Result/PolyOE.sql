@@ -15,7 +15,7 @@ create table Users(
 	PasswordHash nvarchar(60) not null,
 	Email nvarchar(50) not null,
 	FullName nvarchar(50) not null,
-	RoleId int,
+	RoleId int not null,
 	foreign key (RoleId) references Roles(RoleId)
 )
 go
@@ -24,9 +24,9 @@ create table Video(
 	VideoId nvarchar(20) PRIMARY KEY not null,
 	Title nvarchar(50) not null,
 	Poster nvarchar(50) not null,
-	ViewCount int,
+	ViewCount int not null,
 	Descript nvarchar(200),
-	Active bit,
+	Active bit not null,
 )
 go
 
@@ -34,7 +34,7 @@ create table Favourite (
 	FavouriteId bigint PRIMARY KEY IDENTITY(1, 1),
 	UserId nvarchar(20) not null,
 	VideoId nvarchar(20) not null,
-	LikeDate Date,
+	LikeDate Date not null,
 	foreign key (UserId) references Users(UserId),
 	foreign key (VideoId) references Video(VideoId),
 	CONSTRAINT unique_user_video UNIQUE (UserId, VideoId)
@@ -46,7 +46,7 @@ create table Share (
 	UserId nvarchar(20) not null,
 	VideoId nvarchar(20) not null,
 	Emails nvarchar(50),
-	ShareDate Date,
+	ShareDate Date not null,
 	foreign key (UserId) references Users(UserId),
 	foreign key (VideoId) references Video(VideoId)
 )

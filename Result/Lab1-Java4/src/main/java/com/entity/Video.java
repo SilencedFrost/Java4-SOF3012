@@ -105,7 +105,7 @@ public class Video {
         return share != null && this.shares != null && this.shares.contains(share);
     }
 
-    public int getUserCount() {
+    public int getShareCount() {
         return this.shares != null ? this.shares.size() : 0;
     }
 

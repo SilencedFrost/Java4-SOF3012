@@ -1,6 +1,6 @@
 package com.security;
 
-import com.util.ValidationUtils;
+import com.util.ValidationUtil;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class PasswordHasher {
@@ -9,7 +9,7 @@ public class PasswordHasher {
 
     // Return hashed password
     public static String hash(String rawPassword) {
-        if(ValidationUtils.isNullOrBlank(rawPassword)) {
+        if(ValidationUtil.isNullOrBlank(rawPassword)) {
             return null;
         } else {
             return BCrypt.hashpw(rawPassword.trim(), BCrypt.gensalt(COST));

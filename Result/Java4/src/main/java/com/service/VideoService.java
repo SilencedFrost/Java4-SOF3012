@@ -4,7 +4,7 @@ import com.dto.VideoDTO;
 import com.entity.Video;
 import com.mapper.VideoMapper;
 import com.util.EntityManagerUtil;
-import com.util.ValidationUtils;
+import com.util.ValidationUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
@@ -33,7 +33,7 @@ public class VideoService implements Service<VideoDTO, String>{
 
     @Override
     public VideoDTO findById(String videoId) {
-        if (ValidationUtils.isNullOrBlank(videoId)) {
+        if (ValidationUtil.isNullOrBlank(videoId)) {
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
 
@@ -49,7 +49,7 @@ public class VideoService implements Service<VideoDTO, String>{
     }
 
     public List<VideoDTO> findByIdLike(String partialId){
-        if (ValidationUtils.isNullOrBlank(partialId)) {
+        if (ValidationUtil.isNullOrBlank(partialId)) {
             throw new IllegalArgumentException("Partial ID cannot be null or empty");
         }
 
@@ -108,7 +108,7 @@ public class VideoService implements Service<VideoDTO, String>{
     // Object update method
     @Override
     public boolean update(VideoDTO videoDTO) {
-        if (videoDTO == null || ValidationUtils.isNullOrBlank(videoDTO.getVideoId())) {
+        if (videoDTO == null || ValidationUtil.isNullOrBlank(videoDTO.getVideoId())) {
             logger.warning("Video or Video ID cannot be null or empty");
             return false;
         }

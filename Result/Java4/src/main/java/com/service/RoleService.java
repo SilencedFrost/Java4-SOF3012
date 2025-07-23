@@ -2,11 +2,9 @@ package com.service;
 
 import com.dto.RoleDTO;
 import com.entity.Role;
-import com.entity.User;
 import com.mapper.RoleMapper;
-import com.mapper.UserMapper;
 import com.util.EntityManagerUtil;
-import com.util.ValidationUtils;
+import com.util.ValidationUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
@@ -137,7 +135,7 @@ public class RoleService implements Service<RoleDTO, Integer> {
     }
 
     public static Role findByRoleName(EntityManager em, String roleName) {
-        if (ValidationUtils.isNullOrBlank(roleName)) {
+        if (ValidationUtil.isNullOrBlank(roleName)) {
             throw new IllegalArgumentException("Role name cannot be null or empty");
         }
 

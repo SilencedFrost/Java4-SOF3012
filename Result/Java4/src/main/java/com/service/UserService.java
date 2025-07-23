@@ -4,7 +4,7 @@ import com.dto.UserDTO;
 import com.entity.Role;
 import com.entity.User;
 import com.mapper.UserMapper;
-import com.util.ValidationUtils;
+import com.util.ValidationUtil;
 import jakarta.persistence.*;
 import com.util.EntityManagerUtil;
 import lombok.NoArgsConstructor;
@@ -32,7 +32,7 @@ public class UserService implements Service<UserDTO, String>{
 
     @Override
     public UserDTO findById(String userId) {
-        if (ValidationUtils.isNullOrBlank(userId)) {
+        if (ValidationUtil.isNullOrBlank(userId)) {
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
 
@@ -48,7 +48,7 @@ public class UserService implements Service<UserDTO, String>{
     }
 
     public List<UserDTO> findByIdLike(String partialId){
-        if (ValidationUtils.isNullOrBlank(partialId)) {
+        if (ValidationUtil.isNullOrBlank(partialId)) {
             throw new IllegalArgumentException("Partial ID cannot be null or empty");
         }
 
@@ -87,10 +87,11 @@ public class UserService implements Service<UserDTO, String>{
                 logger.warning("Role not found");
                 return false;
             }
-            User user = UserMapper.toEntity(userDTO, role);
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
+                User user = UserMapper.toEntity(userDTO, null);
+                role.addUser(user);
                 em.persist(user);
                 tx.commit();
                 logger.info("User created: " + user);
@@ -112,7 +113,7 @@ public class UserService implements Service<UserDTO, String>{
     // Object update method
     @Override
     public boolean update(UserDTO userDTO) {
-        if (userDTO == null || ValidationUtils.isNullOrBlank(userDTO.getUserId())) {
+        if (userDTO == null || ValidationUtil.isNullOrBlank(userDTO.getUserId())) {
             logger.warning("User or User ID cannot be null or empty");
             return false;
         }
@@ -123,9 +124,9 @@ public class UserService implements Service<UserDTO, String>{
                 User existingUser = em.find(User.class, userDTO.getUserId());
                 if (existingUser != null) {
                     tx.begin();
-                    if (!ValidationUtils.isNullOrBlank(userDTO.getFullName())) existingUser.setFullName(userDTO.getFullName());
-                    if (!ValidationUtils.isNullOrBlank(userDTO.getPasswordHash())) existingUser.setPasswordHash(userDTO.getPasswordHash());
-                    if (!ValidationUtils.isNullOrBlank(userDTO.getEmail()) || ValidationUtils.isValidEmail(userDTO.getEmail())) existingUser.setEmail(userDTO.getEmail());
+                    if (!ValidationUtil.isNullOrBlank(userDTO.getFullName())) existingUser.setFullName(userDTO.getFullName());
+                    if (!ValidationUtil.isNullOrBlank(userDTO.getPasswordHash())) existingUser.setPasswordHash(userDTO.getPasswordHash());
+                    if (!ValidationUtil.isNullOrBlank(userDTO.getEmail()) || ValidationUtil.isValidEmail(userDTO.getEmail())) existingUser.setEmail(userDTO.getEmail());
 
                     Role role = RoleService.findByRoleName(em, userDTO.getRoleName());
                     if (role == null) role = em.find(Role.class, 1);

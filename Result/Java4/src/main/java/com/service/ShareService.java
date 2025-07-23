@@ -6,7 +6,7 @@ import com.entity.User;
 import com.entity.Video;
 import com.mapper.ShareMapper;
 import com.util.EntityManagerUtil;
-import com.util.ValidationUtils;
+import com.util.ValidationUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
@@ -106,7 +106,7 @@ public class ShareService implements Service<ShareDTO, Long>{
                 Share existingShare = em.find(Share.class, shareDTO.getShareId());
                 if (existingShare != null) {
                     tx.begin();
-                    if(!ValidationUtils.isNullOrBlank(shareDTO.getEmail())) existingShare.setEmail(shareDTO.getEmail());
+                    if(!ValidationUtil.isNullOrBlank(shareDTO.getEmail())) existingShare.setEmail(shareDTO.getEmail());
                     if(shareDTO.getShareDate() != null) existingShare.setShareDate(shareDTO.getShareDate());
 
                     User user = em.find(User.class, shareDTO.getUserId());

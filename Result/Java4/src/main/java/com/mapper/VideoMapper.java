@@ -15,6 +15,7 @@ public class VideoMapper {
                 video.getVideoId(),
                 video.getTitle(),
                 video.getPoster(),
+                video.getLink(),
                 video.getViews(),
                 video.getDescription(),
                 video.getActive()
@@ -28,6 +29,7 @@ public class VideoMapper {
                 videoDTO.getVideoId(),
                 videoDTO.getTitle(),
                 videoDTO.getPoster(),
+                videoDTO.getLink(),
                 videoDTO.getViews(),
                 videoDTO.getDescription(),
                 videoDTO.getActive()

@@ -45,10 +45,7 @@ public class UserServlet extends HttpServlet {
 
         if(!ValidationUtil.isNullOrBlank(searchUserId)) {
             users = userService.findByIdLike(searchUserId);
-            if(users == null)
-            {
-                users = List.of();
-            }
+            if(users == null) users = List.of();
         } else {
             users = userService.findAll();
         }
@@ -58,7 +55,6 @@ public class UserServlet extends HttpServlet {
         req.setAttribute("searchUserId", searchUserId);
         ServletUtil.constructFormStructure(req,UserFormFields.class);
         ServletUtil.setTableData(req, users, UserFormFields.class);
-        // setTableData(req, users);
         req.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(req, resp);
     }
 

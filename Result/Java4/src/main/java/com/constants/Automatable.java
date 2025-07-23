@@ -7,7 +7,7 @@ public interface Automatable {
 
     String getFieldType();
 
-    String getCBoxData();
+    List<String> getCBoxData();
 
     String getPropertyKey();
 

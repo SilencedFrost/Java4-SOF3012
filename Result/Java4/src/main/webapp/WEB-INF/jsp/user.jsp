@@ -12,7 +12,7 @@
 
 <body class="container-fluid p-0">
     <%@ include file="components/navbar.jsp" %>
-    <h2 class="text-center my-4">User Menu</h1>
+    <h2 class="text-center my-4">User Menu</h2>
     <div class="container-fluid">
         <div class="row g-2 p-2">
             <div class="col-12 col-lg-4">

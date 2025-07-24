@@ -33,7 +33,7 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String searchUserId = req.getParameter("searchUserId");
+        String searchUserId = req.getParameter("searchId");
         HttpSession session = req.getSession();
         List<UserDTO> users = null;
 
@@ -52,7 +52,7 @@ public class UserServlet extends HttpServlet {
 
         ServletUtil.setErrors(req, errors);
         ServletUtil.setFieldData(req, pageData);
-        req.setAttribute("searchUserId", searchUserId);
+        req.setAttribute("searchId", searchUserId);
         ServletUtil.constructFormStructure(req,UserFormFields.class);
         ServletUtil.setTableData(req, users, UserFormFields.class);
         req.getRequestDispatcher("/WEB-INF/jsp/user.jsp").forward(req, resp);

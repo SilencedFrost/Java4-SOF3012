@@ -10,13 +10,17 @@
             <ul class="navbar-nav">
                 <li class="nav-item d-flex align-items-center">
                     <div class="d-flex align-items-center p-2">
-
                         <a class="nav-link d-inline p-0" href="user">User</a>
                     </div>
                 </li>
                 <li class="nav-item d-flex align-items-center">
                     <div class="d-flex align-items-center p-2">
                         <a class="nav-link d-inline p-0" href="userfavourite">User Favourite</a>
+                    </div>
+                </li>
+                <li class="nav-item d-flex align-items-center">
+                    <div class="d-flex align-items-center p-2">
+                        <a class="nav-link d-inline p-0" href="favouritedvideos">Favourited Videos</a>
                     </div>
                 </li>
             </ul>

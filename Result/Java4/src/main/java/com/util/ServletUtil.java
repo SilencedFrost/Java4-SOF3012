@@ -74,14 +74,17 @@ public class ServletUtil {
         }
     }
 
-    public static <T extends Enum<T> & Automatable, D> void setTableData(HttpServletRequest req, List<D> dtoList, Class<T> enumClass, T... fields) {
-        T[] fieldsToUse = (fields == null || fields.length == 0) ? enumClass.getEnumConstants() : fields;
-
-        req.setAttribute("tableFields", fieldsToUse);
+    public static <D> void setTableData(HttpServletRequest req, List<D> dtoList, Automatable... fields) {
+        req.setAttribute("tableFields", fields);
         req.setAttribute("dataList", dtoList);
     }
 
     public static <T extends Enum<T> & Automatable, D> void setTableData(HttpServletRequest req, List<D> dtoList, Class<T> enumClass) {
-        setTableData(req, dtoList, enumClass, null);
+        setTableData(req, dtoList, enumClass.getEnumConstants());
+    }
+
+    public static <T extends Enum<T> & Automatable, D> void setTableData(HttpServletRequest req, List<D> dtoList, Class<T> enumClass, T... fields) {
+        T[] fieldsToUse = (fields == null || fields.length == 0) ? enumClass.getEnumConstants() : fields;
+        setTableData(req, dtoList, (Automatable[]) fieldsToUse);
     }
 }

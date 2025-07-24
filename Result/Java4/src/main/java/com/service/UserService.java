@@ -1,17 +1,17 @@
 package com.service;
 
 import com.dto.UserDTO;
-import com.entity.Favourite;
+import com.dto.VideoDTO;
 import com.entity.Role;
 import com.entity.User;
 import com.entity.Video;
 import com.mapper.UserMapper;
+import com.mapper.VideoMapper;
 import com.util.ValidationUtil;
 import jakarta.persistence.*;
 import com.util.EntityManagerUtil;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -183,7 +183,7 @@ public class UserService implements Service<UserDTO, String>{
         }
     }
 
-    public List<Video> getFavouritedVideos(String userId) {
+    public List<VideoDTO> getFavouritedVideos(String userId) {
         if(userId == null) return null;
 
         List<Video> videoList = null;
@@ -199,10 +199,10 @@ public class UserService implements Service<UserDTO, String>{
             logger.log(Level.SEVERE, "", e);
             return null;
         }
-        return videoList;
+        return VideoMapper.toDTOList(videoList);
     }
 
-    public List<Video> getFavouritedVideos(UserDTO userDTO) {
+    public List<VideoDTO> getFavouritedVideos(UserDTO userDTO) {
         return getFavouritedVideos(userDTO.getUserId());
     }
 }

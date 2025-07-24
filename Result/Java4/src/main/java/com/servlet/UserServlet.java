@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-@WebServlet (
-    urlPatterns = {"/user"}
-)
+@WebServlet ("/user")
 public class UserServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(UserServlet.class.getName());
 

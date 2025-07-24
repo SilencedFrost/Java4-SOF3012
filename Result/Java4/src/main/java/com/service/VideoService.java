@@ -8,6 +8,7 @@ import com.util.ValidationUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
+import jdk.jshell.PersistentSnippet;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class VideoService implements Service<VideoDTO, String>{
 
     @Override
     public List<VideoDTO> findAll() {
-        List<Video> videoList = null;
+        List<Video> videoList;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             videoList = em.createQuery("SELECT v FROM Video v", Video.class).getResultList();
             logger.info("Fetched all videos: " + videoList.size() + " videos found.");
@@ -44,6 +45,44 @@ public class VideoService implements Service<VideoDTO, String>{
             return video != null ? VideoMapper.toDTO(video) : null;
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error finding video by ID", e);
+            return null;
+        }
+    }
+
+    public List<VideoDTO> findByTitleLike (String partialTitle) {
+        if (partialTitle == null) return null;
+
+        List<Video> videoList;
+        try(EntityManager em = EntityManagerUtil.getEntityManager()){
+            videoList = em.createQuery("SELECT v FROM Video v WHERE Video.title LIKE :partialTitle", Video.class).setParameter("partialTitle", partialTitle).getResultList();
+            return VideoMapper.toDTOList(videoList);
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Could not fetch Videos", e);
+            return null;
+        }
+    }
+
+    public List<VideoDTO> findByTop (Integer amount) {
+        if(amount == null) return null;
+        List<Video> videoList = null;
+
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
+            videoList = em.createQuery("SELECT v FROM Video v ORDER BY SIZE(v.favourites) DESC", Video.class).setMaxResults(amount).getResultList();
+            return VideoMapper.toDTOList(videoList);
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Could not fetch Videos", e);
+            return null;
+        }
+    }
+
+    public List<VideoDTO> findNotFavourited() {
+        List<Video> videoList = null;
+
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
+            videoList = em.createQuery("SELECT v FROM v WHERE SIZE(v.favourites) = 0", Video.class).getResultList();
+            return VideoMapper.toDTOList(videoList);
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Could not fetch Videos", e);
             return null;
         }
     }

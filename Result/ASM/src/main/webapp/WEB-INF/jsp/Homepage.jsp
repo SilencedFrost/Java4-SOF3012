@@ -6,16 +6,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Favourited Videos</title>
+    <title>Homepage</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="container-fluid p-0">
     <%@ include file="components/navbar.jsp" %>
-    <h2 class="text-center my-4">Favourited Videos</h2>
-    <br>
-    <div class="container-fluid px-3">
-        <%@ include file="components/table.jsp" %>
+    <div class="container-fluid p-3">
+        <div class="row g-2">
+            <c:forEach var="i" begin="1" end="16">
+                <%@ include file="components/videoElement.jsp" %>
+            </c:forEach>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

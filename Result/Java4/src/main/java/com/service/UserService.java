@@ -72,6 +72,17 @@ public class UserService implements Service<UserDTO, String>{
         }
     }
 
+    public UserDTO findByIdOrEmail(String idOrEmail) {
+        User user = null;
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
+            user = em.createQuery("SELECT u FROM User u WHERE LOWER(u.userId) = LOWER(:value) OR LOWER(u.email) = LOWER(:value)", User.class).setParameter("value", idOrEmail).getSingleResult();
+            return UserMapper.toDTO(user);
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Error fetching users", e);
+            return null;
+        }
+    }
+
     // Manual creation method
     public boolean create(String userId, String password, String fullName, String email, String roleName) {
         return create(new UserDTO(userId, password, fullName, email, roleName));
@@ -183,7 +194,7 @@ public class UserService implements Service<UserDTO, String>{
         }
     }
 
-    public List<VideoDTO> getFavouritedVideos(String userId) {
+    public List<VideoDTO> findFavouritedVideos(String userId) {
         if(userId == null) return null;
 
         List<Video> videoList = null;
@@ -202,7 +213,7 @@ public class UserService implements Service<UserDTO, String>{
         return VideoMapper.toDTOList(videoList);
     }
 
-    public List<VideoDTO> getFavouritedVideos(UserDTO userDTO) {
-        return getFavouritedVideos(userDTO.getUserId());
+    public List<VideoDTO> findFavouritedVideos(UserDTO userDTO) {
+        return findFavouritedVideos(userDTO.getUserId());
     }
 }

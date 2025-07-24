@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-@WebServlet (
-    urlPatterns = {"/userfavourite"}
-)
+@WebServlet ("/userfavourite")
 public class UserFavouriteServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(UserFavouriteServlet.class.getName());
 
@@ -48,7 +46,7 @@ public class UserFavouriteServlet extends HttpServlet {
         for(UserDTO userDTO : users) {
             Map<String, Object> userMap = new HashMap<>();
             userMap.put(UserFormFields.FULL_NAME.getPropertyKey(), userDTO.getFullName() + " - " + userDTO.getUserId());
-            List<VideoDTO> videoList = new UserService().getFavouritedVideos(userDTO);
+            List<VideoDTO> videoList = new UserService().findFavouritedVideos(userDTO);
             List<String> videoNameList =  new ArrayList<>();
 
             for(VideoDTO videoDTO: videoList) videoNameList.add(videoDTO.getTitle());

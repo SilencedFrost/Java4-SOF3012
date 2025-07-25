@@ -10,15 +10,15 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 @WebServlet (
-        urlPatterns = {"/home"}
+        urlPatterns = {"/user/favourite"}
 )
-public class HomePageServlet extends HttpServlet {
-    private static final Logger logger = Logger.getLogger(HomePageServlet.class.getName());
+public class UserFavouriteServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(UserFavouriteServlet.class.getName());
 
 
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/jsp/homepage.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/jsp/userFavourite.jsp").forward(req, resp);
     }
 }

@@ -1,10 +1,12 @@
 package com.constants;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public enum VideoFormFields implements Automatable {
     VIDEO_ID("videoId", "Video ID", "text", null),
     TITLE("title", "Title", "text", null),
@@ -19,11 +21,4 @@ public enum VideoFormFields implements Automatable {
     private final String label;
     private final String fieldType;
     private final List<String> cBoxData;
-
-    VideoFormFields(String propertyKey, String label, String fieldType, List<String> cBoxData) {
-        this.propertyKey = propertyKey;
-        this.label = label;
-        this.fieldType = fieldType;
-        this.cBoxData = cBoxData;
-    }
 }

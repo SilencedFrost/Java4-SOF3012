@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
-@WebFilter("/*")
+@WebFilter({"/", "/user/*", "/admin/*"})
 public class AuthFilter implements Filter {
     Logger logger = Logger.getLogger(AuthFilter.class.getName());
 
@@ -23,28 +23,13 @@ public class AuthFilter implements Filter {
 
         if(path.equals("/")) {resp.sendRedirect("/home"); return;}
 
-        List<String> excludedAbsolutePaths = List.of("/login", "/logout", "/home", "/register", "/favicon.ico");
-        for(String excludedPath : excludedAbsolutePaths){
-            if(excludedPath.equals(path)) {
-                chain.doFilter(request, response);
-                return;
-            }
-        }
-
-        List<String> excludedWildcardPaths = List.of("/assets");
-        for(String excludedPath : excludedWildcardPaths){
-            if(path.startsWith(excludedPath)) {
-                chain.doFilter(request, response);
-                return;
-            }
-        }
-
         HttpSession session = req.getSession(false);
         boolean loggedIn = session != null && session.getAttribute("user") != null;
 
         if(loggedIn) {
             chain.doFilter(request, response);
         } else {
+            if(!path.equals("/logout")) req.getSession().setAttribute("targetUrl", path);
             resp.sendRedirect(req.getContextPath() + "/login");
         }
     }

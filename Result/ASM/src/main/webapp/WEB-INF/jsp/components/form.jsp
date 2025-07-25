@@ -1,4 +1,5 @@
-<form method="post" action="/user" novalidate>
+<form method="post" action="" novalidate>
+    <input type="hidden" name="csrfToken" value="${csrfToken}" />
     <c:forEach var="field" items="${fieldStructure}">
         <c:choose>
             <c:when test="${field.fieldType == 'text' || field.fieldType == 'email' || field.fieldType == 'password'}">
@@ -32,9 +33,8 @@
     </c:forEach>
 
     <div class="d-flex flex-wrap gap-2">
-        <button type="submit" name="action" value="create" class="btn btn-primary">Create</button>
-        <button type="submit" name="action" value="update" class="btn btn-warning">Update</button>
-        <button type="submit" name="action" value="delete" class="btn btn-danger">Delete</button>
-        <button type="submit" name="action" value="reset" class="btn btn-secondary">Reset</button>
+        <c:forEach var="button" items="${buttons}">
+            <button type="submit" name="${button.propertyKey}" value="${button.propertyKey}" class="btn btn-${button.BSColor}">${button.label}</button>
+        </c:forEach>
     </div>
 </form>

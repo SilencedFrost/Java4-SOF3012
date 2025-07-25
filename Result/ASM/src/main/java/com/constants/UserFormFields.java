@@ -1,10 +1,12 @@
 package com.constants;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public enum UserFormFields implements Automatable {
     USER_ID("userId", "User ID", "text", UserValidationError.USER_ID_REQUIRED, null, null),
     PASSWORD("passwordHash", "Password", "password", UserValidationError.PASSWORD_REQUIRED, UserValidationError.PASSWORD_INCORRECT_FORMAT, null),
@@ -18,13 +20,4 @@ public enum UserFormFields implements Automatable {
     private final UserValidationError requiredError;
     private final UserValidationError formatError;
     private final List<String> cBoxData;
-
-    UserFormFields(String propertyKey, String label, String fieldType, UserValidationError requiredError, UserValidationError formatError, List<String> cBoxData) {
-        this.propertyKey = propertyKey;
-        this.label = label;
-        this.fieldType = fieldType;
-        this.requiredError = requiredError;
-        this.formatError = formatError;
-        this.cBoxData = cBoxData;
-    }
 }

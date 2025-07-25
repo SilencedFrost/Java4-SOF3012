@@ -26,7 +26,7 @@
                             My Account
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="userDropdown">
-                            <%@ include file="navbarDropdown.jsp" %>
+                            <%@ include file="navbarItems.jsp" %>
                         </ul>
 
                         <a class="nav-link d-flex align-items-center d-sm-none" href="#userOptions"
@@ -40,7 +40,7 @@
             <div class="d-flex align-items-center px-2">
                 <div class="collapse d-lg-none" id="userOptions">
                     <ul class="navbar-nav">
-                        <%@ include file="navbarDropdown.jsp" %>
+                        <%@ include file="navbarItems.jsp" %>
                     </ul>
                 </div>
             </div>

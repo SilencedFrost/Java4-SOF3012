@@ -22,5 +22,4 @@ public enum UserValidationError {
     UserValidationError(String message) {
         this.message = message;
     }
-
 }

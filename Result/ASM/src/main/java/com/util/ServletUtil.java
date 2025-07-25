@@ -1,10 +1,9 @@
 package com.util;
 
 import com.constants.Automatable;
-import com.constants.UserFormFields;
+import com.constants.Buttons;
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,13 +54,12 @@ public class ServletUtil {
         }
     }
 
-    public static <T extends Enum<T> & Automatable> void constructFormStructure(HttpServletRequest req, Class<T> enumClass, T... fields) {
-        T[] fieldsToUse = (fields == null || fields.length == 0) ? enumClass.getEnumConstants() : fields;
-        req.setAttribute("fieldStructure", fieldsToUse);
+    public static void constructForm(HttpServletRequest req, Automatable... fields) {
+        req.setAttribute("fieldStructure", fields);
     }
 
-    public static <T extends Enum<T> & Automatable> void constructFormStructure(HttpServletRequest req, Class<T> enumClass) {
-        constructFormStructure(req, enumClass, (T[]) null);
+    public static <T extends Enum<T> & Automatable> void constructForm(HttpServletRequest req, Class<T> enumClass) {
+        constructForm(req, enumClass.getEnumConstants());
     }
 
     public static void setErrors(HttpServletRequest req, Map<String, String> errors) {
@@ -74,17 +72,20 @@ public class ServletUtil {
         }
     }
 
-    public static <D> void setTableData(HttpServletRequest req, List<D> dtoList, Automatable... fields) {
+    public static <D> void setTableData(HttpServletRequest req, List<D> dataList, Automatable... fields) {
         req.setAttribute("tableFields", fields);
-        req.setAttribute("dataList", dtoList);
+        req.setAttribute("dataList", dataList);
     }
 
-    public static <T extends Enum<T> & Automatable, D> void setTableData(HttpServletRequest req, List<D> dtoList, Class<T> enumClass) {
-        setTableData(req, dtoList, enumClass.getEnumConstants());
+    public static <T extends Enum<T> & Automatable, D> void setTableData(HttpServletRequest req, List<D> dataList, Class<T> enumClass) {
+        setTableData(req, dataList, enumClass.getEnumConstants());
     }
 
-    public static <T extends Enum<T> & Automatable, D> void setTableData(HttpServletRequest req, List<D> dtoList, Class<T> enumClass, T... fields) {
-        T[] fieldsToUse = (fields == null || fields.length == 0) ? enumClass.getEnumConstants() : fields;
-        setTableData(req, dtoList, (Automatable[]) fieldsToUse);
+    public static void populateButtons(HttpServletRequest req, Buttons... buttons) {
+        req.setAttribute("buttons", buttons);
+    }
+
+    public static <T extends Enum<T> & Buttons> void populateButtons(HttpServletRequest req, Class<T> enumClass) {
+        populateButtons(req, enumClass.getEnumConstants());
     }
 }

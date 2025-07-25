@@ -28,6 +28,11 @@
                         <a class="nav-link d-inline p-0" href="/video/sharedetails">Video Shares</a>
                     </div>
                 </li>
+                <li class="nav-item d-flex align-items-center">
+                    <div class="d-flex align-items-center p-2">
+                        <a class="nav-link d-inline p-0" href="/video/search">Search Video</a>
+                    </div>
+                </li>
             </ul>
 
            <ul class="navbar-nav ms-auto">

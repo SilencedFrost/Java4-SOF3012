@@ -1,4 +1,4 @@
-<div class="col-3">
+<div class="col-xxl-2 col-lg-3 col-md-4 col-sm-6">
     <div class="card shadow-sm p-2 h-100">
         <img class="rounded-2 w-100"  src="/assets/images/youtube-thumbnail-template-desig.jpg" alt="">
         <h5 class="mt-2">Video title</h5>

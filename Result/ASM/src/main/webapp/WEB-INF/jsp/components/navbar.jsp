@@ -15,7 +15,7 @@
                 </li>
                 <li class="nav-item d-flex align-items-center">
                     <div class="d-flex align-items-center p-2">
-                        <a class="nav-link d-inline p-0" href="userfavourite">My Favourites</a>
+                        <a class="nav-link d-inline p-0" href="/user/favourite">My Favourites</a>
                     </div>
                 </li>
 

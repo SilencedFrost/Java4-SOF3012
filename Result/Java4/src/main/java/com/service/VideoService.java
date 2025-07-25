@@ -11,6 +11,7 @@ import jakarta.persistence.PersistenceException;
 import jdk.jshell.PersistentSnippet;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -107,6 +108,18 @@ public class VideoService implements Service<VideoDTO, String>{
             logger.log(Level.SEVERE, "Error finding videos by partial ID: " + partialId, e);
             return List.of();
         }
+    }
+
+    public List<Date> getAllShareDates(String videoId) {
+        if(ValidationUtil.isNullOrBlank(videoId)) return null;
+
+        List<Date> dateList = null;
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
+            dateList = em.createQuery("SELECT s.shareDate FROM Share s WHERE s.videoId = :videoId", Date.class).setParameter("videoId", videoId).getResultList();
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Error fetching videos", e);
+        }
+        return dateList;
     }
 
     // Manual creation method

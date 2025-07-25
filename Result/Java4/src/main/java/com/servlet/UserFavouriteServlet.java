@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-@WebServlet ("/userfavourite")
+@WebServlet ("/user/favourite")
 public class UserFavouriteServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(UserFavouriteServlet.class.getName());
 

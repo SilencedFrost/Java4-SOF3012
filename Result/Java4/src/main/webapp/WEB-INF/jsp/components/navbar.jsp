@@ -10,17 +10,22 @@
             <ul class="navbar-nav">
                 <li class="nav-item d-flex align-items-center">
                     <div class="d-flex align-items-center p-2">
-                        <a class="nav-link d-inline p-0" href="user">User</a>
+                        <a class="nav-link d-inline p-0" href="/user">User</a>
                     </div>
                 </li>
                 <li class="nav-item d-flex align-items-center">
                     <div class="d-flex align-items-center p-2">
-                        <a class="nav-link d-inline p-0" href="userfavourite">User Favourite</a>
+                        <a class="nav-link d-inline p-0" href="/user/favourite">User Favourite</a>
                     </div>
                 </li>
                 <li class="nav-item d-flex align-items-center">
                     <div class="d-flex align-items-center p-2">
-                        <a class="nav-link d-inline p-0" href="favouritedvideos">Favourited Videos</a>
+                        <a class="nav-link d-inline p-0" href="/video/favourited">Favourited Videos</a>
+                    </div>
+                </li>
+                <li class="nav-item d-flex align-items-center">
+                    <div class="d-flex align-items-center p-2">
+                        <a class="nav-link d-inline p-0" href="/video/sharedetails">Video Shares</a>
                     </div>
                 </li>
             </ul>
@@ -28,7 +33,7 @@
            <ul class="navbar-nav ms-auto">
                <li class="nav-item d-flex align-items-center">
                     <div class="d-flex align-items-center p-2">
-                        <a class="nav-link d-inline p-0" href="logout">Logout</a>
+                        <a class="nav-link d-inline p-0" href="/logout">Logout</a>
                     </div>
                </li>
            </ul>

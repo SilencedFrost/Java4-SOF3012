@@ -22,7 +22,7 @@ public class AuthServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
         HttpSession session = req.getSession(false);
-        if ("/logout".equals(req.getServletPath())) { session.invalidate(); resp.sendRedirect("/login"); return;}
+        if ("/logout".equals(req.getServletPath()) && session != null) { session.invalidate(); resp.sendRedirect("/login"); return;}
         session = req.getSession();
 
         String csrfToken = UUID.randomUUID().toString();

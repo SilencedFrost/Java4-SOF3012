@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-@WebServlet ("/favouritedvideos")
+@WebServlet ("/video/favourited")
 public class FavouritedVideosServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(FavouritedVideosServlet.class.getName());
 

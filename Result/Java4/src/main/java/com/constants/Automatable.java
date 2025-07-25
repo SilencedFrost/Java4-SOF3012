@@ -5,11 +5,15 @@ import java.util.List;
 
 public interface Automatable {
 
+    String getPropertyKey();
+
+    String getLabel();
+
     String getFieldType();
 
     List<String> getCBoxData();
 
-    String getPropertyKey();
+
 
     default String getErrorKey() {
         return getPropertyKey() + "Error";

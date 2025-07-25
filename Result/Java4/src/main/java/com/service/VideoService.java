@@ -110,16 +110,28 @@ public class VideoService implements Service<VideoDTO, String>{
         }
     }
 
-    public List<Date> getAllShareDates(String videoId) {
+    public List<Date> findAllShareDates(String videoId) {
         if(ValidationUtil.isNullOrBlank(videoId)) return null;
 
         List<Date> dateList = null;
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
-            dateList = em.createQuery("SELECT s.shareDate FROM Share s WHERE s.videoId = :videoId", Date.class).setParameter("videoId", videoId).getResultList();
+            dateList = em.createQuery("SELECT s.shareDate FROM Share s WHERE s.video.videoId = :videoId", Date.class).setParameter("videoId", videoId).getResultList();
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error fetching videos", e);
         }
         return dateList;
+    }
+
+    public Integer findShareCount(String videoId) {
+        if (ValidationUtil.isNullOrBlank(videoId)) return null;
+
+        Integer shareCount = null;
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
+            shareCount = ((Number) em.createQuery("SELECT COUNT(s) FROM Share s WHERE s.video.videoId = :videoId").setParameter("videoId", videoId).getSingleResult()).intValue();
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Error fetching videos", e);
+        }
+        return shareCount;
     }
 
     // Manual creation method

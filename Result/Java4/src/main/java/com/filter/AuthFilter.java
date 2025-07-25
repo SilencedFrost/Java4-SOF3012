@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-@WebFilter({"/user", "/userfavourite", "/favouritedvideos"})
+@WebFilter("/*")
 public class AuthFilter implements Filter {
     Logger logger = Logger.getLogger(AuthFilter.class.getName());
 
@@ -17,6 +17,13 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
+
+        String path = req.getServletPath();
+
+        if (path.equals("/login") || path.equals("/logout")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         HttpSession session = req.getSession(false);
         boolean loggedIn = session != null && session.getAttribute("user") != null;

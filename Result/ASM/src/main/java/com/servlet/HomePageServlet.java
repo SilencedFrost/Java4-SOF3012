@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 @WebServlet (
-        urlPatterns = {"/Home"}
+        urlPatterns = {"/home"}
 )
 public class HomePageServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(HomePageServlet.class.getName());

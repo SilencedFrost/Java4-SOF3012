@@ -10,7 +10,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item d-flex align-items-center">
                     <div class="d-flex align-items-center p-2">
-                        <a class="nav-link d-inline p-0 text-danger" href="/Home"><h3>Online Entertainment</h3></a>
+                        <a class="nav-link d-inline p-0 text-danger" href="/home"><h3>Online Entertainment</h3></a>
                     </div>
                 </li>
                 <li class="nav-item d-flex align-items-center">

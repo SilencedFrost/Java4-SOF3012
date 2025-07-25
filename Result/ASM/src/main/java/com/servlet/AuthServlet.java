@@ -21,13 +21,17 @@ public class AuthServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
+        logger.info("Get triggered");
+
         HttpSession session = req.getSession(false);
-        if ("/logout".equals(req.getServletPath()) && session != null) {session.invalidate(); resp.sendRedirect("/home"); return;}
+        if ("/logout".equals(req.getServletPath()) && session != null) { session.invalidate(); resp.sendRedirect("/login"); return;}
         session = req.getSession();
 
         String csrfToken = UUID.randomUUID().toString();
         session.setAttribute("csrfToken", csrfToken);
         req.setAttribute("csrfToken", csrfToken);
+
+        logger.info("csrf token set: " + csrfToken);
 
         Object idOrEmail = session.getAttribute("idOrEmail");
         session.removeAttribute("idOrEmail");
@@ -47,15 +51,19 @@ public class AuthServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if(session == null) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Session does not exist");
+            resp.sendRedirect("/login");
             return;
         }
 
         String formToken = req.getParameter("csrfToken");
         String sessionToken = (String) session.getAttribute("csrfToken");
         session.removeAttribute("csrfToken");
+
+        logger.info("form Token: " + formToken);
+        logger.info("sessionToken: " + sessionToken);
+
         if (formToken == null || !formToken.equals(sessionToken)) {
-            resp.sendRedirect("/logout");
+            resp.sendRedirect("/login");
             return;
         }
 

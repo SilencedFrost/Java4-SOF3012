@@ -23,7 +23,7 @@ public class AuthFilter implements Filter {
 
         if(path.equals("/")) {resp.sendRedirect("/home"); return;}
 
-        List<String> excludedAbsolutePaths = List.of("/login", "/logout", "/home", "/register");
+        List<String> excludedAbsolutePaths = List.of("/login", "/logout", "/home", "/register", "/favicon.ico");
         for(String excludedPath : excludedAbsolutePaths){
             if(excludedPath.equals(path)) {
                 chain.doFilter(request, response);

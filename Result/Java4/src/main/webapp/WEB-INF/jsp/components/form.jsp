@@ -1,4 +1,4 @@
-<form method="post" action="/user" novalidate>
+<form method="post" action="" novalidate>
     <c:forEach var="field" items="${fieldStructure}">
         <c:choose>
             <c:when test="${field.fieldType == 'text' || field.fieldType == 'email' || field.fieldType == 'password'}">

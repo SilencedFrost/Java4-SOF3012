@@ -21,8 +21,6 @@ public class AuthFilter implements Filter {
 
         String path = req.getServletPath();
 
-        logger.info("path: " + path);
-
         List<String> excludedAbsolutePaths = List.of("/login", "/logout", "/favicon.ico");
         for(String excludedPath : excludedAbsolutePaths){
             if(excludedPath.equals(path)) {
@@ -38,8 +36,6 @@ public class AuthFilter implements Filter {
                 return;
             }
         }
-
-        logger.info("Shouldn't be here");
 
         HttpSession session = req.getSession(false);
         boolean loggedIn = session != null && session.getAttribute("user") != null;

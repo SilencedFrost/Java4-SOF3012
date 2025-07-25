@@ -16,9 +16,7 @@
     <div class="container-fluid px-3">
         <%@ include file="components/searchbar.jsp" %>
         <br>
-
-
-
+        <%@ include file="components/table.jsp" %>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

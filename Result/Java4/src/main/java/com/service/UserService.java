@@ -57,13 +57,7 @@ public class UserService implements Service<UserDTO, String>{
 
         List<User> userList = null;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
-            userList = em.createQuery(
-                            "SELECT u FROM User u WHERE u.userId LIKE :partialId",
-                            User.class
-                    )
-                    .setParameter("partialId", "%" + partialId + "%")
-                    .getResultList();
-
+            userList = em.createQuery("SELECT u FROM User u WHERE u.userId LIKE :partialId", User.class).setParameter("partialId", "%" + partialId + "%").getResultList();
             logger.info("Found " + userList.size() + " users with ID containing: " + partialId);
             return UserMapper.toDTOList(userList);
         } catch (PersistenceException e) {

@@ -1,9 +1,14 @@
 package com.servlet;
 
+import com.constants.Automatable;
+import com.constants.CustomFormFields;
 import com.constants.UserFormFields;
+import com.constants.VideoFormFields;
 import com.dto.UserDTO;
 import com.dto.VideoDTO;
 import com.service.UserService;
+import com.service.VideoService;
+import com.util.ServletUtil;
 import com.util.ValidationUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -31,9 +36,31 @@ public class VideoSearchServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String searchTitle = req.getParameter("searchId");
+        String searchTitle = req.getParameter("search");
 
-        req.setAttribute("searchId", searchTitle);
+        List<VideoDTO> videoList = null;
+
+        if(!ValidationUtil.isNullOrBlank(searchTitle)) {
+            videoList = new VideoService().findByTitleLike(searchTitle);
+            if(videoList == null) videoList = List.of();
+        } else {
+            videoList = new VideoService().findAll();
+        }
+
+        List<Map<String, String>> dataList = new ArrayList<>();
+        Automatable likeCount = new CustomFormFields("likeCount", "Like Count", "text", null);
+
+        for(VideoDTO videoDTO : videoList) {
+            Map<String, String> dataMap = new HashMap<>();
+            dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
+            Integer like = new VideoService().findShareCount(videoDTO.getVideoId());
+            dataMap.put(likeCount.getPropertyKey(), like != null ? like.toString() : "0");
+            dataMap.put(VideoFormFields.ACTIVE.getPropertyKey(), videoDTO.getActive().toString());
+            dataList.add(dataMap);
+        }
+
+        ServletUtil.setTableData(req, dataList, VideoFormFields.TITLE, likeCount, VideoFormFields.ACTIVE);
+        req.setAttribute("search", searchTitle);
         req.getRequestDispatcher("/WEB-INF/jsp/videoSearch.jsp").forward(req, resp);
     }
 }

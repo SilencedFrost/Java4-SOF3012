@@ -55,7 +55,8 @@ public class VideoService implements Service<VideoDTO, String>{
 
         List<Video> videoList;
         try(EntityManager em = EntityManagerUtil.getEntityManager()){
-            videoList = em.createQuery("SELECT v FROM Video v WHERE Video.title LIKE :partialTitle", Video.class).setParameter("partialTitle", partialTitle).getResultList();
+            videoList = em.createQuery("SELECT v FROM Video v WHERE v.title LIKE :partialTitle", Video.class).setParameter("partialTitle", "%" + partialTitle.toLowerCase() + "%").getResultList();
+            logger.info(videoList.toString());
             return VideoMapper.toDTOList(videoList);
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Could not fetch Videos", e);
@@ -63,7 +64,7 @@ public class VideoService implements Service<VideoDTO, String>{
         }
     }
 
-    public List<VideoDTO> findByTop (Integer amount) {
+    public List<VideoDTO> findByTop(Integer amount) {
         if(amount == null) return null;
         List<Video> videoList = null;
 
@@ -133,6 +134,19 @@ public class VideoService implements Service<VideoDTO, String>{
         }
         return shareCount;
     }
+
+    public Integer findLikeCount(String videoId) {
+        if (ValidationUtil.isNullOrBlank(videoId)) return null;
+
+        Integer likeCount = null;
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
+            likeCount = ((Number) em.createQuery("SELECT COUNT(l) FROM Like l WHERE l.video.videoId = :videoId").setParameter("videoId", videoId).getSingleResult()).intValue();
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Error fetching videos", e);
+        }
+        return likeCount;
+    }
+
 
     // Manual creation method
     public boolean create(String videoId, String title, String poster, String link, long views, String description, Boolean active) {

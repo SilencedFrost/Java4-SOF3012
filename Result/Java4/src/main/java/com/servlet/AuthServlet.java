@@ -53,12 +53,11 @@ public class AuthServlet extends HttpServlet {
 
         String formToken = req.getParameter("csrfToken");
         String sessionToken = (String) session.getAttribute("csrfToken");
+        session.removeAttribute("csrfToken");
         if (formToken == null || !formToken.equals(sessionToken)) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid CSRF token.");
+            resp.sendRedirect("/logout");
             return;
         }
-
-        session.removeAttribute("csrfToken");
 
         String userIdOrEmail = req.getParameter("idOrEmail");
         String password = req.getParameter("password");
@@ -87,6 +86,6 @@ public class AuthServlet extends HttpServlet {
                 session.setAttribute("loginError", "User or password does not match.");
             }
         }
-        resp.sendRedirect("login");
+        resp.sendRedirect("/login");
     }
 }

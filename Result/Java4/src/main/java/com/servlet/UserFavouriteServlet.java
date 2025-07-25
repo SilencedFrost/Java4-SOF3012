@@ -31,7 +31,7 @@ public class UserFavouriteServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String searchUserId = req.getParameter("searchId");
+        String searchUserId = req.getParameter("search");
         List<UserDTO> users = null;
 
         if(!ValidationUtil.isNullOrBlank(searchUserId)) {
@@ -57,7 +57,7 @@ public class UserFavouriteServlet extends HttpServlet {
         }
 
         req.setAttribute("dataList", dataList);
-        req.setAttribute("searchId", searchUserId);
+        req.setAttribute("search", searchUserId);
         req.getRequestDispatcher("/WEB-INF/jsp/userFavourite.jsp").forward(req, resp);
     }
 }

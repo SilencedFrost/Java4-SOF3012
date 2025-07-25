@@ -12,8 +12,9 @@
     <body class="container-fluid p-0">
         <div class="d-flex justify-content-center align-items-center vh-100">
             <div class="card p-3 shadow-sm" style="width: 300px;">
-                <h4 class="text-center">Login</h4>
+                <h3 class="text-center">Login</h3>
                 <form action="" method="post">
+                    <input type="hidden" name="csrfToken" value="${csrfToken}" />
                     <div class="mb-3">
                         <label for="idOrEmail" class="form-label">User ID or Email</label>
                         <input type="text" class="form-control shadow-sm" id="idOrEmail" name="idOrEmail" value="${idOrEmail}" placeholder="Enter user id or email">

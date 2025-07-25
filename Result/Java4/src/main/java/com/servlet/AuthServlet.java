@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 @WebServlet({"/login", "/logout"})
@@ -20,9 +21,17 @@ public class AuthServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
         if ("/logout".equals(req.getServletPath())) { session.invalidate(); resp.sendRedirect("/login"); return;}
+        session = req.getSession();
 
+        String csrfToken = UUID.randomUUID().toString();
+        session.setAttribute("csrfToken", csrfToken);
+        req.setAttribute("csrfToken", csrfToken);
+
+        Object idOrEmail = session.getAttribute("idOrEmail");
+        session.removeAttribute("idOrEmail");
+        if(idOrEmail != null) req.setAttribute("idOrEmail", idOrEmail);
         req.setAttribute("idOrEmailError", session.getAttribute("idOrEmailError"));
         session.removeAttribute("idOrEmailError");
         req.setAttribute("passwordError", session.getAttribute("passwordError"));
@@ -35,7 +44,21 @@ public class AuthServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
+
+        if(session == null) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Session does not exist");
+            return;
+        }
+
+        String formToken = req.getParameter("csrfToken");
+        String sessionToken = (String) session.getAttribute("csrfToken");
+        if (formToken == null || !formToken.equals(sessionToken)) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid CSRF token.");
+            return;
+        }
+
+        session.removeAttribute("csrfToken");
 
         String userIdOrEmail = req.getParameter("idOrEmail");
         String password = req.getParameter("password");
@@ -45,6 +68,8 @@ public class AuthServlet extends HttpServlet {
         if(ValidationUtil.isNullOrBlank(userIdOrEmail)) {
             session.setAttribute("idOrEmailError", "User ID or Email cannot be empty.");
             error = true;
+        } else {
+            session.setAttribute("idOrEmail", userIdOrEmail);
         }
         if(ValidationUtil.isNullOrBlank(password)) {
             session.setAttribute("passwordError", "Password cannot be empty.");

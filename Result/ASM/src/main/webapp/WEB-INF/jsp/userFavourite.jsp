@@ -14,7 +14,7 @@
     <%@ include file="components/navbar.jsp" %>
     <div class="container-fluid p-3">
         <div class="row g-2">
-            <c:forEach var="i" begin="1" end="16">
+            <c:forEach var="video" items="${videoList}">
                 <%@ include file="components/videoElement.jsp" %>
             </c:forEach>
         </div>

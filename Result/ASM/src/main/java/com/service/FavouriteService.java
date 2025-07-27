@@ -6,12 +6,14 @@ import com.entity.User;
 import com.entity.Video;
 import com.mapper.FavouriteMapper;
 import com.util.EntityManagerUtil;
+import com.util.ValidationUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,8 +53,8 @@ public class FavouriteService implements Service<FavouriteDTO, Long>{
     }
 
     // Manual creation method
-    public boolean create(Long favouriteId, String userId, String videoId, Date favouriteDate) {
-        return create(new FavouriteDTO(favouriteId, userId, videoId, favouriteDate));
+    public boolean create(String userId, String videoId) {
+        return create(new FavouriteDTO(userId, videoId));
     }
 
     // Object creation method
@@ -64,11 +66,17 @@ public class FavouriteService implements Service<FavouriteDTO, Long>{
 
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             User user = em.find(User.class, favouriteDTO.getUserId());
-            Video video = em.find(Video.class, favouriteDTO.getUserId());
-            if(user == null || video == null){
-                logger.warning("user or video not found");
+            Video video = em.find(Video.class, favouriteDTO.getVideoId());
+
+            if(user == null){
+                logger.warning("user not found");
                 return false;
             }
+            if(video == null) {
+                logger.warning("video not found");
+                return false;
+            }
+
             Favourite favourite = FavouriteMapper.toEntity(favouriteDTO, user, video);
             EntityTransaction tx = em.getTransaction();
             try {
@@ -87,7 +95,7 @@ public class FavouriteService implements Service<FavouriteDTO, Long>{
         }
     }
 
-    public boolean update(Long favouriteId, String userId, String videoId, Date favouriteDate) {
+    public boolean update(Long favouriteId, String userId, String videoId, LocalDate favouriteDate) {
         return update(new FavouriteDTO(favouriteId, userId, videoId, favouriteDate));
     }
 
@@ -169,5 +177,22 @@ public class FavouriteService implements Service<FavouriteDTO, Long>{
             return false;
         }
         return delete(favouriteDTO.getFavouriteId());
+    }
+
+    public boolean delete(String userId, String videoId) {
+        if(ValidationUtil.isNullOrBlank(userId) || ValidationUtil.isNullOrBlank(videoId)) return false;
+
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
+            List<Favourite> favouriteList = em.createQuery("SELECT f FROM Favourite f WHERE f.user.userId = :userId AND f.video.videoId = :videoId", Favourite.class).setParameter("userId", userId).setParameter("videoId", videoId).getResultList();
+            if(!favouriteList.isEmpty()) {
+                delete(favouriteList.getFirst().getFavouriteId());
+                return true;
+            } else {
+                logger.log(Level.SEVERE, "Favourite with userId " + userId + " and videoId " + videoId + " not found for removal");
+            }
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Error removing favourite", e);
+        }
+        return false;
     }
 }

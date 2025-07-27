@@ -16,7 +16,7 @@
         <%@ include file="components/searchbar.jsp" %>
         <hr class="py-2">
         <div class="row g-2 p-0">
-            <c:forEach var="video" items="${videoList}">
+            <c:forEach var="video" items="${dataList}">
                 <%@ include file="components/videoElement.jsp" %>
             </c:forEach>
         </div>

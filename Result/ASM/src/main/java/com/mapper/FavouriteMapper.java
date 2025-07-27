@@ -28,7 +28,6 @@ public class FavouriteMapper {
         }
 
         return new Favourite(
-                favouriteDTO.getFavouriteId(),
                 user,
                 video,
                 favouriteDTO.getFavouriteDate()

@@ -1,19 +1,14 @@
 package com.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "Favourite",
-		uniqueConstraints = @UniqueConstraint(
-			name = "unique_user_video",
-			columnNames = {"UserID", "VideoID"}
-	))
+@Table(name = "Favourite", uniqueConstraints = @UniqueConstraint(name = "unique_user_video", columnNames = {"UserID", "VideoID"}))
 public class Favourite {
 
 	@Id
@@ -29,5 +24,11 @@ public class Favourite {
 	private Video video;
 
 	@Column(name = "LikeDate")
-	private Date favouriteDate;
+	private LocalDate favouriteDate;
+
+	public Favourite(User user, Video video, LocalDate favouriteDate) {
+		this.user = user;
+		this.video = video;
+		this.favouriteDate = favouriteDate;
 	}
+}

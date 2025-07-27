@@ -191,15 +191,11 @@ public class UserService implements Service<UserDTO, String>{
     public List<VideoDTO> findFavouritedVideos(String userId) {
         if(userId == null) return null;
 
-        List<Video> videoList = null;
+        List<Video> videoList;
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
-            TypedQuery<Video> query = em.createQuery(
-                    "SELECT f.video FROM Favourite f WHERE f.user.id = :userId",
-                    Video.class
-            );
+            TypedQuery<Video> query = em.createQuery("SELECT f.video FROM Favourite f WHERE f.user.id = :userId", Video.class);
             query.setParameter("userId", userId);
             videoList = query.getResultList();
-
         } catch (Exception e) {
             logger.log(Level.SEVERE, "", e);
             return null;

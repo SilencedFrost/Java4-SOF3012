@@ -15,6 +15,6 @@ public class ShareDTO {
     private Long shareId;
     private String userId;
     private String videoId;
-    private String email;
+    private String receiveEmail;
     private Date shareDate;
 }

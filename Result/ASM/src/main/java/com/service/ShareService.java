@@ -106,7 +106,7 @@ public class ShareService implements Service<ShareDTO, Long>{
                 Share existingShare = em.find(Share.class, shareDTO.getShareId());
                 if (existingShare != null) {
                     tx.begin();
-                    if(!ValidationUtil.isNullOrBlank(shareDTO.getEmail())) existingShare.setEmail(shareDTO.getEmail());
+                    if(!ValidationUtil.isNullOrBlank(shareDTO.getReceiveEmail())) existingShare.setEmail(shareDTO.getReceiveEmail());
                     if(shareDTO.getShareDate() != null) existingShare.setShareDate(shareDTO.getShareDate());
 
                     User user = em.find(User.class, shareDTO.getUserId());

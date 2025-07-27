@@ -11,7 +11,7 @@ public interface Automatable {
 
     String getFieldType();
 
-    List<String> getCBoxData();
+    List<String> getSelectionData();
 
 
 

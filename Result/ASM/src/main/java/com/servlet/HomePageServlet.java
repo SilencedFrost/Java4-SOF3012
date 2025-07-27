@@ -2,6 +2,7 @@ package com.servlet;
 
 import com.dto.VideoDTO;
 import com.service.VideoService;
+import com.util.ValidationUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,10 +21,21 @@ public class HomePageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<VideoDTO> videoList = new VideoService().findAll();
+        String searchVideo = (String) req.getParameter("search");
+
+
+        List<VideoDTO> videoList = null;
+
+        VideoService videoService = new VideoService();
+
+        if(!ValidationUtil.isNullOrBlank(searchVideo)) {
+            videoList = videoService.findByTitleLike(searchVideo);
+        } else {
+            videoList = videoService.findAll();
+        }
 
         req.setAttribute("videoList", videoList);
-
+        req.setAttribute("search", searchVideo);
         req.getRequestDispatcher("/WEB-INF/jsp/homepage.jsp").forward(req, resp);
     }
 }

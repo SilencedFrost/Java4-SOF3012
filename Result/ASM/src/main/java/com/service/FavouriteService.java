@@ -51,8 +51,8 @@ public class FavouriteService implements Service<FavouriteDTO, Long>{
     }
 
     // Manual creation method
-    public boolean create(Long favouriteId, String userId, String videoId, Date likeDate) {
-        return create(new FavouriteDTO(favouriteId, userId, videoId, likeDate));
+    public boolean create(Long favouriteId, String userId, String videoId, Date favouriteDate) {
+        return create(new FavouriteDTO(favouriteId, userId, videoId, favouriteDate));
     }
 
     // Object creation method
@@ -87,8 +87,8 @@ public class FavouriteService implements Service<FavouriteDTO, Long>{
         }
     }
 
-    public boolean update(Long favouriteId, String userId, String videoId, Date likeDate) {
-        return update(new FavouriteDTO(favouriteId, userId, videoId, likeDate));
+    public boolean update(Long favouriteId, String userId, String videoId, Date favouriteDate) {
+        return update(new FavouriteDTO(favouriteId, userId, videoId, favouriteDate));
     }
 
     // Object update method
@@ -105,7 +105,7 @@ public class FavouriteService implements Service<FavouriteDTO, Long>{
                 Favourite existingFavourite = em.find(Favourite.class, favouriteDTO.getFavouriteId());
                 if (existingFavourite != null) {
                     tx.begin();
-                    if (favouriteDTO.getLikeDate() != null) existingFavourite.setLikeDate(favouriteDTO.getLikeDate());
+                    if (favouriteDTO.getFavouriteDate() != null) existingFavourite.setFavouriteDate(favouriteDTO.getFavouriteDate());
 
                     User user = em.find(User.class, favouriteDTO.getUserId());
                     if(user != null) user.addFavourite(existingFavourite);

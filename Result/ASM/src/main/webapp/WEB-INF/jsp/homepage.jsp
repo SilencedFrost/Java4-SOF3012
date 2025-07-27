@@ -13,7 +13,9 @@
 <body class="container-fluid p-0">
     <%@ include file="components/navbar.jsp" %>
     <div class="container-fluid p-3">
-        <div class="row g-2">
+        <%@ include file="components/searchbar.jsp" %>
+        <hr class="py-2">
+        <div class="row g-2 p-0">
             <c:forEach var="video" items="${videoList}">
                 <%@ include file="components/videoElement.jsp" %>
             </c:forEach>

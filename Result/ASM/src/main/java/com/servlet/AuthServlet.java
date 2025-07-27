@@ -22,8 +22,12 @@ public class AuthServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
         HttpSession session = req.getSession(false);
-        if ("/logout".equals(req.getServletPath()) && session != null) { session.invalidate(); resp.sendRedirect("/login"); return;}
+        if ("/logout".equals(req.getServletPath()) && session != null) { session.invalidate(); resp.sendRedirect("/home"); return;}
         session = req.getSession();
+
+        String targetUrl = (String) session.getAttribute("targetUrl");
+        session.removeAttribute("targetUrl");
+        req.setAttribute("targetUrl", targetUrl);
 
         String csrfToken = UUID.randomUUID().toString();
         session.setAttribute("csrfToken", csrfToken);
@@ -50,6 +54,8 @@ public class AuthServlet extends HttpServlet {
             resp.sendRedirect("/login");
             return;
         }
+
+        String targetUrl = req.getParameter("targetUrl");
 
         String formToken = req.getParameter("csrfToken");
         String sessionToken = (String) session.getAttribute("csrfToken");
@@ -80,8 +86,7 @@ public class AuthServlet extends HttpServlet {
             UserDTO userDTO = new UserService().findByIdOrEmail(userIdOrEmail);
             if(userDTO != null && PasswordHasher.verify(password, userDTO.getPasswordHash())) {
                 session.setAttribute("user", userDTO);
-                String targetUrl = (String) session.getAttribute("targetUrl");
-                session.removeAttribute("targetUrl");
+
                 if(!ValidationUtil.isNullOrBlank(targetUrl)){
                     resp.sendRedirect(targetUrl);
                 } else {
@@ -93,6 +98,7 @@ public class AuthServlet extends HttpServlet {
                 session.setAttribute("loginError", "User or password does not match.");
             }
         }
+        session.setAttribute("targetUrl", targetUrl);
         resp.sendRedirect("/login");
     }
 }

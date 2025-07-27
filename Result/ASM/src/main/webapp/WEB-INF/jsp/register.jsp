@@ -11,8 +11,10 @@
 
     <body class="container-fluid p-0">
         <div class="d-flex justify-content-center align-items-center vh-100">
+            <a class="text-secondary text-decoration-none position-absolute top-0 start-0 m-2" href="/home"><h3>Home</h3></a>
             <div class="card p-3 shadow-sm" style="width: 300px;">
                 <h3 class="text-center">Register</h3>
+                <hr>
                 <%@ include file="components/form.jsp" %>
             </div>
         </div>

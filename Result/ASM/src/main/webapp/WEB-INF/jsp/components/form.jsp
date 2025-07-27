@@ -14,16 +14,50 @@
                     </div>
                 </div>
             </c:when>
+
             <c:when test="${field.fieldType == 'combobox'}">
                 <div class="mb-3">
                     <label for="${field.propertyKey}" class="form-label">${field.label}</label>
                     <select class="form-select shadow-sm" id="${field.propertyKey}" name="${field.propertyKey}">
-                        <c:forEach var="option" items="${field.CBoxData}" varStatus="status">
+                        <c:forEach var="option" items="${field.selectionData}" varStatus="status">
                             <option value="${option}" ${(empty requestScope[field.propertyKey] && status.first) || requestScope[field.propertyKey] == option ? 'selected' : ''}>
                                 ${option}
                             </option>
                         </c:forEach>
                     </select>
+                    <div id="${field.errorKey}" class="form-text ps-2 text-danger ${empty requestScope[field.errorKey] ? 'd-none' : ''}">
+                        ${requestScope[field.errorKey]}
+                    </div>
+                </div>
+            </c:when>
+
+            <c:when test="${field.fieldType == 'radio'}">
+                <div class="mb-3">
+                    <label class="form-label">${field.label}</label>
+                    <c:forEach var="option" items="${field.selectionData}" varStatus="status">
+                        <div class="form-check">
+                            <input class="form-check-input shadow-sm" type="radio" 
+                                id="${field.propertyKey}_${status.index}" 
+                                name="${field.propertyKey}" 
+                                value="${option}"
+                                ${requestScope[field.propertyKey] == option ? 'checked' : ''}>
+                            <label class="form-check-label" for="${field.propertyKey}_${status.index}">
+                                ${option}
+                            </label>
+                        </div>
+                    </c:forEach>
+                    <div id="${field.errorKey}" class="form-text ps-2 text-danger ${empty requestScope[field.errorKey] ? 'd-none' : ''}">
+                        ${requestScope[field.errorKey]}
+                    </div>
+                </div>
+            </c:when>
+
+            <c:when test="${field.fieldType == 'textarea'}">
+                <div class="mb-3">
+                    <label for="${field.propertyKey}" class="form-label">${field.label}</label>
+                    <textarea class="form-control shadow-sm"
+                            id="${field.propertyKey}" name="${field.propertyKey}"
+                            placeholder="Enter ${field.label.toLowerCase()}">${requestScope[field.propertyKey]}</textarea>
                     <div id="${field.errorKey}" class="form-text ps-2 text-danger ${empty requestScope[field.errorKey] ? 'd-none' : ''}">
                         ${requestScope[field.errorKey]}
                     </div>

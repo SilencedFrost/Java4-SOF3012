@@ -29,5 +29,5 @@ public class Favourite {
 	private Video video;
 
 	@Column(name = "LikeDate")
-	private Date likeDate;
+	private Date favouriteDate;
 	}

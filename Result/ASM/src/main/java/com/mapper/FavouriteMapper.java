@@ -18,7 +18,7 @@ public class FavouriteMapper {
                 favourite.getFavouriteId(),
                 favourite.getUser().getUserId(),
                 favourite.getVideo().getVideoId(),
-                favourite.getLikeDate()
+                favourite.getFavouriteDate()
         );
     }
 
@@ -31,7 +31,7 @@ public class FavouriteMapper {
                 favouriteDTO.getFavouriteId(),
                 user,
                 video,
-                favouriteDTO.getLikeDate()
+                favouriteDTO.getFavouriteDate()
         );
     }
 

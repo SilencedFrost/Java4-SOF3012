@@ -15,5 +15,5 @@ public class FavouriteDTO {
     private Long favouriteId;
     private String userId;
     private String videoId;
-    private Date likeDate;
+    private Date favouriteDate;
 }

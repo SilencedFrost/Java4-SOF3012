@@ -1,5 +1,6 @@
 package com.filter;
 
+import com.dto.UserDTO;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,12 +25,20 @@ public class AuthFilter implements Filter {
         if(path.equals("/")) {resp.sendRedirect("/home"); return;}
 
         HttpSession session = req.getSession(false);
-        boolean loggedIn = session != null && session.getAttribute("user") != null;
+        UserDTO userDTO = null;
+        if(session!= null) {
+            userDTO = (UserDTO) session.getAttribute("user");
+        }
+        boolean loggedIn = userDTO != null;
 
         if(loggedIn) {
+            if(path.startsWith("/admin") && userDTO.getRoleName().equals("User")) {
+                resp.sendRedirect("/home");
+                return;
+            }
             chain.doFilter(request, response);
         } else {
-            if(!path.equals("/logout")) req.getSession().setAttribute("targetUrl", path);
+            if(!path.equals("/logout") && !path.equals("/login")) req.getSession().setAttribute("targetUrl", path);
             resp.sendRedirect(req.getContextPath() + "/login");
         }
     }

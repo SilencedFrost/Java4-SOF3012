@@ -11,9 +11,12 @@
 
     <body class="container-fluid p-0">
         <div class="d-flex justify-content-center align-items-center vh-100">
+            <a class="text-secondary text-decoration-none position-absolute top-0 start-0 m-2" href="/home"><h3>Home</h3></a>
             <div class="card p-3 shadow-sm" style="width: 300px;">
                 <h3 class="text-center">Login</h3>
+                <hr>
                 <form action="" method="post">
+                <input type="hidden" name="targetUrl" value="${targetUrl}" />
                     <input type="hidden" name="csrfToken" value="${csrfToken}" />
                     <div class="mb-3">
                         <label for="idOrEmail" class="form-label">User ID or Email</label>
@@ -29,6 +32,7 @@
                         <div id="passwordError" class="form-text ps-2 text-danger ${empty requestScope['passwordError'] ? 'd-none' : ''}">
                             ${passwordError}
                         </div>
+                        <a class="w-100 small" href="/forgotpassword">Forgot Password?</a>
                     </div>
 
                     <div id="loginError" class="form-text ps-2 text-danger ${empty requestScope['loginError'] ? 'd-none' : ''}">

@@ -81,6 +81,15 @@ public class ServletUtil {
         setTableData(req, dataList, enumClass.getEnumConstants());
     }
 
+    public static <D> void setTableData(HttpServletRequest req, int index, List<D> dataList, Automatable... fields) {
+        req.setAttribute("tableFields" + String.valueOf(index), fields);
+        req.setAttribute("dataList"  + String.valueOf(index), dataList);
+    }
+
+    public static <T extends Enum<T> & Automatable, D> void setTableData(HttpServletRequest req, int index,  List<D> dataList, Class<T> enumClass) {
+        setTableData(req, index, dataList, enumClass.getEnumConstants());
+    }
+
     public static void populateButtons(HttpServletRequest req, Buttons... buttons) {
         req.setAttribute("buttons", buttons);
     }

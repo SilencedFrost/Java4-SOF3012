@@ -19,5 +19,5 @@ public enum UserFormFields implements Automatable {
     private final String fieldType;
     private final UserValidationError requiredError;
     private final UserValidationError formatError;
-    private final List<String> cBoxData;
+    private final List<String> selectionData;
 }

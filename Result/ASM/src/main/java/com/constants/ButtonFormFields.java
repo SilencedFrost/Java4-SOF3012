@@ -11,7 +11,8 @@ public enum ButtonFormFields implements Buttons{
     DELETE("delete", "Delete", "danger"),
     RESET("reset", "Reset", "secondary"),
     LOGIN("login", "Login", "primary"),
-    REGISTER("register", "Register", "primary");
+    REGISTER("register", "Register", "primary"),
+    SUBMIT("submit", "Submit", "primary");
 
     private final String propertyKey;
     private final String label;

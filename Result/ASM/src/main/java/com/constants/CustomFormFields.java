@@ -13,5 +13,5 @@ public class CustomFormFields implements Automatable{
     private final String propertyKey;
     private final String label;
     private final String fieldType;
-    private final List<String> cBoxData;
+    private final List<String> selectionData;
 }

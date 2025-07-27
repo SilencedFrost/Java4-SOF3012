@@ -50,7 +50,7 @@ public class VideoService implements Service<VideoDTO, String>{
         }
     }
 
-    public List<VideoDTO> findByTitleLike (String partialTitle) {
+    public List<VideoDTO> findByTitleLike(String partialTitle) {
         if (partialTitle == null) return null;
 
         List<Video> videoList;
@@ -94,15 +94,9 @@ public class VideoService implements Service<VideoDTO, String>{
             throw new IllegalArgumentException("Partial ID cannot be null or empty");
         }
 
-        List<Video> videoList = null;
+        List<Video> videoList;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
-            videoList = em.createQuery(
-                            "SELECT u FROM Video u WHERE u.videoId LIKE :partialId",
-                            Video.class
-                    )
-                    .setParameter("partialId", "%" + partialId + "%")
-                    .getResultList();
-
+            videoList = em.createQuery("SELECT u FROM Video u WHERE u.videoId LIKE :partialId", Video.class).setParameter("partialId", "%" + partialId + "%").getResultList();
             logger.info("Found " + videoList.size() + " videos with ID containing: " + partialId);
             return VideoMapper.toDTOList(videoList);
         } catch (PersistenceException e) {
@@ -123,6 +117,18 @@ public class VideoService implements Service<VideoDTO, String>{
         return dateList;
     }
 
+    public List<Date> findAllFavouriteDates(String videoId) {
+        if(ValidationUtil.isNullOrBlank(videoId)) return null;
+
+        List<Date> dateList = null;
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
+            dateList = em.createQuery("SELECT f.favouriteDate FROM Favourite f WHERE f.video.videoId = :videoId", Date.class).setParameter("videoId", videoId).getResultList();
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Error fetching videos", e);
+        }
+        return dateList;
+    }
+
     public Integer findShareCount(String videoId) {
         if (ValidationUtil.isNullOrBlank(videoId)) return null;
 
@@ -135,16 +141,16 @@ public class VideoService implements Service<VideoDTO, String>{
         return shareCount;
     }
 
-    public Integer findLikeCount(String videoId) {
+    public Integer findFavouriteCount(String videoId) {
         if (ValidationUtil.isNullOrBlank(videoId)) return null;
 
-        Integer likeCount = null;
+        Integer favouriteCount = null;
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
-            likeCount = ((Number) em.createQuery("SELECT COUNT(l) FROM Like l WHERE l.video.videoId = :videoId").setParameter("videoId", videoId).getSingleResult()).intValue();
+            favouriteCount = ((Number) em.createQuery("SELECT COUNT(f) FROM Favourite f WHERE f.video.videoId = :videoId").setParameter("videoId", videoId).getSingleResult()).intValue();
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error fetching videos", e);
         }
-        return likeCount;
+        return favouriteCount;
     }
 
 

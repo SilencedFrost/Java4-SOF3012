@@ -32,7 +32,7 @@ public class ShareMapper {
                 shareDTO.getShareId(),
                 user,
                 video,
-                shareDTO.getEmail(),
+                shareDTO.getReceiveEmail(),
                 shareDTO.getShareDate()
         );
     }

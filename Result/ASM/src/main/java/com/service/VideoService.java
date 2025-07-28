@@ -50,13 +50,37 @@ public class VideoService implements Service<VideoDTO, String>{
         }
     }
 
+    public boolean incrementView(String videoId) {
+        if(ValidationUtil.isNullOrBlank(videoId)) return false;
+
+        try(EntityManager em = EntityManagerUtil.getEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                Video video = em.find(Video.class, videoId);
+                if (video == null) {
+                    logger.log(Level.SEVERE, "Video not found");
+                    return false;
+                }
+                tx.begin();
+                video.setViews(video.getViews() + 1);
+                tx.commit();
+                return true;
+            } catch (PersistenceException e) {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+                logger.log(Level.SEVERE, "Error finding video by ID", e);
+                return false;
+            }
+        }
+    }
+
     public List<VideoDTO> findByTitleLike(String partialTitle) {
         if (partialTitle == null) return null;
 
         List<Video> videoList;
         try(EntityManager em = EntityManagerUtil.getEntityManager()){
             videoList = em.createQuery("SELECT v FROM Video v WHERE v.title LIKE :partialTitle", Video.class).setParameter("partialTitle", "%" + partialTitle.toLowerCase() + "%").getResultList();
-            logger.info(videoList.toString());
             return VideoMapper.toDTOList(videoList);
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Could not fetch Videos", e);

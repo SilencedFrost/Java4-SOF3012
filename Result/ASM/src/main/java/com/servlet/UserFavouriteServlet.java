@@ -15,10 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 @WebServlet (
@@ -29,18 +26,19 @@ public class UserFavouriteServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String searchVideo = (String) req.getParameter("search");
-        if(searchVideo == null) searchVideo = "";
-
-        List<Map<String, String>> dataList = new ArrayList<>();
-
         HttpSession session = req.getSession(false);
         if(session == null) {resp.sendRedirect("/login"); return;}
 
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
         if(userDTO == null) {resp.sendRedirect("/login"); return;}
 
+        String searchVideo = req.getParameter("search");
+        if(searchVideo == null) searchVideo = "";
+
         List<VideoDTO> videoList = new UserService().findFavouritedVideos(userDTO);
+        List<Map<String, String>> dataList = new ArrayList<>();
+
+        videoList.sort(Comparator.comparingLong(VideoDTO::getViews).reversed());
 
         for(VideoDTO videoDTO : videoList) {
             if(videoDTO.getActive() && videoDTO.getTitle().contains(searchVideo)){
@@ -50,6 +48,7 @@ public class UserFavouriteServlet extends HttpServlet {
                 dataMap.put(VideoFormFields.VIDEO_ID.getPropertyKey(), videoDTO.getVideoId());
                 dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
                 dataMap.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getPoster());
+                dataMap.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
 
                 dataList.add(dataMap);
             }

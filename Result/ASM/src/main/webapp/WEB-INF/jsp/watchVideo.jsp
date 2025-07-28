@@ -13,18 +13,17 @@
         <%@ include file="components/navbar.jsp" %>
         <div class="container-fluid p-3">
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-7 col-xl-8">
                     <%@ include file="components/videoMaximized.jsp" %>
                 </div>
-                <div class="col-lg-4">
-                    <c:forEach var="i" begin="1" end="16">
+                <div class="col-lg-5 col-xl-4">
+                    <c:forEach var="video" items="${dataList}">
                         <%@ include file="components/videoMinimized.jsp" %>
                     </c:forEach>
                 </div>
             </div>
         </div>
         <%@ include file="components/shareModal.jsp" %>
-
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

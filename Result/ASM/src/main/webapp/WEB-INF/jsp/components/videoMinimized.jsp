@@ -1,8 +1,16 @@
 <div class="row p-1">
     <div class="col-lg-5">
-        <img class="rounded-2 w-100" src="/assets/images/youtube-thumbnail-template-desig.jpg" alt="">
+        <a href="/video/watch?id=${video.videoId}">
+            <img src="/assets/images/${video.poster}" alt="Video Thumbnail" class="img-fluid rounded-2" />
+        </a>
     </div>
-    <div class="col-lg-7">
-        <h6 class="mt-2">Video title</h6>
+    <div class="col-lg-7 d-lg d-none d-lg-block">
+        <h6 class="mt-2">${video.title}</h6>
+        <small>Views: ${video.views}</small>
     </div>
+    <div class="d-block d-lg-none">
+        <h4 class="mt-2">${video.title}</h4>
+        <small>Views: ${video.views}</small>
+    </div>
+    
 </div>

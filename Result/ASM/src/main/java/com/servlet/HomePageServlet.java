@@ -17,10 +17,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 @WebServlet (
@@ -31,10 +28,18 @@ public class HomePageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String searchVideo = (String) req.getParameter("search");
+        HttpSession session = req.getSession();
 
-        List<Map<String, String>> dataList = new ArrayList<>();
+        List<VideoDTO> favouritedVideos = List.of();
+
+        UserDTO userDTO = (UserDTO) session.getAttribute("user");
+        if(userDTO != null) favouritedVideos = new UserService().findFavouritedVideos(userDTO);
+
+        String searchVideo = req.getParameter("search");
+        if(searchVideo == null) searchVideo = "";
+
         List<VideoDTO> videoList;
+        List<Map<String, String>> dataList = new ArrayList<>();
 
         VideoService videoService = new VideoService();
 
@@ -44,11 +49,7 @@ public class HomePageServlet extends HttpServlet {
             videoList = videoService.findAll();
         }
 
-        HttpSession session = req.getSession(false);
-        UserDTO userDTO = null;
-        List<VideoDTO> favouritedVideos = List.of();
-        if(session != null) userDTO = (UserDTO) session.getAttribute("user");
-        if(userDTO != null) favouritedVideos = new UserService().findFavouritedVideos(userDTO);
+        videoList.sort(Comparator.comparingLong(VideoDTO::getViews).reversed());
 
         for(VideoDTO videoDTO : videoList) {
             if(videoDTO.getActive()){
@@ -57,9 +58,11 @@ public class HomePageServlet extends HttpServlet {
                 for(VideoDTO favouritedVideo : favouritedVideos) {
                     if(favouritedVideo.getVideoId().equals(videoDTO.getVideoId())) dataMap.put("isFavourited", "favourited");
                 }
+
                 dataMap.put(VideoFormFields.VIDEO_ID.getPropertyKey(), videoDTO.getVideoId());
                 dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
                 dataMap.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getPoster());
+                dataMap.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
 
                 dataList.add(dataMap);
             }

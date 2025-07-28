@@ -5,6 +5,7 @@ import com.dto.UserDTO;
 import com.dto.VideoDTO;
 import com.entity.Favourite;
 import com.service.FavouriteService;
+import com.service.ShareService;
 import com.service.UserService;
 import com.service.VideoService;
 import com.util.ValidationUtil;
@@ -77,21 +78,25 @@ public class HomePageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String favourite = req.getParameter("favourite");
         String unfavourite = req.getParameter("unfavourite");
+        String share = req.getParameter("share");
+        String email = req.getParameter("email");
 
         HttpSession session = req.getSession(false);
         if(session == null) {resp.sendRedirect("/home"); return;}
 
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
 
-        if((!ValidationUtil.isNullOrBlank(favourite) || !ValidationUtil.isNullOrBlank(unfavourite)) && userDTO == null) {
+        if((!ValidationUtil.isNullOrBlank(favourite) || !ValidationUtil.isNullOrBlank(unfavourite) || !ValidationUtil.isNullOrBlank(share)) && userDTO == null) {
             resp.sendRedirect("/login");
             return;
         }
 
         if(!ValidationUtil.isNullOrBlank(favourite)){
             new FavouriteService().create(userDTO.getUserId(), favourite);
-        } else if (!ValidationUtil.isNullOrBlank(unfavourite)) {
+        } else if(!ValidationUtil.isNullOrBlank(unfavourite)) {
             new FavouriteService().delete(userDTO.getUserId(), unfavourite);
+        } else if(!ValidationUtil.isNullOrBlank(share) && ValidationUtil.isValidEmail(email)) {
+            new ShareService().create(userDTO.getUserId(), share, email);
         }
 
         resp.sendRedirect("/home");

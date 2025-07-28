@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 )
 public class adminReportServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(adminReportServlet.class.getName());
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

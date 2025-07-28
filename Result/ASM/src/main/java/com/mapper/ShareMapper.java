@@ -18,7 +18,7 @@ public class ShareMapper {
                 share.getShareId(),
                 share.getUser().getUserId(),
                 share.getVideo().getVideoId(),
-                share.getEmail(),
+                share.getReceiveEmail(),
                 share.getShareDate()
         );
     }
@@ -29,7 +29,6 @@ public class ShareMapper {
         }
 
         return new Share(
-                shareDTO.getShareId(),
                 user,
                 video,
                 shareDTO.getReceiveEmail(),

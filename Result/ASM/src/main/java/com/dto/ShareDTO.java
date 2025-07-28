@@ -9,12 +9,19 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ShareDTO {
     private Long shareId;
     private String userId;
     private String videoId;
     private String receiveEmail;
     private LocalDate shareDate;
+
+    public ShareDTO(String userId, String videoId, String receiveEmail) {
+        this.userId = userId;
+        this.videoId = videoId;
+        this.receiveEmail = receiveEmail;
+        this.shareDate = LocalDate.now();
+    }
 }

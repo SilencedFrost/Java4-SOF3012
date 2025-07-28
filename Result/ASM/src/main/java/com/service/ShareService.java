@@ -52,8 +52,8 @@ public class ShareService implements Service<ShareDTO, Long>{
     }
 
     // Manual creation method
-    public boolean create(Long shareId, String userId, String videoId, String email, LocalDate shareDate) {
-        return create(new ShareDTO(shareId, userId, videoId, email, shareDate));
+    public boolean create(String userId, String videoId, String email) {
+        return create(new ShareDTO(userId, videoId, email));
     }
 
     // Object creation method
@@ -65,9 +65,13 @@ public class ShareService implements Service<ShareDTO, Long>{
 
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             User user = em.find(User.class, shareDTO.getUserId());
-            Video video = em.find(Video.class, shareDTO.getUserId());
-            if(user == null || video == null){
-                logger.warning("user or video not found");
+            Video video = em.find(Video.class, shareDTO.getVideoId());
+            if(user == null) {
+                logger.warning("user " + shareDTO.getUserId() + " not found");
+                return false;
+            }
+            if(video == null) {
+                logger.warning("video " + shareDTO.getVideoId() + " not found");
                 return false;
             }
             Share share = ShareMapper.toEntity(shareDTO, user, video);
@@ -106,7 +110,7 @@ public class ShareService implements Service<ShareDTO, Long>{
                 Share existingShare = em.find(Share.class, shareDTO.getShareId());
                 if (existingShare != null) {
                     tx.begin();
-                    if(!ValidationUtil.isNullOrBlank(shareDTO.getReceiveEmail())) existingShare.setEmail(shareDTO.getReceiveEmail());
+                    if(!ValidationUtil.isNullOrBlank(shareDTO.getReceiveEmail())) existingShare.setReceiveEmail(shareDTO.getReceiveEmail());
                     if(shareDTO.getShareDate() != null) existingShare.setShareDate(shareDTO.getShareDate());
 
                     User user = em.find(User.class, shareDTO.getUserId());

@@ -11,7 +11,7 @@ import jakarta.persistence.PersistenceException;
 import jdk.jshell.PersistentSnippet;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -129,24 +129,24 @@ public class VideoService implements Service<VideoDTO, String>{
         }
     }
 
-    public List<Date> findAllShareDates(String videoId) {
+    public List<LocalDate> findAllShareDates(String videoId) {
         if(ValidationUtil.isNullOrBlank(videoId)) return null;
 
-        List<Date> dateList = null;
+        List<LocalDate> dateList = null;
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
-            dateList = em.createQuery("SELECT s.shareDate FROM Share s WHERE s.video.videoId = :videoId", Date.class).setParameter("videoId", videoId).getResultList();
+            dateList = em.createQuery("SELECT s.shareDate FROM Share s WHERE s.video.videoId = :videoId", LocalDate.class).setParameter("videoId", videoId).getResultList();
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error fetching videos", e);
         }
         return dateList;
     }
 
-    public List<Date> findAllFavouriteDates(String videoId) {
+    public List<LocalDate> findAllFavouriteDates(String videoId) {
         if(ValidationUtil.isNullOrBlank(videoId)) return null;
 
-        List<Date> dateList = null;
+        List<LocalDate> dateList = null;
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
-            dateList = em.createQuery("SELECT f.favouriteDate FROM Favourite f WHERE f.video.videoId = :videoId", Date.class).setParameter("videoId", videoId).getResultList();
+            dateList = em.createQuery("SELECT f.favouriteDate FROM Favourite f WHERE f.video.videoId = :videoId", LocalDate.class).setParameter("videoId", videoId).getResultList();
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error fetching videos", e);
         }

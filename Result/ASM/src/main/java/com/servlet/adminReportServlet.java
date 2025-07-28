@@ -17,7 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -26,7 +27,7 @@ import java.util.logging.Logger;
 )
 public class adminReportServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(adminReportServlet.class.getName());
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -55,13 +56,13 @@ public class adminReportServlet extends HttpServlet {
             dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
             Integer favourite = new VideoService().findFavouriteCount(videoDTO.getVideoId());
             dataMap.put(favouriteCount.getPropertyKey(), favourite != null ? favourite.toString() : "0");
-            List<Date> dateList = new VideoService().findAllFavouriteDates(videoDTO.getVideoId());
+            List<LocalDate> dateList = new VideoService().findAllFavouriteDates(videoDTO.getVideoId());
             String firstDate = null;
             String lastDate = null;
             if(dateList != null && !dateList.isEmpty()) {
                 Collections.sort(dateList);
-                firstDate = formatter.format(dateList.getFirst());
-                lastDate = formatter.format(dateList.getLast());
+                firstDate = dateList.getFirst().format(formatter);
+                lastDate = dateList.getLast().format(formatter);
             }
             dataMap.put(firstFavouriteDate.getPropertyKey(), firstDate != null ? firstDate : "no data");
             dataMap.put(lastFavouriteDate.getPropertyKey(), lastDate != null ? lastDate : "no data");
@@ -85,7 +86,7 @@ public class adminReportServlet extends HttpServlet {
             UserDTO userDTO = new UserService().findById(favouriteDTO.getUserId());
             dataMap.put(UserFormFields.FULL_NAME.getPropertyKey(), userDTO.getFullName());
             dataMap.put(UserFormFields.EMAIL.getPropertyKey(), userDTO.getEmail());
-            dataMap.put(FavouriteFormFields.FAVOURITE_DATE.getPropertyKey(), formatter.format(favouriteDTO.getFavouriteDate()));
+            dataMap.put(FavouriteFormFields.FAVOURITE_DATE.getPropertyKey(), favouriteDTO.getFavouriteDate().format(formatter));
 
             dataList.add(dataMap);
         }
@@ -107,7 +108,7 @@ public class adminReportServlet extends HttpServlet {
             dataMap.put(UserFormFields.FULL_NAME.getPropertyKey(), userDTO.getFullName());
             dataMap.put(UserFormFields.EMAIL.getPropertyKey(), userDTO.getEmail());
             dataMap.put(ShareFormFields.RECEIVER_EMAIL.getPropertyKey(), shareDTO.getReceiveEmail());
-            dataMap.put(ShareFormFields.SHARE_DATE.getPropertyKey(), formatter.format(shareDTO.getShareDate()));
+            dataMap.put(ShareFormFields.SHARE_DATE.getPropertyKey(), shareDTO.getShareDate().format(formatter));
 
             dataList.add(dataMap);
         }

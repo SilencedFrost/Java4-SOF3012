@@ -1,8 +1,9 @@
 package com.entity;
 
-import java.util.Date;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -27,5 +28,5 @@ public class Share {
     @Column(name = "Emails")
 	private String email;
 	@Column(name = "ShareDate")
-	private Date shareDate;
+	private LocalDate shareDate;
 }

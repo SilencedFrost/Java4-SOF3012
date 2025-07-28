@@ -12,7 +12,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +52,7 @@ public class ShareService implements Service<ShareDTO, Long>{
     }
 
     // Manual creation method
-    public boolean create(Long shareId, String userId, String videoId, String email, Date shareDate) {
+    public boolean create(Long shareId, String userId, String videoId, String email, LocalDate shareDate) {
         return create(new ShareDTO(shareId, userId, videoId, email, shareDate));
     }
 
@@ -88,7 +88,7 @@ public class ShareService implements Service<ShareDTO, Long>{
         }
     }
 
-    public boolean update(Long shareId, String userId, String videoId, String email, Date shareDate) {
+    public boolean update(Long shareId, String userId, String videoId, String email, LocalDate shareDate) {
         return update(new ShareDTO(shareId, userId, videoId, email, shareDate));
     }
 

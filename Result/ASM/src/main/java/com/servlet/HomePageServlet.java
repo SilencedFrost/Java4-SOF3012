@@ -96,6 +96,4 @@ public class HomePageServlet extends HttpServlet {
 
         resp.sendRedirect("/home");
     }
-
-
 }

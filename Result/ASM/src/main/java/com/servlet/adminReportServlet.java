@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
@@ -56,7 +56,7 @@ public class adminReportServlet extends HttpServlet {
             dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
             Integer favourite = new VideoService().findFavouriteCount(videoDTO.getVideoId());
             dataMap.put(favouriteCount.getPropertyKey(), favourite != null ? favourite.toString() : "0");
-            List<LocalDate> dateList = new VideoService().findAllFavouriteDates(videoDTO.getVideoId());
+            List<LocalDateTime> dateList = new VideoService().findAllFavouriteDates(videoDTO.getVideoId());
             String firstDate = null;
             String lastDate = null;
             if(dateList != null && !dateList.isEmpty()) {

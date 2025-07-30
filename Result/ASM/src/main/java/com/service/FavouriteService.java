@@ -12,7 +12,6 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,7 +75,7 @@ public class FavouriteService implements Service<FavouriteDTO, Long>{
                 return false;
             }
 
-            Favourite favourite = FavouriteMapper.toEntity(favouriteDTO, user, video);
+            Favourite favourite = FavouriteMapper.toEntity(user, video);
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
@@ -94,8 +93,8 @@ public class FavouriteService implements Service<FavouriteDTO, Long>{
         }
     }
 
-    public boolean update(Long favouriteId, String userId, String videoId, LocalDate favouriteDate) {
-        return update(new FavouriteDTO(favouriteId, userId, videoId, favouriteDate));
+    public boolean update(Long favouriteId, String userId, String videoId) {
+        return update(new FavouriteDTO(favouriteId, userId, videoId));
     }
 
     // Object update method

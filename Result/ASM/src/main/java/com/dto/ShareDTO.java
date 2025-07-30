@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,12 +16,18 @@ public class ShareDTO {
     private String userId;
     private String videoId;
     private String receiveEmail;
-    private LocalDate shareDate;
+    private LocalDateTime shareDate;
 
     public ShareDTO(String userId, String videoId, String receiveEmail) {
         this.userId = userId;
         this.videoId = videoId;
         this.receiveEmail = receiveEmail;
-        this.shareDate = LocalDate.now();
+    }
+
+    public ShareDTO(Long shareId, String userId, String videoId, String receiveEmail) {
+        this.shareId = shareId;
+        this.userId = userId;
+        this.videoId = videoId;
+        this.receiveEmail = receiveEmail;
     }
 }

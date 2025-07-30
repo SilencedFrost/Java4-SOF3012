@@ -19,7 +19,8 @@ public class UserMapper {
                 user.getPasswordHash(),
                 user.getFullName(),
                 user.getEmail(),
-                user.getRole() != null ? user.getRole().getRoleName() : "null"
+                user.getRole() != null ? user.getRole().getRoleName() : "null",
+                user.getCreationDate()
         );
     }
 

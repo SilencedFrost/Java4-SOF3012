@@ -31,8 +31,7 @@ public class ShareMapper {
         return new Share(
                 user,
                 video,
-                shareDTO.getReceiveEmail(),
-                shareDTO.getShareDate()
+                shareDTO.getReceiveEmail()
         );
     }
 

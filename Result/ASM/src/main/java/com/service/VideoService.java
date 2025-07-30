@@ -10,7 +10,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -128,24 +128,24 @@ public class VideoService implements Service<VideoDTO, String>{
         }
     }
 
-    public List<LocalDate> findAllShareDates(String videoId) {
+    public List<LocalDateTime> findAllShareDates(String videoId) {
         if(ValidationUtil.isNullOrBlank(videoId)) return null;
 
-        List<LocalDate> dateList = null;
+        List<LocalDateTime> dateList = null;
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
-            dateList = em.createQuery("SELECT s.shareDate FROM Share s WHERE s.video.videoId = :videoId", LocalDate.class).setParameter("videoId", videoId).getResultList();
+            dateList = em.createQuery("SELECT s.shareDate FROM Share s WHERE s.video.videoId = :videoId", LocalDateTime.class).setParameter("videoId", videoId).getResultList();
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error fetching videos", e);
         }
         return dateList;
     }
 
-    public List<LocalDate> findAllFavouriteDates(String videoId) {
+    public List<LocalDateTime> findAllFavouriteDates(String videoId) {
         if(ValidationUtil.isNullOrBlank(videoId)) return null;
 
-        List<LocalDate> dateList = null;
+        List<LocalDateTime> dateList = null;
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
-            dateList = em.createQuery("SELECT f.favouriteDate FROM Favourite f WHERE f.video.videoId = :videoId", LocalDate.class).setParameter("videoId", videoId).getResultList();
+            dateList = em.createQuery("SELECT f.favouriteDate FROM Favourite f WHERE f.video.videoId = :videoId", LocalDateTime.class).setParameter("videoId", videoId).getResultList();
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error fetching videos", e);
         }

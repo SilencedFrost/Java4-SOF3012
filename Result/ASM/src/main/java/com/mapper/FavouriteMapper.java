@@ -22,15 +22,10 @@ public class FavouriteMapper {
         );
     }
 
-    public static Favourite toEntity(FavouriteDTO favouriteDTO, User user, Video video) {
-        if (favouriteDTO == null) {
-            return null;
-        }
-
+    public static Favourite toEntity(User user, Video video) {
         return new Favourite(
                 user,
-                video,
-                favouriteDTO.getFavouriteDate()
+                video
         );
     }
 

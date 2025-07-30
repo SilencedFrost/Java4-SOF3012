@@ -12,7 +12,6 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -92,8 +91,8 @@ public class ShareService implements Service<ShareDTO, Long>{
         }
     }
 
-    public boolean update(Long shareId, String userId, String videoId, String email, LocalDate shareDate) {
-        return update(new ShareDTO(shareId, userId, videoId, email, shareDate));
+    public boolean update(Long shareId, String userId, String videoId, String email) {
+        return update(new ShareDTO(shareId, userId, videoId, email));
     }
 
     // Object update method
@@ -111,7 +110,6 @@ public class ShareService implements Service<ShareDTO, Long>{
                 if (existingShare != null) {
                     tx.begin();
                     if(!ValidationUtil.isNullOrBlank(shareDTO.getReceiveEmail())) existingShare.setReceiveEmail(shareDTO.getReceiveEmail());
-                    if(shareDTO.getShareDate() != null) existingShare.setShareDate(shareDTO.getShareDate());
 
                     User user = em.find(User.class, shareDTO.getUserId());
                     if(user != null) user.addShare(existingShare);

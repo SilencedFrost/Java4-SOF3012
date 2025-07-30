@@ -24,10 +24,12 @@ public class RoleMapper {
         if (roleDTO == null) {
             return null;
         }
+        return toEntity(roleDTO.getRoleName());
+    }
 
+    public static Role toEntity(String roleName) {
         return new Role(
-                roleDTO.getRoleId(),
-                roleDTO.getRoleName()
+                roleName
         );
     }
 

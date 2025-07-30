@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,11 +15,16 @@ public class FavouriteDTO {
     private Long favouriteId;
     private String userId;
     private String videoId;
-    private LocalDate favouriteDate;
+    private LocalDateTime favouriteDate;
 
     public FavouriteDTO(String userId, String videoId) {
         this.userId = userId;
         this.videoId = videoId;
-        this.favouriteDate = LocalDate.now();
+    }
+
+    public FavouriteDTO(Long favouriteId, String userId, String videoId) {
+        this.favouriteId = favouriteId;
+        this.userId = userId;
+        this.videoId = videoId;
     }
 }

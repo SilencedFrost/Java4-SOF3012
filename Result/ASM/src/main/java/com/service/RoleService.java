@@ -48,15 +48,22 @@ public class RoleService implements Service<RoleDTO, Integer> {
         }
     }
 
+    public boolean create(String roleName) {
+        return create(new RoleDTO(roleName));
+    }
+
     @Override
     public boolean create(RoleDTO roleDTO) {
-        if (roleDTO == null) {
+        if(roleDTO == null) {
             throw new IllegalArgumentException("Role cannot be null");
+        }
+        if(!ValidationUtil.isNullOrBlank(roleDTO.getRoleName())) {
+            throw new IllegalArgumentException("roleName cannot be null");
         }
 
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             Role role = RoleMapper.toEntity(roleDTO);
-            role.setRoleId(null);
+
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();

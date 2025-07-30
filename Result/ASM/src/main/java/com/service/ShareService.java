@@ -12,6 +12,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +30,7 @@ public class ShareService implements Service<ShareDTO, Long>{
             return ShareMapper.toDTOList(shareList);
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error fetching shares", e);
-            return List.of();
+            return new ArrayList<>();
         }
     }
 
@@ -39,7 +40,7 @@ public class ShareService implements Service<ShareDTO, Long>{
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
 
-        Share share = null;
+        Share share;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             share = em.find(Share.class, shareId);
             logger.info("Share with id " + shareId + (share != null ? " found." : " not found."));

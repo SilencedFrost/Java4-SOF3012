@@ -23,7 +23,7 @@ public class LogService implements Service<LogDTO, Long>{
 
     @Override
     public List<LogDTO> findAll() {
-        List<Log> logList = null;
+        List<Log> logList;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
             logList = em.createQuery("SELECT l FROM Log l", Log.class).getResultList();
             logger.info("Fetched all logs: " + logList.size() + " logs found.");

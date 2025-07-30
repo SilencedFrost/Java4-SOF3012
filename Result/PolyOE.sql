@@ -4,6 +4,12 @@ go
 use PolyOE
 go
 
+create table Visits(
+	VisitId int PRIMARY KEY IDENTITY(1, 1),
+	VisitCount int,
+)
+go
+
 create table Roles(
 	RoleId int PRIMARY KEY IDENTITY(1, 1),
 	RoleName nvarchar(20) UNIQUE not null

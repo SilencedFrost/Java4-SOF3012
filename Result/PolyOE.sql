@@ -6,12 +6,12 @@ go
 
 create table Roles(
 	RoleId int PRIMARY KEY IDENTITY(1, 1),
-	RoleName nvarchar(20) UNIQUE not null,
+	RoleName nvarchar(20) UNIQUE not null
 )
 go
 
 create table Users(
-	UserId nvarchar(20) PRIMARY KEY not null,
+	UserId nvarchar(30) PRIMARY KEY,
 	PasswordHash nvarchar(60) not null,
 	Email nvarchar(50) UNIQUE not null,
 	FullName nvarchar(50) not null,
@@ -21,7 +21,7 @@ create table Users(
 go
 
 create table Video(
-	VideoId nvarchar(20) PRIMARY KEY not null,
+	VideoId nvarchar(20) PRIMARY KEY,
 	Title nvarchar(100) not null,
 	Poster nvarchar(50) not null,
 	Link nvarchar(100) UNIQUE not null,
@@ -33,7 +33,7 @@ go
 
 create table Favourite (
 	FavouriteId bigint PRIMARY KEY IDENTITY(1, 1),
-	UserId nvarchar(20) not null,
+	UserId nvarchar(30) not null,
 	VideoId nvarchar(20) not null,
 	LikeDate Date not null,
 	foreign key (UserId) references Users(UserId),
@@ -43,13 +43,22 @@ create table Favourite (
 go
 
 create table Share (
-	ShareId bigint PRIMARY KEY IDENTITY(1,1) not null,
-	UserId nvarchar(20) not null,
+	ShareId bigint PRIMARY KEY IDENTITY(1,1),
+	UserId nvarchar(30) not null,
 	VideoId nvarchar(20) not null,
 	Emails nvarchar(50),
 	ShareDate Date not null,
 	foreign key (UserId) references Users(UserId),
 	foreign key (VideoId) references Video(VideoId)
+)
+go
+
+create table Logs (
+	LogId bigint PRIMARY KEY IDENTITY(1, 1),
+	Link nvarchar(50),
+	LoginTime Date not null,
+	UserId nvarchar(30),
+	foreign key (UserId) references Users(UserId)
 )
 go
 

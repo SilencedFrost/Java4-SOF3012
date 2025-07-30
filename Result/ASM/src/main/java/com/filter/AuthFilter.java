@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
-// @WebFilter({"/", "/user/*", "/admin/*"})
+@WebFilter({"/", "/user/*", "/admin/*"})
 public class AuthFilter implements Filter {
     Logger logger = Logger.getLogger(AuthFilter.class.getName());
 

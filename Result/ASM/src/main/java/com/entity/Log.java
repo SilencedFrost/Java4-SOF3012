@@ -20,7 +20,7 @@ public class Log {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long LogId;
 
-	@Column(name = "Link", length = 50)
+	@Column(name = "Link", length = 100)
 	private String link;
 
 	@CreationTimestamp

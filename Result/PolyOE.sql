@@ -62,7 +62,7 @@ go
 
 create table Logs (
 	LogId bigint PRIMARY KEY IDENTITY(1, 1),
-	Link nvarchar(50),
+	Link nvarchar(100),
 	LoginTime datetime2(3) not null,
 	UserId nvarchar(30) not null,
 	foreign key (UserId) references Users(UserId)

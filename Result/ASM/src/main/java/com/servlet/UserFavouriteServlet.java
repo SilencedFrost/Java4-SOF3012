@@ -25,11 +25,9 @@ public class UserFavouriteServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
-        if(session == null) {resp.sendRedirect("/login"); return;}
+        HttpSession session = req.getSession();
 
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
-        if(userDTO == null) {resp.sendRedirect("/login"); return;}
 
         String searchVideo = req.getParameter("search");
         if(searchVideo == null) searchVideo = "";
@@ -71,6 +69,7 @@ public class UserFavouriteServlet extends HttpServlet {
             if(userDTO != null) {
                 new FavouriteService().delete(userDTO.getUserId(), unfavourite);
             } else {
+                session.setAttribute("targetUrl", req.getRequestURL().toString() + (req.getQueryString() != null ? "?" + req.getQueryString() : ""));
                 resp.sendRedirect("/login");
                 return;
             }

@@ -38,7 +38,7 @@ public class AuthFilter implements Filter {
             }
             chain.doFilter(request, response);
         } else {
-            if(!path.equals("/logout") && !path.equals("/login")) req.getSession().setAttribute("targetUrl", path);
+            if(!path.equals("/logout") && !path.equals("/login")) req.getSession().setAttribute("targetUrl",req.getRequestURI() + ((req.getQueryString() == null || req.getQueryString().isEmpty()) ? "" : "?" + req.getQueryString()));
             resp.sendRedirect(req.getContextPath() + "/login");
         }
     }

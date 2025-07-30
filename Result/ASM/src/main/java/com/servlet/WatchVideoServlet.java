@@ -107,6 +107,7 @@ public class WatchVideoServlet extends HttpServlet {
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
 
         if((!ValidationUtil.isNullOrBlank(favourite) || !ValidationUtil.isNullOrBlank(unfavourite)) && userDTO == null) {
+            session.setAttribute("targetUrl", req.getRequestURL().toString() + (req.getQueryString() != null ? "?" + req.getQueryString() : ""));
             resp.sendRedirect("/login");
             return;
         }

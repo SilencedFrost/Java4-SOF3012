@@ -2,8 +2,10 @@ package com.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,23 +19,23 @@ public class Share {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long shareId;
 
-	@ManyToOne
-	@JoinColumn(name = "UserId")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "UserId", nullable = false)
 	private User user;
 
-	@ManyToOne
-	@JoinColumn(name = "VideoId")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "VideoId", nullable = false)
 	private Video video;
 
-    @Column(name = "Emails")
+    @Column(name = "Emails", nullable = false, length = 50)
 	private String receiveEmail;
-	@Column(name = "ShareDate")
-	private LocalDate shareDate;
+	@CreationTimestamp
+	@Column(name = "ShareDate", updatable = false, nullable = false)
+	private LocalDateTime shareDate;
 
-	public Share(User user, Video video, String receiveEmail, LocalDate shareDate) {
+	public Share(User user, Video video, String receiveEmail) {
 		this.user = user;
 		this.video = video;
 		this.receiveEmail = receiveEmail;
-		this.shareDate = shareDate;
 	}
 }

@@ -5,7 +5,6 @@ import com.dto.UserDTO;
 import com.dto.VideoDTO;
 import com.service.FavouriteService;
 import com.service.UserService;
-import com.service.VideoService;
 import com.util.ValidationUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -47,7 +46,7 @@ public class UserFavouriteServlet extends HttpServlet {
                 dataMap.put("isFavourited", "favourited");
                 dataMap.put(VideoFormFields.VIDEO_ID.getPropertyKey(), videoDTO.getVideoId());
                 dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
-                dataMap.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getPoster());
+                dataMap.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getThumbnail());
                 dataMap.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
 
                 dataList.add(dataMap);

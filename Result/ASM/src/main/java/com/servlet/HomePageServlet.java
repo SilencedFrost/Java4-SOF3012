@@ -3,7 +3,6 @@ package com.servlet;
 import com.constants.VideoFormFields;
 import com.dto.UserDTO;
 import com.dto.VideoDTO;
-import com.entity.Favourite;
 import com.service.FavouriteService;
 import com.service.ShareService;
 import com.service.UserService;
@@ -17,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -62,7 +60,7 @@ public class HomePageServlet extends HttpServlet {
 
                 dataMap.put(VideoFormFields.VIDEO_ID.getPropertyKey(), videoDTO.getVideoId());
                 dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
-                dataMap.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getPoster());
+                dataMap.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getThumbnail());
                 dataMap.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
 
                 dataList.add(dataMap);

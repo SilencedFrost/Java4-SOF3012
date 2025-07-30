@@ -8,7 +8,6 @@ import com.util.ValidationUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
-import jdk.jshell.PersistentSnippet;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -228,7 +227,7 @@ public class VideoService implements Service<VideoDTO, String>{
                 if (existingVideo != null) {
                     tx.begin();
                     if (videoDTO.getTitle()!= null) existingVideo.setTitle(videoDTO.getTitle());
-                    if (videoDTO.getPoster() != null) existingVideo.setPoster(videoDTO.getPoster());
+                    if (videoDTO.getThumbnail() != null) existingVideo.setThumbnail(videoDTO.getThumbnail());
                     if (videoDTO.getViews() != null) existingVideo.setViews(videoDTO.getViews());
                     if (videoDTO.getActive() != null) existingVideo.setActive(videoDTO.getActive());
                     tx.commit();

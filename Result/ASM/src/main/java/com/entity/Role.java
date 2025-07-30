@@ -18,13 +18,12 @@ public class Role {
     @Column(name = "RoleId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer roleId;
-    @Column(name = "RoleName", unique = true)
+    @Column(name = "RoleName", unique = true, nullable = false, length = 20)
     private String roleName;
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> users;
 
-    public Role(Integer roleId, String roleName) {
-        this.roleId = roleId;
+    public Role(String roleName) {
         this.roleName = roleName;
     }
 

@@ -9,7 +9,6 @@ import com.util.EntityManagerUtil;
 import com.util.ValidationUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
 import lombok.NoArgsConstructor;
 

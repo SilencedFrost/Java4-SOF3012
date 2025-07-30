@@ -2,35 +2,50 @@ package com.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "Users")
 public class User {
-    @Id
-    @Column(name = "UserId")
-    private String userId;
-    @Column(name = "Passwordhash")
-    private String passwordHash;
-    @Column(name = "Fullname")
-    private String fullName;
-    @Column(name = "Email")
-    private String email;
 
-    @ManyToOne
-    @JoinColumn(name="RoleId")
+    @Id
+    @Column(name = "UserId", length = 30)
+    private String userId;
+    @Column(name = "PasswordHash", nullable = false, length = 60)
+    private String passwordHash;
+    @Column(name = "FullName", nullable = false, length = 50)
+    private String fullName;
+    @Column(name = "Email", nullable = false, length = 50)
+    private String email;
+    @CreationTimestamp
+    @Column(name = "CreationDate", updatable = false, nullable = false)
+    private LocalDateTime creationDate;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="RoleId", nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Favourite> favourites  = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Share> shares = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Log> logs = new ArrayList<>();
+
+    public User(String userId, String passwordHash, String fullName, String email, Role role) {
+        this.userId = userId;
+        this.passwordHash = passwordHash;
+        this.fullName = fullName;
+        this.email = email;
+        this.role = role;
+    }
 
     public void addFavourite(Favourite favourite) {
         if (favourite == null) return;
@@ -104,19 +119,41 @@ public class User {
         return this.shares != null ? new ArrayList<>(this.shares) : new ArrayList<>();
     }
 
-    public User(String userId,String passwordHash,String fullName, String email, Role role){
-        this.userId = userId;
-        this.passwordHash = passwordHash;
-        this.fullName = fullName;
-        this.email = email;
+    public void addLog(Log log) {
+        if (log == null) return;
+
+        if (this.logs == null) this.logs = new ArrayList<>();
+
+        User currentUser = log.getUser();
+        if (currentUser != null) {
+            if (this.logs.contains(log)) return;
+            currentUser.removeLog(log);
+        }
+
+        this.logs.add(log);
+        log.setUser(this);
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "user='" + userId + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public void removeLog(Log log) {
+        if (log == null || this.logs == null || this.logs.isEmpty()) return;
+
+        if (this.logs.contains(log)) {
+            this.logs.remove(log);
+            log.setUser(null);
+        }
     }
+
+    public boolean hasLog(Log log) {
+        return log != null && this.logs != null && this.logs.contains(log);
+    }
+
+    public int getLogCount() {
+        return this.logs != null ? this.logs.size() : 0;
+    }
+
+    public List<Log> getLogs() {
+        return this.logs != null ? new ArrayList<>(this.logs) : new ArrayList<>();
+    }
+    
+    
 }

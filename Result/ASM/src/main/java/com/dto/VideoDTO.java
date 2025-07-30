@@ -12,7 +12,7 @@ import lombok.Setter;
 public class VideoDTO {
     private String videoId;
     private String title;
-    private String poster;
+    private String thumbnail;
     private String link;
     private Long views;
     private String description;

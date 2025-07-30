@@ -9,35 +9,35 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "Video")
 public class Video {
 
     @Id
-    @Column(name = "VideoId")
+    @Column(name = "VideoId", length = 20)
     private String videoId;
-    @Column(name = "Title")
+    @Column(name = "Title", nullable = false, length = 100)
     private String title;
-    @Column(name = "Poster")
-    private String poster;
-    @Column(name = "Link")
+    @Column(name = "Thumbnail", nullable = false, length = 50)
+    private String thumbnail;
+    @Column(name = "Link", nullable = false, length = 100)
     private String link;
-    @Column(name = "ViewCount")
-    private Long views;
-    @Column(name = "Descript")
+    @Column(name = "ViewCount", nullable = false)
+    private Long views = 0L;
+    @Column(name = "Descript", nullable = false, length = 500)
     private String description;
-    @Column(name = "Active")
+    @Column(name = "Active", nullable = false)
     private Boolean active;
+
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Favourite> favourites;
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Share> shares;
 
-    public Video(String videoId, String title, String poster, String link, Long views, String description, Boolean active) {
+    public Video(String videoId, String title, String thumbnail, String link, Long views, String description, Boolean active) {
         this.videoId = videoId;
         this.title = title;
-        this.poster = poster;
+        this.thumbnail = thumbnail;
         this.link = link;
         this.views = views;
         this.description = description;

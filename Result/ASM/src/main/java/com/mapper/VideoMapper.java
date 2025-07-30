@@ -14,7 +14,7 @@ public class VideoMapper {
         return new VideoDTO(
                 video.getVideoId(),
                 video.getTitle(),
-                video.getPoster(),
+                video.getThumbnail(),
                 video.getLink(),
                 video.getViews(),
                 video.getDescription(),
@@ -28,7 +28,7 @@ public class VideoMapper {
         return new Video(
                 videoDTO.getVideoId(),
                 videoDTO.getTitle(),
-                videoDTO.getPoster(),
+                videoDTO.getThumbnail(),
                 videoDTO.getLink(),
                 videoDTO.getViews(),
                 videoDTO.getDescription(),

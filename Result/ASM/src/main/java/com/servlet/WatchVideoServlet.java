@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -66,7 +65,7 @@ public class WatchVideoServlet extends HttpServlet {
 
         videoData.put(VideoFormFields.VIDEO_ID.getPropertyKey(), videoDTO.getVideoId());
         videoData.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
-        videoData.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getPoster());
+        videoData.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getThumbnail());
         videoData.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
         videoData.put(VideoFormFields.DESCRIPTION.getPropertyKey(), videoDTO.getDescription());
 
@@ -86,7 +85,7 @@ public class WatchVideoServlet extends HttpServlet {
 
                 dataMap.put(VideoFormFields.VIDEO_ID.getPropertyKey(), video.getVideoId());
                 dataMap.put(VideoFormFields.TITLE.getPropertyKey(), video.getTitle());
-                dataMap.put(VideoFormFields.POSTER.getPropertyKey(), video.getPoster());
+                dataMap.put(VideoFormFields.POSTER.getPropertyKey(), video.getThumbnail());
                 dataMap.put(VideoFormFields.VIEWS.getPropertyKey(), video.getViews().toString());
 
                 dataList.add(dataMap);

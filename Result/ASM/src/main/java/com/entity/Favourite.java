@@ -1,8 +1,10 @@
 package com.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Setter
@@ -16,19 +18,19 @@ public class Favourite {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long favouriteId;
 
-	@ManyToOne
-	@JoinColumn(name = "UserId")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "UserId", nullable = false)
 	private User user;
-	@ManyToOne 
-	@JoinColumn(name = "VideoId")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "VideoId", nullable = false)
 	private Video video;
 
-	@Column(name = "LikeDate")
-	private LocalDate favouriteDate;
+	@CreationTimestamp
+	@Column(name = "FavouriteDate", updatable = false, nullable = false)
+	private LocalDateTime favouriteDate;
 
-	public Favourite(User user, Video video, LocalDate favouriteDate) {
+	public Favourite(User user, Video video) {
 		this.user = user;
 		this.video = video;
-		this.favouriteDate = favouriteDate;
 	}
 }

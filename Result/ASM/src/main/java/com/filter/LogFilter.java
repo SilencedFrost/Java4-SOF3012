@@ -20,12 +20,10 @@ public class LogFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
 
         HttpSession session = req.getSession(false);
-        logger.info("trying to get session");
 
         if(session == null) {chain.doFilter(request, response); return;}
 
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
-        logger.info("trying to get user");
 
         if(userDTO == null) {chain.doFilter(request, response); return;}
 

@@ -1,5 +1,6 @@
 package com.filter;
 
+
 import com.dto.UserDTO;
 import com.service.LogService;
 import jakarta.servlet.*;
@@ -10,18 +11,13 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-public class Filter1 implements Filter {
-    Logger logger = Logger.getLogger(Filter1.class.getName());
+@WebFilter({"/*"})
+public class LogFilter implements Filter {
+    Logger logger = Logger.getLogger(LogFilter.class.getName());
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        logger.info("set encoding");
-
         HttpServletRequest req = (HttpServletRequest) request;
-
-        req.setAttribute("hello", "This is filter 1");
 
         HttpSession session = req.getSession(false);
         logger.info("trying to get session");

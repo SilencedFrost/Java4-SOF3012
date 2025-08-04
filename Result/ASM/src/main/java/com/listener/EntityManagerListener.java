@@ -52,6 +52,7 @@ public class EntityManagerListener implements ServletContextListener, HttpSessio
     public void sessionCreated(HttpSessionEvent se) {
         ServletContext sc = se.getSession().getServletContext();
         Integer visitCount = (Integer) sc.getAttribute("visits");
+        if(visitCount == null) visitCount = 0;
         visitCount++;
         sc.setAttribute("visits", visitCount);
     }

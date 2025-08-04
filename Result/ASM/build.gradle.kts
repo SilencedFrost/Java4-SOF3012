@@ -51,6 +51,9 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    // Jackson
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.19.2")
 }
 
 tasks.test {

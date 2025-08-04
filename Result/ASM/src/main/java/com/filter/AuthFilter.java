@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
-@WebFilter({"/", "/user/*", "/admin/*"})
+@WebFilter({"/", "/user/*", "/admin/*", "/logout"})
 public class AuthFilter implements Filter {
     Logger logger = Logger.getLogger(AuthFilter.class.getName());
 
@@ -22,9 +22,19 @@ public class AuthFilter implements Filter {
 
         String path = req.getServletPath();
 
-        if(path.equals("/")) {resp.sendRedirect("/home"); return;}
+        if(path.equals("/")) {
+            resp.sendRedirect("/home");
+            return;
+        }
 
         HttpSession session = req.getSession(false);
+
+        if(path.equals("/logout") && session != null) {
+            session.invalidate();
+            resp.sendRedirect("/home");
+            return;
+        }
+
         UserDTO userDTO = null;
         if(session!= null) {
             userDTO = (UserDTO) session.getAttribute("user");

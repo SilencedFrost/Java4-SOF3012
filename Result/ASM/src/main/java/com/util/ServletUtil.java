@@ -2,8 +2,13 @@ package com.util;
 
 import com.constants.Automatable;
 import com.constants.Buttons;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +16,7 @@ import java.util.logging.Logger;
 
 public class ServletUtil {
     private static final Logger logger = Logger.getLogger(ServletUtil.class.getName());
-
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static <T extends Enum<T> & Automatable> Map<String, String> getFieldData(HttpServletRequest req, Class<T> enumClass) {
         List<String> fieldNames = Automatable.getAllPropertyKeys(enumClass);
@@ -96,5 +101,33 @@ public class ServletUtil {
 
     public static <T extends Enum<T> & Buttons> void populateButtons(HttpServletRequest req, Class<T> enumClass) {
         populateButtons(req, enumClass.getEnumConstants());
+    }
+
+    public static void sendJsonResp(HttpServletResponse resp, String json, int httpServletResponse) throws IOException {
+        resp.setContentType("application/json");
+        resp.setStatus(httpServletResponse);
+        resp.getWriter().write(json);
+    }
+
+    public static void sendJsonRedirect(HttpServletResponse resp, String redirectUrl) throws IOException {
+        resp.setContentType("application/json");
+        resp.setStatus(HttpServletResponse.SC_OK);
+        String json = String.format("{\"redirect\": \"%s\"}", redirectUrl);
+        resp.getWriter().write(json);
+    }
+
+    public static String readJsonBody(HttpServletRequest request) throws IOException {
+        StringBuilder json = new StringBuilder();
+        try (BufferedReader reader = request.getReader()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                json.append(line);
+            }
+        }
+        return json.toString();
+    }
+
+    public static Map<String, String> readJsonAsMap(HttpServletRequest request) throws IOException {
+        return mapper.readValue(readJsonBody(request), new TypeReference<Map<String, String>>() {});
     }
 }

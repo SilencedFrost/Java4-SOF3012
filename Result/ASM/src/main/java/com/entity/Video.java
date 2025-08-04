@@ -33,7 +33,7 @@ public class Video {
     private List<Favourite> favourites;
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Share> shares;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     public Video(String videoId, String title, String thumbnail, String link, Long views, String description, Boolean active) {

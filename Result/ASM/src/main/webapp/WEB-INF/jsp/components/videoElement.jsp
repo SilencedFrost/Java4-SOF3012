@@ -1,7 +1,7 @@
 <div class="col-lg-3 col-md-4 col-sm-6">
     <div class="card shadow-sm p-2 h-100">
         <a href="/video/watch?id=${video.videoId}">
-            <img src="/assets/images/${video.poster}" alt="Video Thumbnail" class="img-fluid rounded-2" />
+            <img src="/assets/images/video_poster/${video.poster}" alt="Video Thumbnail" class="img-fluid rounded-2" />
         </a>
         <h5 class="mt-2">${video.title}</h5>
         <small class="text-secondary">Views: ${video.views}</small>

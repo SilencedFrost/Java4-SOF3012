@@ -38,6 +38,8 @@ public class User {
     private List<Share> shares = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Log> logs = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public User(String userId, String passwordHash, String fullName, String email, Role role) {
         this.userId = userId;
@@ -154,6 +156,40 @@ public class User {
     public List<Log> getLogs() {
         return this.logs != null ? new ArrayList<>(this.logs) : new ArrayList<>();
     }
-    
-    
+
+    public void addComment(Comment comment) {
+        if (comment == null) return;
+
+        if (this.comments == null) this.comments = new ArrayList<>();
+
+        User currentUser = comment.getUser();
+        if (currentUser != null) {
+            if (this.comments.contains(comment)) return;
+            currentUser.removeComment(comment);
+        }
+
+        this.comments.add(comment);
+        comment.setUser(this);
+    }
+
+    public void removeComment(Comment comment) {
+        if (comment == null || this.comments == null || this.comments.isEmpty()) return;
+
+        if (this.comments.contains(comment)) {
+            this.comments.remove(comment);
+            comment.setUser(null);
+        }
+    }
+
+    public boolean hasComment(Comment comment) {
+        return comment != null && this.comments != null && this.comments.contains(comment);
+    }
+
+    public int getCommentCount() {
+        return this.comments != null ? this.comments.size() : 0;
+    }
+
+    public List<Comment> getComments() {
+        return this.comments != null ? new ArrayList<>(this.comments) : new ArrayList<>();
+    }
 }

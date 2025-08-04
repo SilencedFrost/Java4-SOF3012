@@ -1,7 +1,7 @@
 <div class="row p-1">
     <div class="col-lg-5">
         <a href="/video/watch?id=${video.videoId}">
-            <img src="/assets/images/${video.poster}" alt="Video Thumbnail" class="img-fluid rounded-2" />
+            <img src="/assets/images/video_poster/${video.poster}" alt="Video Thumbnail" class="img-fluid rounded-2" />
         </a>
     </div>
     <div class="col-lg-7 d-lg d-none d-lg-block">

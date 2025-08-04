@@ -15,6 +15,7 @@
         <class>com.entity.Role</class>
         <class>com.entity.Log</class>
         <class>com.entity.Visit</class>
+        <class>com.entity.Comment</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>

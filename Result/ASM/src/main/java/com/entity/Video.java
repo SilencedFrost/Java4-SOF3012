@@ -33,6 +33,8 @@ public class Video {
     private List<Favourite> favourites;
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Share> shares;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public Video(String videoId, String title, String thumbnail, String link, Long views, String description, Boolean active) {
         this.videoId = videoId;
@@ -114,6 +116,42 @@ public class Video {
 
     public List<Share> getShares() {
         return this.shares != null ? new ArrayList<>(this.shares) : new ArrayList<>();
+    }
+
+    public void addComment(Comment comment) {
+        if (comment == null) return;
+
+        if (this.comments == null) this.comments = new ArrayList<>();
+
+        Video currentVideo = comment.getVideo();
+        if (currentVideo != null) {
+            if (this.comments.contains(comment)) return;
+            currentVideo.removeComment(comment);
+        }
+
+        this.comments.add(comment);
+        comment.setVideo(this);
+    }
+
+    public void removeComment(Comment comment) {
+        if (comment == null || this.comments == null || this.comments.isEmpty()) return;
+
+        if (this.comments.contains(comment)) {
+            this.comments.remove(comment);
+            comment.setVideo(null);
+        }
+    }
+
+    public boolean hasComment(Comment comment) {
+        return comment != null && this.comments != null && this.comments.contains(comment);
+    }
+
+    public int getCommentCount() {
+        return this.comments != null ? this.comments.size() : 0;
+    }
+
+    public List<Comment> getComments() {
+        return this.comments != null ? new ArrayList<>(this.comments) : new ArrayList<>();
     }
 }
 

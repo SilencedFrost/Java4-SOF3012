@@ -69,6 +69,17 @@ create table Logs (
 )
 go
 
+create table Comments (
+	CommentId bigint PRIMARY KEY IDENTITY(1,1),
+	UserId nvarchar(30) not null,
+	VideoId nvarchar(20) not null,
+	CommentDate datetime2(3) not null,
+	CommentContent nvarchar(500) not null,
+	foreign key (UserId) references Users(UserId),
+	foreign key (VideoId) references Video(VideoId)
+)
+go
+
 insert into Roles(RoleName) values ('User')
 go
 insert into Roles(RoleName) values ('Employee')
@@ -238,4 +249,88 @@ insert into Share(UserId, VideoId, Emails, ShareDate) values ('SD001', 'HDMTRImk
 insert into Share(UserId, VideoId, Emails, ShareDate) values ('SD003', 'LmGofzJ8d3k', 'engine@physics.edu', '2025-06-02 13:13:13.130');
 insert into Share(UserId, VideoId, Emails, ShareDate) values ('SD002', 'OesCL-yKowU', 'validity@stats.org', '2025-06-20 14:14:14.140');
 insert into Share(UserId, VideoId, Emails, ShareDate) values ('SD004', 'VWS6CNJtldU', 'understanding@mech.com', '2025-07-08 15:15:15.150');
+go
+
+-- Comments from Satisfactory enthusiasts (SD004, SD005, SD006)
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD004', 'x12trt4SMFg', '2024-01-15 10:30:22.345', 'These tips are game-changing! The belt optimization trick alone saved me hours of factory redesign.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD005', 'x12trt4SMFg', '2024-01-20 14:25:33.567', 'Why didnt I think of the manifold approach before? This video is pure gold for factory builders!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD006', 'x12trt4SMFg', '2024-01-25 16:45:15.890', 'Finally someone explains underclocking properly. My power efficiency just went through the roof!')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD004', 'uRjDFtabuVA', '2024-01-16 15:22:45.123', 'The 1.1 update features are incredible! Love how you integrated the new blueprints into your mega factory.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD005', 'uRjDFtabuVA', '2024-01-21 18:30:12.789', 'That modular construction technique is brilliant. Definitely stealing this for my next playthrough!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD006', 'uRjDFtabuVA', '2024-01-26 20:15:44.456', 'The way you handle dimensional depot integration is so clean. My factories always look like spaghetti compared to this.')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD004', 'HDMTRImkHC8', '2024-01-17 12:45:30.234', 'Priority mergers were confusing me until this video. Your explanations are always so clear and practical.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD005', 'HDMTRImkHC8', '2024-01-22 09:20:55.678', 'Belt compressors make so much more sense now! This is going to revolutionize my production lines.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD006', 'HDMTRImkHC8', '2024-01-27 21:30:18.901', 'The math behind the throughput calculations is fascinating. Thanks for showing the theory behind the practice!')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD004', 'BtfCOKa2eNk', '2024-01-18 19:10:25.567', 'Lighting makes such a huge difference! My factory went from industrial to absolutely stunning with these techniques.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD005', 'BtfCOKa2eNk', '2024-01-24 11:45:40.123', 'The ambient lighting setup around the space elevator is gorgeous. Definitely trying this in my world.')
+go
+
+-- Comments from Science/Physics enthusiasts (SD007, SD008, SD009)
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD007', 'qAZ-q3KmDHM', '2024-01-10 12:30:15.234', 'The physics behind vapor chambers is mind-blowing! I never realized how elegant this cooling solution is.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD008', 'qAZ-q3KmDHM', '2024-01-14 14:20:30.456', 'Incredible how such a simple phase change can be so effective. The thermodynamics explanation was perfect!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD009', 'qAZ-q3KmDHM', '2024-01-18 16:45:22.789', 'This is why I love physics - seemingly magical phenomena with beautiful scientific explanations behind them.')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD007', 'Jgmy-796dtc', '2024-01-11 13:40:45.345', 'The chemistry of metallic fires is fascinating! The reaction with water creating hydrogen is particularly dangerous.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD008', 'Jgmy-796dtc', '2024-01-15 15:50:12.678', 'Great demonstration of why you should never use water on metal fires. The safety implications are so important.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD009', 'Jgmy-796dtc', '2024-01-19 18:25:33.901', 'The slow-motion footage of the reaction was incredible. You can actually see the hydrogen igniting!')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD007', 'Mcg9GcilBfU', '2024-01-12 14:15:20.456', 'Catalytic ignition is such an elegant solution! No sparks needed, just the right materials and chemistry.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD008', 'Mcg9GcilBfU', '2024-01-16 16:30:45.789', 'The history behind these lighters is as interesting as the science. Amazing how old technology can be so clever.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD009', 'Mcg9GcilBfU', '2024-01-20 20:10:15.123', 'I love how you explained the platinum catalyst mechanism. Makes me want to study more chemistry!')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD007', 'LmGofzJ8d3k', '2024-01-13 21:20:10.567', 'Physics engines are basically applied mathematics at its finest. The collision detection algorithms are brilliant!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD008', 'LmGofzJ8d3k', '2024-01-17 23:15:55.890', 'The explanation of numerical integration for physics simulation was excellent. Euler vs Verlet methods finally make sense!')
+go
+
+-- Comments from 3D Printing enthusiasts (SD010, SD011)
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD010', 'vRA776CtTw0', '2024-01-05 11:45:30.234', 'These design principles are game-changers! My support material usage has dropped by 60% following these tips.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD011', 'vRA776CtTw0', '2024-01-08 09:30:15.567', 'The overhang angle explanation is perfect. Finally understand why my bridges were failing at certain angles.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD001', 'vRA776CtTw0', '2024-02-09 10:20:22.890', 'Excellent tutorial! The wall thickness guidelines have improved my print strength significantly.')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD010', 'Z8zmoXBMvyA', '2024-01-06 15:30:45.345', 'FreeCAD is underrated! Your workflow demonstrations make parametric design look so accessible.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD011', 'Z8zmoXBMvyA', '2024-01-09 13:15:20.678', 'The constraint-based modeling approach is brilliant for 3D printing. No more accidental dimension changes!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD005', 'Z8zmoXBMvyA', '2024-02-10 14:25:35.901', 'Switching from Fusion 360 to FreeCAD after watching this. The open-source approach is compelling.')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD010', '7MOKjQxbP18', '2024-01-07 19:20:10.456', 'This error has been plaguing my prints! The layer adhesion explanation is spot-on.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD011', '7MOKjQxbP18', '2024-01-10 21:40:55.789', 'Temperature tower testing changed everything for me. Clean prints every time now!')
+go
+
+-- Comments from Engineering enthusiasts (SD012, SD013, SD014)
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD012', 'VWS6CNJtldU', '2024-01-01 02:30:15.123', 'This really opened my eyes to the depth of mechanical engineering. The interdisciplinary connections are fascinating!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD013', 'VWS6CNJtldU', '2024-01-03 04:20:30.456', 'The materials science foundation is crucial. You cant design without understanding the properties deeply.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD014', 'VWS6CNJtldU', '2024-01-05 06:45:45.789', 'Systems thinking is everything in engineering. This video perfectly captures the holistic approach needed.')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD012', 'xHa52v5xNOU', '2024-01-02 03:15:25.234', 'Sheet metal design mistakes are so common! The bend radius guidelines are particularly important.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD013', 'xHa52v5xNOU', '2024-01-04 05:25:40.567', 'Manufacturing constraints drive design more than people realize. Great real-world examples here.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD003', 'xHa52v5xNOU', '2024-02-12 17:30:15.890', 'As a mechanical engineer, I see these mistakes daily. This video should be required viewing!')
+go
+
+-- Additional comments from users on their favorited videos
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD001', 'x12trt4SMFg', '2024-02-01 10:15:30.345', 'Great beginner tips! This helped me understand Satisfactory optimization much better.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD002', 'uRjDFtabuVA', '2024-02-02 11:30:45.678', 'The 1.1 features integration is smooth. Looking forward to trying these techniques!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD003', 'HDMTRImkHC8', '2024-02-03 15:45:20.901', 'Belt compressors were confusing until this explanation. Crystal clear now!')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD001', 'qAZ-q3KmDHM', '2024-02-05 09:20:15.234', 'Physics explanations are always fascinating. The cooling mechanism is ingenious!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD002', 'Jgmy-796dtc', '2024-02-06 11:40:30.567', 'The safety implications of metallic fires are terrifying. Important knowledge for everyone!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD004', 'qAZ-q3KmDHM', '2024-02-08 23:30:50.890', 'Love the intersection of physics and engineering. Vapor chambers are brilliant!')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD009', 'vRA776CtTw0', '2024-02-11 21:45:15.123', '3D printing design principles apply to so many manufacturing processes. Great cross-disciplinary content!')
+go
+
+-- Comments on moderately popular tech videos
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD001', 'oaOxMdKlJTc', '2024-02-13 10:30:20.456', 'GPU programming complexity is both fascinating and terrifying. The parallel processing challenges are immense!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD008', 'oaOxMdKlJTc', '2024-02-14 11:45:35.789', 'The race conditions and memory management issues explain why GPU code is so hard to debug.')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD014', 'oaOxMdKlJTc', '2024-02-15 12:20:50.012', 'As someone who works with CUDA, this video perfectly captures the development challenges we face daily.')
+
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD002', '7W3oWskU8t8', '2024-02-16 13:15:25.345', 'That flashlight is insanely bright! The lumens rating must be off the charts.')
+go
+
+-- Some additional scattered comments from users who didn't favorite but still watched
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD003', 'LmGofzJ8d3k', '2024-02-07 16:20:40.678', 'Physics engines make gaming possible. The computational complexity behind smooth gameplay is amazing!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD007', 'BtfCOKa2eNk', '2024-02-04 22:10:30.901', 'Even though this is about Satisfactory, the lighting principles apply to architectural visualization too!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD011', 'Mcg9GcilBfU', '2024-02-20 08:30:15.234', 'Historical engineering solutions are often more elegant than modern ones. This lighter is proof!')
+insert into Comments(UserId, VideoId, CommentDate, CommentContent) values ('SD013', '7MOKjQxbP18', '2024-02-25 14:45:20.567', 'Quality control in 3D printing has engineering principles that apply to traditional manufacturing too.')
 go

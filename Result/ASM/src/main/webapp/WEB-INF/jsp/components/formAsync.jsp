@@ -88,60 +88,87 @@
         e.preventDefault();
 
         const form = e.target;
-
-        const data = {};
-        <c:forEach var="field" items="${resolvedFieldStructure}">
-            <c:if test="${field.fieldType != 'link'}">
-                data["${field.propertyKey}"] = form.${field.propertyKey}.value;
-            </c:if>
-        </c:forEach>
-
-        const response = await fetch(form.getAttribute('action'), {
-            method: form.method,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(data)
+        const buttons = form.querySelectorAll('button');
+        
+        // Store original button states and disable them
+        const originalStates = [];
+        buttons.forEach((btn, index) => {
+            originalStates[index] = {
+                disabled: btn.disabled,
+                innerHTML: btn.innerHTML
+            };
+            btn.disabled = true;
+            if (btn.type === 'submit') {
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+            }
         });
 
-        const contentType = response.headers.get('content-type');
+        try {
+            const data = {};
+            <c:forEach var="field" items="${resolvedFieldStructure}">
+                <c:if test="${field.fieldType != 'link'}">
+                    data["${field.propertyKey}"] = form.${field.propertyKey}.value;
+                </c:if>
+            </c:forEach>
+            data["csrfToken"] = form.csrfToken.value;
 
-        if (contentType && contentType.includes('application/json')) {
-            const result = await response.json();
-            switch (response.status) {
-                case 200:
-                    if (result.redirect) {
-                        window.location.href = result.redirect;
-                    } else {
-                        console.log("Logged in, but no redirect specified.");
-                    }
-                    break;
-                case 400:
-                    clearAllErrors();
-                    for (const [field, message] of Object.entries(result.errors)) {
-                        showFieldError(field, message);
-                    }
-                    if (result.csrfToken) {
-                        form.csrfToken.value = result.csrfToken;
-                    }
-                    break;
-                case 401:
-                    process401();
-                    if (result.csrfToken) {
-                        form.csrfToken.value = result.csrfToken;
-                    }
-                    break;
-                case 403:
-                    alert(result.forbiddenError);
-                    window.location.reload();
-                    break;
+            const response = await fetch(form.getAttribute('action'), {
+                method: form.method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const contentType = response.headers.get('content-type');
+
+            if (contentType && contentType.includes('application/json')) {
+                const result = await response.json();
+                switch (response.status) {
+                    case 200:
+                        if (result.redirect) {
+                            window.location.href = result.redirect;
+                        } else {
+                            console.log("Logged in, but no redirect specified.");
+                        }
+                        break;
+                    case 400:
+                        clearAllErrors();
+                        for (const [field, message] of Object.entries(result.errors)) {
+                            showFieldError(field, message);
+                        }
+                        if (result.csrfToken) {
+                            form.csrfToken.value = result.csrfToken;
+                        }
+                        break;
+                    case 401:
+                        process401(result, form);
+                        if (result.csrfToken) {
+                            form.csrfToken.value = result.csrfToken;
+                        }
+                        break;
+                    case 403:
+                        alert(result.forbiddenError);
+                        window.location.reload();
+                        break;
+                }
+
+            } else {
+                console.error('Server returned non-JSON response');
+                const textResponse = await response.text();
+                console.error('Response body:', textResponse);
             }
 
-        } else {
-            console.error('Server returned non-JSON response');
-            const textResponse = await response.text();
-            console.error('Response body:', textResponse);
+        } catch (error) {
+            console.error('Network error:', error);
+            alert('Network error occurred. Please try again.');
+        } finally {
+            // Always restore button states, even if there's an error
+            buttons.forEach((btn, index) => {
+                btn.disabled = originalStates[index].disabled;
+                btn.innerHTML = originalStates[index].innerHTML;
+            });
         }
     });
 

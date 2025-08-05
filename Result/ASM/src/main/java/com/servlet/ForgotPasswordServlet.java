@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @WebServlet (
-        urlPatterns = {"/forgotpassword"}
+        urlPatterns = {"/forgot-password"}
 )
 public class ForgotPasswordServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(ForgotPasswordServlet.class.getName());

@@ -27,6 +27,8 @@ public class LoginServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(LoginServlet.class.getName());
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final CustomFormFields userIdOrEmail = new CustomFormFields("userIdOrEmail", "User ID or Email", "text", null);
+    private static final CustomFormFields forgotPasswordLink = new CustomFormFields("/forgot-password", "forgot password?", "link", null);
+    private static final CustomFormFields registerLink = new CustomFormFields("/register", "don't have an account?", "link", null);
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
@@ -40,7 +42,7 @@ public class LoginServlet extends HttpServlet {
         session.setAttribute("csrfToken", csrfToken);
         req.setAttribute("csrfToken", csrfToken);
 
-        ServletUtil.constructForm(req, userIdOrEmail, UserFormFields.PASSWORD);
+        ServletUtil.constructForm(req, userIdOrEmail, UserFormFields.PASSWORD, forgotPasswordLink, registerLink);
         ServletUtil.populateButtons(req, ButtonFormFields.LOGIN);
 
         req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
@@ -60,7 +62,6 @@ public class LoginServlet extends HttpServlet {
         }
 
         Map<String, String> reqMap = ServletUtil.readJsonAsMap(req);
-        logger.info(reqMap.toString());
 
         String formToken = reqMap.get("csrfToken");
 
@@ -73,16 +74,16 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        String userIdOrEmail = reqMap.get("idOrEmail");
-        String password = reqMap.get("password");
+        String idOrEmail = reqMap.get(userIdOrEmail.getPropertyKey());
+        String password = reqMap.get(UserFormFields.PASSWORD.getPropertyKey());
         String targetUrl = reqMap.get("targetUrl");
 
-        if(ValidationUtil.isNullOrBlank(userIdOrEmail)) errors.put("idOrEmailError", "User ID or Email cannot be empty.");
+        if(ValidationUtil.isNullOrBlank(idOrEmail)) errors.put(userIdOrEmail.getErrorKey(), "User ID or Email cannot be empty.");
 
-        if(ValidationUtil.isNullOrBlank(password)) errors.put("passwordError", "Password cannot be empty.");
+        if(ValidationUtil.isNullOrBlank(password)) errors.put(UserFormFields.PASSWORD.getErrorKey(), "Password cannot be empty.");
 
         if(errors.isEmpty()) {
-            UserDTO userDTO = new UserService().findByIdOrEmail(userIdOrEmail);
+            UserDTO userDTO = new UserService().findByIdOrEmail(idOrEmail);
             if(userDTO != null && PasswordHasher.verify(password, userDTO.getPasswordHash())) {
                 session.setAttribute("user", userDTO);
 

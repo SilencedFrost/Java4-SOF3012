@@ -54,7 +54,9 @@
                     </li>
                 </c:if>
                 <li class="nav-item d-flex align-items-center">
-                    Visits: ${applicationScope.visits}
+                    <div class="d-flex align-items-center p-2">
+                        Visits: ${applicationScope.visits}
+                    </div>
                 </li>
             </ul>
         </div>

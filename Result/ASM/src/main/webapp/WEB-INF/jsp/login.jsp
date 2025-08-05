@@ -15,12 +15,12 @@
             <div class="card p-3 shadow-sm" style="width: 300px;">
                 <h3 class="text-center">Login</h3>
                 <hr>
-                <form id="loginForm" method="POST" action="/login">
+                <form id="loginForm" method="POST" action="">
                 <input type="hidden" name="targetUrl" value="${targetUrl}" />
                     <input type="hidden" id="csrfToken" name="csrfToken" value="${csrfToken}" />
                     <div class="mb-3">
                         <label for="idOrEmail" class="form-label">User ID or Email</label>
-                        <input type="text" class="form-control shadow-sm" id="idOrEmail" name="idOrEmail" value="${idOrEmail}" placeholder="Enter user id or email">
+                        <input type="text" class="form-control shadow-sm" id="idOrEmail" name="idOrEmail" placeholder="Enter user id or email">
                         <div id="idOrEmailError" class="my-2 form-text ps-2 text-danger d-none form-error"></div>
                     </div>
 
@@ -83,6 +83,7 @@
                                 showFieldError(field, message);
                             }
                             form.csrfToken.value = result.csrfToken;
+                            form.password.value = "";
                             break;
                         case 403:
                             alert(result.forbiddenError);

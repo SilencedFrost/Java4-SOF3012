@@ -15,7 +15,7 @@
             <div class="card p-3 shadow-sm" style="width: 300px;">
                 <h3 class="text-center">Register</h3>
                 <hr>
-                <%@ include file="components/form.jsp" %>
+                <%@ include file="components/formAsync.jsp" %>
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

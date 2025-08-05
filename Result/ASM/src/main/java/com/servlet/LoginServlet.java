@@ -50,6 +50,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Session processing
         HttpSession session = req.getSession(false);
 
         Map<String, Object> respMap = new HashMap<>();
@@ -60,9 +61,11 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
+        // Map object initialization
         Map<String, String> reqMap = ServletUtil.readJsonAsMap(req);
         Map<String, String> errors = new HashMap<>();
 
+        // CSRF check
         String formToken = reqMap.get("csrfToken");
 
         String sessionToken = (String) session.getAttribute("csrfToken");
@@ -74,14 +77,16 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
+        // Extraction of form fields
         String idOrEmail = reqMap.get(userIdOrEmail.getPropertyKey());
         String password = reqMap.get(UserFormFields.PASSWORD.getPropertyKey());
         String targetUrl = reqMap.get("targetUrl");
 
+        // Blank field validation
         if(ValidationUtil.isNullOrBlank(idOrEmail)) errors.put(userIdOrEmail.getErrorKey(), "User ID or Email cannot be empty.");
-
         if(ValidationUtil.isNullOrBlank(password)) errors.put(UserFormFields.PASSWORD.getErrorKey(), "Password cannot be empty.");
 
+        // Check if user exists and password matches
         if(errors.isEmpty()) {
             UserDTO userDTO = new UserService().findByIdOrEmail(idOrEmail);
             if(userDTO != null && PasswordHasher.verify(password, userDTO.getPasswordHash())) {
@@ -95,10 +100,13 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
         } else {
+            // If failed blank field validation
+            // Reload CSRF token
             String csrfToken = UUID.randomUUID().toString();
             session.setAttribute("csrfToken", csrfToken);
             respMap.put("csrfToken", csrfToken);
 
+            // Send response back
             respMap.put("errors", errors);
 
             String json = mapper.writeValueAsString(respMap);
@@ -106,12 +114,15 @@ public class LoginServlet extends HttpServlet {
             ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
+        // If user or password does not match
+        // Reload CSRF token
         errors.put("specialError", "User or password does not match.");
 
         String csrfToken = UUID.randomUUID().toString();
         session.setAttribute("csrfToken", csrfToken);
         respMap.put("csrfToken", csrfToken);
 
+        // Send response back
         respMap.put("errors", errors);
 
         String json = mapper.writeValueAsString(respMap);

@@ -49,6 +49,22 @@ public class User {
         this.role = role;
     }
 
+    @PrePersist
+    @PreUpdate
+    private void normalizeEmail() {
+        if (email != null) {
+            this.email = email.toLowerCase().trim();
+        }
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeUserId() {
+        if (userId != null) {
+            this.userId = userId.toLowerCase().trim();
+        }
+    }
+
     public void addFavourite(Favourite favourite) {
         if (favourite == null) return;
 

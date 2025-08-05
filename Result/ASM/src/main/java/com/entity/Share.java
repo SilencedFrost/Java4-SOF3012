@@ -38,4 +38,12 @@ public class Share {
 		this.video = video;
 		this.receiveEmail = receiveEmail;
 	}
+
+	@PrePersist
+	@PreUpdate
+	private void normalizeEmail() {
+		if (receiveEmail != null) {
+			this.receiveEmail = receiveEmail.toLowerCase().trim();
+		}
+	}
 }

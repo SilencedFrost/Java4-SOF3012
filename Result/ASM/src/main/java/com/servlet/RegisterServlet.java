@@ -4,6 +4,7 @@ import com.constants.ButtonFormFields;
 import com.constants.CustomFormFields;
 import com.constants.UserFormFields;
 import com.dto.UserDTO;
+import com.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.PasswordHasher;
 import com.service.UserService;
@@ -44,6 +45,7 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Session processing
         HttpSession session = req.getSession(false);
 
         Map<String, Object> respMap = new HashMap<>();
@@ -54,9 +56,11 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
+        // Map object initialization
         Map<String, String> reqMap = ServletUtil.readJsonAsMap(req);
         Map<String, String> errors = new HashMap<>();
 
+        // CSRF check
         String formToken = reqMap.get("csrfToken");
 
         String sessionToken = (String) session.getAttribute("csrfToken");
@@ -68,28 +72,64 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
+        // Extraction of form fields
         String userId = reqMap.get(UserFormFields.USER_ID.getPropertyKey());
         String fullName = reqMap.get(UserFormFields.FULL_NAME.getPropertyKey());
         String email = reqMap.get(UserFormFields.EMAIL.getPropertyKey());
         String password = reqMap.get(UserFormFields.PASSWORD.getPropertyKey());
 
-        /* if(!error) {
-            UserDTO userDTO = new UserService().findByIdOrEmail(userIdOrEmail);
-            if(userDTO != null && PasswordHasher.verify(password, userDTO.getPasswordHash())) {
-                session.setAttribute("user", userDTO);
-                String targetUrl = (String) session.getAttribute("targetUrl");
-                session.removeAttribute("targetUrl");
-                if(!ValidationUtil.isNullOrBlank(targetUrl)){
-                    resp.sendRedirect(targetUrl);
-                } else {
-                    resp.sendRedirect("/home");
-                }
-                return;
-            }
-            else {
-                session.setAttribute("loginError", "User or password does not match.");
-            }
-        } */
-        resp.sendRedirect("/register");
+        // Service initialization late down the chain to save resource
+        UserService userService = new UserService();
+
+        // Field validation
+        // UserId
+        if(ValidationUtil.isNullOrBlank(userId)) {
+            errors.put(UserFormFields.USER_ID.getErrorKey(), "User Id cannot be empty!");
+        } else if (
+                userService.findById(userId) != null ||
+                userService.findByEmail(userId) != null ||
+                ValidationUtil.isValidEmail(userId)) {
+            errors.put(UserFormFields.USER_ID.getErrorKey(), "Invalid user ID");
+        }
+
+        // Full name
+        if(ValidationUtil.isNullOrBlank(fullName)) {
+            errors.put(UserFormFields.FULL_NAME.getErrorKey(), "Full name cannot be empty!");
+        }
+
+        // Email
+        if(ValidationUtil.isNullOrBlank(email)) {
+            errors.put(UserFormFields.EMAIL.getErrorKey(), "Email cannot be empty!");
+        } else if (!ValidationUtil.isValidEmail(email)) {
+            errors.put(UserFormFields.EMAIL.getErrorKey(), "Email is invalid!");
+        } else if (userService.findByEmail(email) != null) {
+            errors.put(UserFormFields.EMAIL.getErrorKey(), "Email already taken");
+        }
+
+        // Password
+        if(ValidationUtil.isNullOrBlank(password)){
+            errors.put(UserFormFields.PASSWORD.getErrorKey(), "Password cannot be empty!");
+        } else if (!ValidationUtil.isValidPassword(password)) {
+            errors.put(UserFormFields.PASSWORD.getErrorKey(), "8-32 characters with uppercase, lowercase, number & special character");
+        }
+
+        if(errors.isEmpty()) {
+            logger.info("you passed, bitch");
+        } else {
+            // If failed blank field validation
+            // Reload CSRF token
+            String csrfToken = UUID.randomUUID().toString();
+            session.setAttribute("csrfToken", csrfToken);
+            respMap.put("csrfToken", csrfToken);
+
+            // Send response back
+            respMap.put("errors", errors);
+
+            String json = mapper.writeValueAsString(respMap);
+
+            ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
     }
 }

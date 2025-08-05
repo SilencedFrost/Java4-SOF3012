@@ -39,9 +39,9 @@ public class UserService implements Service<UserDTO, String>{
             throw new IllegalArgumentException("ID cannot be null or empty");
         }
 
-        User user = null;
+        User user;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
-            user = em.find(User.class, userId);
+            user = em.find(User.class, userId.toLowerCase().trim());
             logger.info("User with id " + userId + (user != null ? " found." : " not found."));
             return user != null ? UserMapper.toDTO(user) : null;
         } catch (PersistenceException e) {
@@ -57,12 +57,28 @@ public class UserService implements Service<UserDTO, String>{
 
         List<User> userList = null;
         try (EntityManager em = EntityManagerUtil.getEntityManager()) {
-            userList = em.createQuery("SELECT u FROM User u WHERE u.userId LIKE :partialId", User.class).setParameter("partialId", "%" + partialId + "%").getResultList();
+            userList = em.createQuery("SELECT u FROM User u WHERE LOWER(u.userId) LIKE LOWER(:partialId)", User.class).setParameter("partialId", "%" + partialId + "%").getResultList();
             logger.info("Found " + userList.size() + " users with ID containing: " + partialId);
             return UserMapper.toDTOList(userList);
         } catch (PersistenceException e) {
             logger.log(Level.SEVERE, "Error finding users by partial ID: " + partialId, e);
             return List.of();
+        }
+    }
+
+    public UserDTO findByEmail(String email) {
+        if (ValidationUtil.isNullOrBlank(email)) {
+            throw new IllegalArgumentException("email cannot be null or empty");
+        }
+
+        User user;
+        try (EntityManager em = EntityManagerUtil.getEntityManager()) {
+            user = em.createQuery("SELECT u FROM User u WHERE LOWER(u.email) = LOWER(:email)", User.class).setParameter("email", email).getSingleResult();
+            logger.info("User with email " + email + (user != null ? " found." : " not found."));
+            return user != null ? UserMapper.toDTO(user) : null;
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error finding user by email", e);
+            return null;
         }
     }
 
@@ -193,7 +209,7 @@ public class UserService implements Service<UserDTO, String>{
 
         List<Video> videoList;
         try(EntityManager em = EntityManagerUtil.getEntityManager()) {
-            TypedQuery<Video> query = em.createQuery("SELECT f.video FROM Favourite f WHERE f.user.id = :userId", Video.class);
+            TypedQuery<Video> query = em.createQuery("SELECT f.video FROM Favourite f WHERE LOWER(f.user.id) = LOWER(:userId)", Video.class);
             query.setParameter("userId", userId);
             videoList = query.getResultList();
         } catch (Exception e) {

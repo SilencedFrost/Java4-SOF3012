@@ -53,7 +53,6 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         Map<String, Object> respMap = new HashMap<>();
-        Map<String, String> errors = new HashMap<>();
 
         if(session == null) {
             respMap.put("forbiddenError", "Session expired, reload page");
@@ -62,6 +61,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         Map<String, String> reqMap = ServletUtil.readJsonAsMap(req);
+        Map<String, String> errors = new HashMap<>();
 
         String formToken = reqMap.get("csrfToken");
 

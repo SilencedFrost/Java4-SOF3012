@@ -18,6 +18,14 @@
                 <%@ include file="components/formAsync.jsp" %>
             </div>
         </div>
+        <script>
+            function process401(result, form) {
+                clearAllErrors();
+                for (const [field, message] of Object.entries(result.errors)) {
+                    showFieldError(field, message);
+                }
+            }
+        </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

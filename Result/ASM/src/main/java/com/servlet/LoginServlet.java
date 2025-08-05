@@ -115,9 +115,9 @@ public class LoginServlet extends HttpServlet {
             return;
         }
         // If user or password does not match
-        // Reload CSRF token
         errors.put("specialError", "User or password does not match.");
 
+        // Reload CSRF token
         String csrfToken = UUID.randomUUID().toString();
         session.setAttribute("csrfToken", csrfToken);
         respMap.put("csrfToken", csrfToken);

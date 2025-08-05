@@ -114,7 +114,25 @@ public class RegisterServlet extends HttpServlet {
         }
 
         if(errors.isEmpty()) {
-            logger.info("you passed, bitch");
+            if(userService.create(userId, PasswordHasher.hash(password), fullName, email, "User")) {
+                ServletUtil.sendJsonRedirect(resp, "/login");
+            } else {
+                // If failed user creation
+                errors.put("specialError", "User creation failed");
+
+                // Reload CSRF token
+                String csrfToken = UUID.randomUUID().toString();
+                session.setAttribute("csrfToken", csrfToken);
+                respMap.put("csrfToken", csrfToken);
+
+                // Send response back
+                respMap.put("errors", errors);
+
+                String json = mapper.writeValueAsString(respMap);
+
+                ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
         } else {
             // If failed blank field validation
             // Reload CSRF token

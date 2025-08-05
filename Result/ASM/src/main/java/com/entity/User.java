@@ -51,15 +51,10 @@ public class User {
 
     @PrePersist
     @PreUpdate
-    private void normalizeEmail() {
+    private void normalizeEmailAndUserId() {
         if (email != null) {
             this.email = email.toLowerCase().trim();
         }
-    }
-
-    @PrePersist
-    @PreUpdate
-    private void normalizeUserId() {
         if (userId != null) {
             this.userId = userId.toLowerCase().trim();
         }

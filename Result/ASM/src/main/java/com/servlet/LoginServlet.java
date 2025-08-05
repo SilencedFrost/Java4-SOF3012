@@ -1,5 +1,8 @@
 package com.servlet;
 
+import com.constants.ButtonFormFields;
+import com.constants.CustomFormFields;
+import com.constants.UserFormFields;
 import com.dto.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.PasswordHasher;
@@ -23,6 +26,7 @@ import java.util.logging.Logger;
 public class LoginServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(LoginServlet.class.getName());
     private static final ObjectMapper mapper = new ObjectMapper();
+    private static final CustomFormFields userIdOrEmail = new CustomFormFields("userIdOrEmail", "User ID or Email", "text", null);
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
@@ -35,6 +39,9 @@ public class LoginServlet extends HttpServlet {
         String csrfToken = UUID.randomUUID().toString();
         session.setAttribute("csrfToken", csrfToken);
         req.setAttribute("csrfToken", csrfToken);
+
+        ServletUtil.constructForm(req, userIdOrEmail, UserFormFields.PASSWORD);
+        ServletUtil.populateButtons(req, ButtonFormFields.LOGIN);
 
         req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
     }
@@ -98,7 +105,7 @@ public class LoginServlet extends HttpServlet {
             ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        errors.put("loginError", "User or password does not match.");
+        errors.put("specialError", "User or password does not match.");
 
         String csrfToken = UUID.randomUUID().toString();
         session.setAttribute("csrfToken", csrfToken);

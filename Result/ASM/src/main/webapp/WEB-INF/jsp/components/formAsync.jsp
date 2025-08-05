@@ -11,7 +11,8 @@
 <c:set var="resolvedFieldStructure" value="${requestScope[structureKey]}" />
 
 <form id="${structureKey}" method="post" action="" novalidate>
-    <input type="hidden" name="csrfToken" value="${csrfToken}"/>
+    <input type="hidden" id="targetUrl" name="targetUrl" value="${targetUrl}"/>
+    <input type="hidden" id="csrfToken" name="csrfToken" value="${csrfToken}"/>
     <c:forEach var="field" items="${resolvedFieldStructure}">
         <c:choose>
             <c:when test="${field.fieldType == 'text' || field.fieldType == 'email' || field.fieldType == 'password'}">
@@ -21,6 +22,7 @@
                            id="${field.propertyKey}" name="${field.propertyKey}"
                            placeholder="Enter ${field.label.toLowerCase()}">
                     <div id="${field.errorKey}" class="my-2 form-text ps-2 text-danger d-none form-error"></div>
+                </div>
             </c:when>
 
             <c:when test="${field.fieldType == 'combobox'}">
@@ -64,10 +66,16 @@
                     <div id="${field.errorKey}" class="my-2 form-text ps-2 text-danger d-none form-error"></div>
                 </div>
             </c:when>
+
+            <c:when test="${field.fieldType == 'link'}">
+                <div class="mb-3">
+                    <a class="w-100 small" href="${field.propertyKey}">${field.label}</a>
+                </div>
+            </c:when>
         </c:choose>
     </c:forEach>
 
-    <br>
+    <div id="specialError" class="mb-3 form-text ps-2 text-danger d-none form-error"></div>
 
     <div class="d-flex flex-wrap gap-2">
         <c:forEach var="button" items="${buttons}">
@@ -81,11 +89,12 @@
 
         const form = e.target;
 
-        const data = {
-            <c:forEach var="field" items="${resolvedFieldStructure}" varStatus="loop">
-                "${field.propertyKey}": form.${field.propertyKey}.value<c:if test="${!loop.last}">,</c:if>
-            </c:forEach>
-        };
+        const data = {};
+        <c:forEach var="field" items="${resolvedFieldStructure}">
+            <c:if test="${field.fieldType != 'link'}">
+                data["${field.propertyKey}"] = form.${field.propertyKey}.value;
+            </c:if>
+        </c:forEach>
 
         const response = await fetch(form.getAttribute('action'), {
             method: form.method,

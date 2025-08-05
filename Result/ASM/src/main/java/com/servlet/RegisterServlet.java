@@ -1,6 +1,7 @@
 package com.servlet;
 
 import com.constants.ButtonFormFields;
+import com.constants.CustomFormFields;
 import com.constants.UserFormFields;
 import com.dto.UserDTO;
 import com.security.PasswordHasher;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(RegisterServlet.class.getName());
+    private static final CustomFormFields loginLink = new CustomFormFields("/login", "already has an acount?", "link", null);
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
@@ -31,7 +33,7 @@ public class RegisterServlet extends HttpServlet {
         session.setAttribute("csrfToken", csrfToken);
         req.setAttribute("csrfToken", csrfToken);
 
-        ServletUtil.constructForm(req, UserFormFields.USER_ID, UserFormFields.FULL_NAME, UserFormFields.PASSWORD, UserFormFields.EMAIL);
+        ServletUtil.constructForm(req, UserFormFields.USER_ID, UserFormFields.FULL_NAME, UserFormFields.PASSWORD, UserFormFields.EMAIL, loginLink);
         ServletUtil.populateButtons(req, ButtonFormFields.REGISTER);
         req.getRequestDispatcher("/WEB-INF/jsp/register.jsp").forward(req, resp);
     }

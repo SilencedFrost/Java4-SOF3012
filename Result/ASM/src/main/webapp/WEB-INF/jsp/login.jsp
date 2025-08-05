@@ -16,7 +16,7 @@
                 <h3 class="text-center">Login</h3>
                 <hr>
                 <form id="loginForm" method="POST" action="">
-                <input type="hidden" name="targetUrl" value="${targetUrl}" />
+                    <input type="hidden" name="targetUrl" value="${targetUrl}" />
                     <input type="hidden" id="csrfToken" name="csrfToken" value="${csrfToken}" />
                     <div class="mb-3">
                         <label for="idOrEmail" class="form-label">User ID or Email</label>

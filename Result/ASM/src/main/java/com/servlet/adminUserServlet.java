@@ -3,6 +3,7 @@ package com.servlet;
 import com.constants.ButtonFormFields;
 import com.constants.UserFormFields;
 import com.dto.UserDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.PasswordHasher;
 import com.util.ServletUtil;
 import com.util.ValidationUtil;
@@ -23,6 +24,7 @@ import java.util.logging.Logger;
 @WebServlet ("/admin/users")
 public class adminUserServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(adminUserServlet.class.getName());
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private UserService userService;
 
@@ -61,7 +63,34 @@ public class adminUserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Session processing
+        HttpSession session = req.getSession(false);
 
+        Map<String, Object> respMap = new HashMap<>();
+
+        if(session == null) {
+            respMap.put("forbiddenError", "Session expired, reload page");
+            ServletUtil.sendJsonResp(resp, mapper.writeValueAsString(respMap), HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        // Map object initialization
+        Map<String, String> reqMap = ServletUtil.readJsonAsMap(req);
+        Map<String, String> errors = new HashMap<>();
+
+        // CSRF check
+        String formToken = reqMap.get("csrfToken");
+
+        String sessionToken = (String) session.getAttribute("csrfToken");
+        session.removeAttribute("csrfToken");
+
+        if (formToken == null || !formToken.equals(sessionToken)) {
+            respMap.put("forbiddenError", "Security token expired, reload page");
+            ServletUtil.sendJsonResp(resp, mapper.writeValueAsString(respMap), HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        // Extraction of form fields
     }
 
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -71,7 +100,6 @@ public class adminUserServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
     }
-
 
     private void validateFormFields(Map<String, String> pageData, Map<String, String> errors) {
         validateFormFields(pageData, errors, List.of(UserFormFields.values()));

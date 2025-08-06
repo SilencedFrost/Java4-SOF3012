@@ -4,8 +4,10 @@ import com.constants.Automatable;
 import com.constants.Buttons;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -129,5 +131,33 @@ public class ServletUtil {
 
     public static Map<String, String> readJsonAsMap(HttpServletRequest request) throws IOException {
         return mapper.readValue(readJsonBody(request), new TypeReference<Map<String, String>>() {});
+    }
+
+    public static Map<String, String> basicFormCheck(HttpServletRequest req, HttpServletResponse resp, Map<String, String> errors, Map<String, Object> respMap) throws ServletException, IOException{
+        // Session processing
+        HttpSession session = req.getSession(false);
+
+        if(session == null) {
+            respMap.put("forbiddenError", "Session expired, reload page");
+            ServletUtil.sendJsonResp(resp, mapper.writeValueAsString(respMap), HttpServletResponse.SC_FORBIDDEN);
+            return null;
+        }
+
+        // Map object initialization
+        Map<String, String> reqMap = ServletUtil.readJsonAsMap(req);
+
+        // CSRF check
+        String formToken = reqMap.get("csrfToken");
+
+        String sessionToken = (String) session.getAttribute("csrfToken");
+        session.removeAttribute("csrfToken");
+
+        if (formToken == null || !formToken.equals(sessionToken)) {
+            respMap.put("forbiddenError", "Security token expired, reload page");
+            ServletUtil.sendJsonResp(resp, mapper.writeValueAsString(respMap), HttpServletResponse.SC_FORBIDDEN);
+            return null;
+        }
+
+        return reqMap;
     }
 }

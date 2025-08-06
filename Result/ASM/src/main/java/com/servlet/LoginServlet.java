@@ -50,57 +50,52 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Session processing
-        HttpSession session = req.getSession(false);
-
-        Map<String, Object> respMap = new HashMap<>();
-
-        if(session == null) {
-            respMap.put("forbiddenError", "Session expired, reload page");
-            ServletUtil.sendJsonResp(resp, mapper.writeValueAsString(respMap), HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-
-        // Map object initialization
-        Map<String, String> reqMap = ServletUtil.readJsonAsMap(req);
         Map<String, String> errors = new HashMap<>();
+        Map<String, Object> respMap = new HashMap<>();
+        HttpSession session = req.getSession();
 
-        // CSRF check
-        String formToken = reqMap.get("csrfToken");
+        Map<String, String> reqMap = ServletUtil.basicFormCheck(req, resp, errors, respMap);
 
-        String sessionToken = (String) session.getAttribute("csrfToken");
-        session.removeAttribute("csrfToken");
+        if(reqMap != null) {
+            String idOrEmail = reqMap.get(userIdOrEmail.getPropertyKey());
+            String password = reqMap.get(UserFormFields.PASSWORD.getPropertyKey());
+            String targetUrl = reqMap.get("targetUrl");
 
-        if (formToken == null || !formToken.equals(sessionToken)) {
-            respMap.put("forbiddenError", "Security token expired, reload page");
-            ServletUtil.sendJsonResp(resp, mapper.writeValueAsString(respMap), HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
+            // Blank field validation
+            if(ValidationUtil.isNullOrBlank(idOrEmail)) errors.put(userIdOrEmail.getErrorKey(), "User ID or Email cannot be empty.");
+            if(ValidationUtil.isNullOrBlank(password)) errors.put(UserFormFields.PASSWORD.getErrorKey(), "Password cannot be empty.");
 
-        // Extraction of form fields
-        String idOrEmail = reqMap.get(userIdOrEmail.getPropertyKey());
-        String password = reqMap.get(UserFormFields.PASSWORD.getPropertyKey());
-        String targetUrl = reqMap.get("targetUrl");
+            // Check if user exists and password matches
+            if(errors.isEmpty()) {
+                UserDTO userDTO = new UserService().findByIdOrEmail(idOrEmail);
+                if(userDTO != null && PasswordHasher.verify(password, userDTO.getPasswordHash())) {
+                    session.setAttribute("user", userDTO);
 
-        // Blank field validation
-        if(ValidationUtil.isNullOrBlank(idOrEmail)) errors.put(userIdOrEmail.getErrorKey(), "User ID or Email cannot be empty.");
-        if(ValidationUtil.isNullOrBlank(password)) errors.put(UserFormFields.PASSWORD.getErrorKey(), "Password cannot be empty.");
-
-        // Check if user exists and password matches
-        if(errors.isEmpty()) {
-            UserDTO userDTO = new UserService().findByIdOrEmail(idOrEmail);
-            if(userDTO != null && PasswordHasher.verify(password, userDTO.getPasswordHash())) {
-                session.setAttribute("user", userDTO);
-
-                if(!ValidationUtil.isNullOrBlank(targetUrl)){
-                    ServletUtil.sendJsonRedirect(resp, targetUrl);
-                } else {
-                    ServletUtil.sendJsonRedirect(resp, "/home");
+                    if(!ValidationUtil.isNullOrBlank(targetUrl)){
+                        ServletUtil.sendJsonRedirect(resp, targetUrl);
+                    } else {
+                        ServletUtil.sendJsonRedirect(resp, "/home");
+                    }
+                    return;
                 }
+            } else {
+                // If failed blank field validation
+                // Reload CSRF token
+                String csrfToken = UUID.randomUUID().toString();
+                session.setAttribute("csrfToken", csrfToken);
+                respMap.put("csrfToken", csrfToken);
+
+                // Send response back
+                respMap.put("errors", errors);
+
+                String json = mapper.writeValueAsString(respMap);
+
+                ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-        } else {
-            // If failed blank field validation
+            // If user or password does not match
+            errors.put("specialError", "User or password does not match.");
+
             // Reload CSRF token
             String csrfToken = UUID.randomUUID().toString();
             session.setAttribute("csrfToken", csrfToken);
@@ -111,22 +106,9 @@ public class LoginServlet extends HttpServlet {
 
             String json = mapper.writeValueAsString(respMap);
 
-            ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_UNAUTHORIZED);
         }
-        // If user or password does not match
-        errors.put("specialError", "User or password does not match.");
 
-        // Reload CSRF token
-        String csrfToken = UUID.randomUUID().toString();
-        session.setAttribute("csrfToken", csrfToken);
-        respMap.put("csrfToken", csrfToken);
 
-        // Send response back
-        respMap.put("errors", errors);
-
-        String json = mapper.writeValueAsString(respMap);
-
-        ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_UNAUTHORIZED);
     }
 }

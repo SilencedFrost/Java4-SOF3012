@@ -3,6 +3,7 @@ package com.servlet;
 import com.constants.VideoFormFields;
 import com.dto.UserDTO;
 import com.dto.VideoDTO;
+import com.email.EmailSender;
 import com.service.FavouriteService;
 import com.service.ShareService;
 import com.service.UserService;
@@ -19,9 +20,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
-@WebServlet (
-        urlPatterns = {"/home"}
-)
+@WebServlet ("/home")
 public class HomePageServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(HomePageServlet.class.getName());
 
@@ -38,7 +37,6 @@ public class HomePageServlet extends HttpServlet {
         if(searchVideo == null) searchVideo = "";
 
         List<VideoDTO> videoList;
-        List<Map<String, String>> dataList = new ArrayList<>();
 
         VideoService videoService = new VideoService();
 
@@ -47,6 +45,8 @@ public class HomePageServlet extends HttpServlet {
         } else {
             videoList = videoService.findAll();
         }
+
+        videoList.removeIf(videoDTO -> videoDTO.getActive() == null || !videoDTO.getActive());
 
         //Sort
         videoList.sort(Comparator.comparingLong(VideoDTO::getViews).reversed());
@@ -67,25 +67,32 @@ public class HomePageServlet extends HttpServlet {
 
         videoList = videoList.subList(startIndex, endIndex);
 
-        for(VideoDTO videoDTO : videoList) {
-            if(videoDTO.getActive()){
-                Map<String, String> dataMap = new HashMap<>();
-
-                for(VideoDTO favouritedVideo : favouritedVideos) {
-                    if(favouritedVideo.getVideoId().equals(videoDTO.getVideoId())) dataMap.put("isFavourited", "favourited");
-                }
-
-                dataMap.put(VideoFormFields.VIDEO_ID.getPropertyKey(), videoDTO.getVideoId());
-                dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
-                dataMap.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getThumbnail());
-                dataMap.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
-
-                dataList.add(dataMap);
-            }
-        }
+        List<Map<String, String>> dataList = getMaps(videoList, favouritedVideos);
 
         req.setAttribute("dataList", dataList);
+
         req.getRequestDispatcher("/WEB-INF/jsp/homepage.jsp").forward(req, resp);
+    }
+
+    private static List<Map<String, String>> getMaps(List<VideoDTO> videoList, List<VideoDTO> favouritedVideos) {
+        List<Map<String, String>> dataList = new ArrayList<>();
+
+        for(VideoDTO videoDTO : videoList) {
+            Map<String, String> dataMap = new HashMap<>();
+
+            for(VideoDTO favouritedVideo : favouritedVideos) {
+                if(favouritedVideo.getVideoId().equals(videoDTO.getVideoId())) dataMap.put("isFavourited", "favourited");
+            }
+
+            dataMap.put(VideoFormFields.VIDEO_ID.getPropertyKey(), videoDTO.getVideoId());
+            dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
+            dataMap.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getThumbnail());
+            dataMap.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
+
+            dataList.add(dataMap);
+        }
+
+        return dataList;
     }
 
     @Override
@@ -111,6 +118,7 @@ public class HomePageServlet extends HttpServlet {
             new FavouriteService().delete(userDTO.getUserId(), unfavourite);
         } else if(!ValidationUtil.isNullOrBlank(share) && ValidationUtil.isValidEmail(email)) {
             new ShareService().create(userDTO.getUserId(), share, email);
+            EmailSender.sendEmail(email, "PolyOE Online Entertainment share", userDTO.getFullName() + " shared this video with you, check it out here: http://silencedfrost.freeddns.org:25595/video/watch?id=" + share);
         }
 
         resp.sendRedirect("/home");

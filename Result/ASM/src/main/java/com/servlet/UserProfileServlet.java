@@ -9,11 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-@WebServlet (
-        urlPatterns = {"/user/profile"}
-)
-public class userProfileServlet extends HttpServlet {
-    private static final Logger logger = Logger.getLogger(userProfileServlet.class.getName());
+@WebServlet ("/user/profile")
+public class UserProfileServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(UserProfileServlet.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

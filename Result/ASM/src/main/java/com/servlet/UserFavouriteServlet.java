@@ -17,9 +17,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
-@WebServlet (
-        urlPatterns = {"/user/favourite"}
-)
+@WebServlet ("/user/favourite")
 public class UserFavouriteServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(UserFavouriteServlet.class.getName());
 
@@ -33,12 +31,26 @@ public class UserFavouriteServlet extends HttpServlet {
         if(searchVideo == null) searchVideo = "";
 
         List<VideoDTO> videoList = new UserService().findFavouritedVideos(userDTO);
-        List<Map<String, String>> dataList = new ArrayList<>();
 
+        videoList.removeIf(videoDTO -> videoDTO.getActive() == null || !videoDTO.getActive());
+
+        // Sort
         videoList.sort(Comparator.comparingLong(VideoDTO::getViews).reversed());
 
+        // Convert to map
+        List<Map<String, String>> dataList = getMaps(videoList, searchVideo);
+
+        req.setAttribute("dataList", dataList);
+        req.setAttribute("search", searchVideo);
+
+        req.getRequestDispatcher("/WEB-INF/jsp/userFavourite.jsp").forward(req, resp);
+    }
+
+    private static List<Map<String, String>> getMaps(List<VideoDTO> videoList, String searchVideo) {
+        List<Map<String, String>> dataList = new ArrayList<>();
+
         for(VideoDTO videoDTO : videoList) {
-            if(videoDTO.getActive() && videoDTO.getTitle().contains(searchVideo)){
+            if(videoDTO.getTitle().contains(searchVideo)){
                 Map<String, String> dataMap = new HashMap<>();
 
                 dataMap.put("isFavourited", "favourited");
@@ -51,9 +63,7 @@ public class UserFavouriteServlet extends HttpServlet {
             }
         }
 
-        req.setAttribute("dataList", dataList);
-        req.setAttribute("search", searchVideo);
-        req.getRequestDispatcher("/WEB-INF/jsp/userFavourite.jsp").forward(req, resp);
+        return dataList;
     }
 
     @Override

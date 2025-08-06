@@ -22,17 +22,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
 
-@WebServlet (
-        urlPatterns = {"/admin/reports"}
-)
-public class adminReportServlet extends HttpServlet {
-    private static final Logger logger = Logger.getLogger(adminReportServlet.class.getName());
+@WebServlet ("/admin/reports")
+public class AdminReportServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(AdminReportServlet.class.getName());
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<VideoDTO> videoList = new VideoService().findAll();
-
         buildForm(req);
         buildForm2(req);
         buildForm3(req);

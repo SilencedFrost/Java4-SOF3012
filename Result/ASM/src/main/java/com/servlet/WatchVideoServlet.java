@@ -27,8 +27,6 @@ public class WatchVideoServlet extends HttpServlet {
         HttpSession session = req.getSession();
         VideoService videoService = new VideoService();
 
-        // =================================================
-
         List<VideoDTO> favouritedVideos = List.of();
 
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
@@ -58,26 +56,23 @@ public class WatchVideoServlet extends HttpServlet {
 
         videoDTO = videoService.findById(videoId);
 
-        Map<String, String> videoData = new HashMap<>();
-        for(VideoDTO video: favouritedVideos) {
-            if(video.getVideoId().equals(videoId)) videoData.put("isFavourited", "favourited");
-        }
-
-        videoData.put(VideoFormFields.VIDEO_ID.getPropertyKey(), videoDTO.getVideoId());
-        videoData.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
-        videoData.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getThumbnail());
-        videoData.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
-        videoData.put(VideoFormFields.DESCRIPTION.getPropertyKey(), videoDTO.getDescription());
+        Map<String, String> videoData = getMap(favouritedVideos, videoId, videoDTO);
 
         req.setAttribute("video", videoData);
 
-        // ========================================
-
         List<VideoDTO> videoList = videoService.findAll();
 
-        List<Map<String, String>> dataList = new ArrayList<>();
-
         videoList.sort(Comparator.comparingLong(VideoDTO::getViews).reversed());
+
+        List<Map<String, String>> dataList = getMaps(videoList, videoDTO);
+
+        req.setAttribute("dataList", dataList);
+
+        req.getRequestDispatcher("/WEB-INF/jsp/watchVideo.jsp").forward(req, resp);
+    }
+
+    private static List<Map<String, String>> getMaps(List<VideoDTO> videoList, VideoDTO videoDTO) {
+        List<Map<String, String>> dataList = new ArrayList<>();
 
         for(VideoDTO video : videoList) {
             if(videoDTO.getActive() && !video.getVideoId().equals(videoDTO.getVideoId())){
@@ -91,10 +86,22 @@ public class WatchVideoServlet extends HttpServlet {
                 dataList.add(dataMap);
             }
         }
+        return dataList;
+    }
 
-        req.setAttribute("dataList", dataList);
+    private static Map<String, String> getMap(List<VideoDTO> favouritedVideos, String videoId, VideoDTO videoDTO) {
+        Map<String, String> videoData = new HashMap<>();
 
-        req.getRequestDispatcher("/WEB-INF/jsp/watchVideo.jsp").forward(req, resp);
+        for(VideoDTO video: favouritedVideos) {
+            if(video.getVideoId().equals(videoId)) videoData.put("isFavourited", "favourited");
+        }
+
+        videoData.put(VideoFormFields.VIDEO_ID.getPropertyKey(), videoDTO.getVideoId());
+        videoData.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
+        videoData.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getThumbnail());
+        videoData.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
+        videoData.put(VideoFormFields.DESCRIPTION.getPropertyKey(), videoDTO.getDescription());
+        return videoData;
     }
 
     @Override

@@ -54,6 +54,7 @@ dependencies {
 
     // Jackson
     implementation("com.fasterxml.jackson.core:jackson-databind:2.19.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2")
 
     // Jakarta mail API
     implementation("com.sun.mail:jakarta.mail:2.0.2")

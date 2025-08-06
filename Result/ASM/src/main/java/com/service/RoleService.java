@@ -143,7 +143,7 @@ public class RoleService implements Service<RoleDTO, Integer> {
 
     public static Role findByRoleName(EntityManager em, String roleName) {
         if (ValidationUtil.isNullOrBlank(roleName)) {
-            throw new IllegalArgumentException("Role name cannot be null or empty");
+            return null;
         }
 
         try {

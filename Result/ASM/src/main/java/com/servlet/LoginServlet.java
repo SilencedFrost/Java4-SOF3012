@@ -4,9 +4,9 @@ import com.constants.ButtonFormFields;
 import com.constants.CustomFormFields;
 import com.constants.UserFormFields;
 import com.dto.UserDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.PasswordHasher;
 import com.service.UserService;
+import com.util.JsonUtil;
 import com.util.ServletUtil;
 import com.util.ValidationUtil;
 import jakarta.servlet.ServletException;
@@ -19,13 +19,11 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 
-@WebServlet({"/login"})
+@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(LoginServlet.class.getName());
-    private static final ObjectMapper mapper = new ObjectMapper();
     private static final CustomFormFields userIdOrEmail = new CustomFormFields("userIdOrEmail", "User ID or Email", "text", null);
     private static final CustomFormFields forgotPasswordLink = new CustomFormFields("/forgot-password", "forgot password?", "link", null);
     private static final CustomFormFields registerLink = new CustomFormFields("/register", "don't have an account?", "link", null);
@@ -38,9 +36,7 @@ public class LoginServlet extends HttpServlet {
         session.removeAttribute("targetUrl");
         req.setAttribute("targetUrl", targetUrl);
 
-        String csrfToken = UUID.randomUUID().toString();
-        session.setAttribute("csrfToken", csrfToken);
-        req.setAttribute("csrfToken", csrfToken);
+        ServletUtil.refreshCsrfToken(req);
 
         ServletUtil.constructForm(req, userIdOrEmail, UserFormFields.PASSWORD, forgotPasswordLink, registerLink);
         ServletUtil.populateButtons(req, ButtonFormFields.LOGIN);
@@ -72,43 +68,23 @@ public class LoginServlet extends HttpServlet {
                     session.setAttribute("user", userDTO);
 
                     if(!ValidationUtil.isNullOrBlank(targetUrl)){
-                        ServletUtil.sendJsonRedirect(resp, targetUrl);
+                        JsonUtil.sendJsonRedirect(resp, targetUrl);
                     } else {
-                        ServletUtil.sendJsonRedirect(resp, "/home");
+                        JsonUtil.sendJsonRedirect(resp, "/home");
                     }
                     return;
+                } else {
+                    // If user or password does not match
+                    errors.put("specialError", "User or password does not match.");
                 }
-            } else {
-                // If failed blank field validation
-                // Reload CSRF token
-                String csrfToken = UUID.randomUUID().toString();
-                session.setAttribute("csrfToken", csrfToken);
-                respMap.put("csrfToken", csrfToken);
-
-                // Send response back
-                respMap.put("errors", errors);
-
-                String json = mapper.writeValueAsString(respMap);
-
-                ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_BAD_REQUEST);
-                return;
             }
-            // If user or password does not match
-            errors.put("specialError", "User or password does not match.");
-
             // Reload CSRF token
-            String csrfToken = UUID.randomUUID().toString();
-            session.setAttribute("csrfToken", csrfToken);
-            respMap.put("csrfToken", csrfToken);
+            ServletUtil.refreshCsrfToken(req, respMap);
 
             // Send response back
             respMap.put("errors", errors);
 
-            String json = mapper.writeValueAsString(respMap);
-
-            ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_UNAUTHORIZED);
+            JsonUtil.sendJsonResp(resp, respMap, HttpServletResponse.SC_UNAUTHORIZED);
         }
-
-
     }
 }

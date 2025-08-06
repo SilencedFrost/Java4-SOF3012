@@ -79,7 +79,11 @@
 
     <div class="d-flex flex-wrap gap-2">
         <c:forEach var="button" items="${buttons}">
-            <button type="submit" name="${button.propertyKey}" value="${button.propertyKey}" class="btn btn-${button.BSColor}">${button.label}</button>
+            <button type="submit"
+                    name="${button.propertyKey}"
+                    value="${button.propertyKey}"
+                    class="btn btn-${button.BSColor}"
+                    data-submit-method="${button.submitMethod}">${button.label}</button>
         </c:forEach>
     </div>
 </form>
@@ -88,8 +92,17 @@
         e.preventDefault();
 
         const form = e.target;
+        const submitter = e.submitter; // The button that was clicked
+        const submitMethod = submitter.getAttribute('data-submit-method');
+
+        // If submitMethod is null, just reset the form
+        if (!submitMethod || submitMethod === 'null') {
+            resetFormFields(form);
+            return;
+        }
+
         const buttons = form.querySelectorAll('button');
-        
+
         // Store original button states and disable them
         const originalStates = [];
         buttons.forEach((btn, index) => {
@@ -98,7 +111,7 @@
                 innerHTML: btn.innerHTML
             };
             btn.disabled = true;
-            if (btn.type === 'submit') {
+            if (btn === submitter) {
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
             }
         });
@@ -111,9 +124,10 @@
                 </c:if>
             </c:forEach>
             data["csrfToken"] = form.csrfToken.value;
+            data["action"] = submitter.value; // Add which button was clicked
 
-            const response = await fetch(form.getAttribute('action'), {
-                method: form.method,
+            const response = await fetch(form.getAttribute('action') || window.location.pathname, {
+                method: submitMethod, // Use the button's specific HTTP method
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -130,7 +144,7 @@
                         if (result.redirect) {
                             window.location.href = result.redirect;
                         } else {
-                            console.log("Logged in, but no redirect specified.");
+                            console.log("Request successful, but no redirect specified.");
                         }
                         break;
                     case 400:
@@ -171,6 +185,34 @@
             });
         }
     });
+
+    function resetFormFields(form) {
+        <c:forEach var="field" items="${resolvedFieldStructure}">
+            <c:if test="${field.fieldType != 'link'}">
+                <c:choose>
+                    <c:when test="${field.fieldType == 'radio'}">
+                        // Uncheck all radio buttons for this field
+                        const radioButtons = form.querySelectorAll('input[name="${field.propertyKey}"]');
+                        radioButtons.forEach(radio => radio.checked = false);
+                    </c:when>
+                    <c:when test="${field.fieldType == 'combobox'}">
+                        // Reset select to first option
+                        const select = form.${field.propertyKey};
+                        if (select.options.length > 0) {
+                            select.selectedIndex = 0;
+                        }
+                    </c:when>
+                    <c:otherwise>
+                        // Clear text inputs and textareas
+                        form.${field.propertyKey}.value = '';
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
+        </c:forEach>
+
+        // Clear any error messages
+        clearAllErrors();
+    }
 
     <%@ include file="fieldErrorJs.jsp" %>
 </script>

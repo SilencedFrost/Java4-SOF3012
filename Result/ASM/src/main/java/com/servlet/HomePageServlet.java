@@ -85,7 +85,6 @@ public class HomePageServlet extends HttpServlet {
         }
 
         req.setAttribute("dataList", dataList);
-        req.setAttribute("search", searchVideo);
         req.getRequestDispatcher("/WEB-INF/jsp/homepage.jsp").forward(req, resp);
     }
 

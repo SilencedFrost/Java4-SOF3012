@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 @WebServlet ("/admin/users")
@@ -32,15 +33,18 @@ public class adminUserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String searchUserId = req.getParameter("search");
         HttpSession session = req.getSession();
-        List<UserDTO> users = null;
 
-        // Session data extraction
-        Map<String, String> errors = (Map<String, String>) session.getAttribute("errors");
-        session.removeAttribute("errors");
-        Map<String, String> pageData = (Map<String, String>) session.getAttribute("pageData");
-        session.removeAttribute("pageData");
+        String targetUrl = (String) session.getAttribute("targetUrl");
+        session.removeAttribute("targetUrl");
+        req.setAttribute("targetUrl", targetUrl);
+
+        String csrfToken = UUID.randomUUID().toString();
+        session.setAttribute("csrfToken", csrfToken);
+        req.setAttribute("csrfToken", csrfToken);
+
+        String searchUserId = req.getParameter("search");
+        List<UserDTO> users;
 
         if(!ValidationUtil.isNullOrBlank(searchUserId)) {
             users = userService.findByIdLike(searchUserId);
@@ -49,9 +53,6 @@ public class adminUserServlet extends HttpServlet {
             users = userService.findAll();
         }
 
-        ServletUtil.setErrors(req, errors);
-        ServletUtil.setFieldData(req, pageData);
-        req.setAttribute("search", searchUserId);
         ServletUtil.constructForm(req,UserFormFields.class);
         ServletUtil.populateButtons(req, ButtonFormFields.CREATE, ButtonFormFields.DELETE, ButtonFormFields.UPDATE, ButtonFormFields.RESET);
         ServletUtil.setTableData(req, users, UserFormFields.class);
@@ -60,72 +61,17 @@ public class adminUserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Map<String, String> pageData = ServletUtil.getFieldData(req, UserFormFields.class);
-        Map<String, String> errors = new HashMap<>();
-        String action = req.getParameter("action");
-        HttpSession session = req.getSession();
-        logger.info(pageData.get(UserFormFields.ROLE.getPropertyKey()));
 
-        if("create".equals(action)){
-            logger.info("Create action triggered");
-            validateFormFields(pageData, errors);
-            logger.info("Data validation completed");
-
-            if(errors.isEmpty()) {
-                userService.create(
-                        pageData.get(UserFormFields.USER_ID.getPropertyKey()),
-                        PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.getPropertyKey())),
-                        pageData.get(UserFormFields.FULL_NAME.getPropertyKey()),
-                        pageData.get(UserFormFields.EMAIL.getPropertyKey()),
-                        pageData.get(UserFormFields.ROLE.getPropertyKey())
-                );
-                ServletUtil.clearFieldData(pageData, UserFormFields.class);
-            }
-
-        } else if("delete".equals(action)) {
-            logger.info("Delete action triggered");
-            validateFormFields(pageData, errors, List.of(UserFormFields.USER_ID));
-            logger.info("Data validation completed");
-
-            if(errors.isEmpty()) userService.delete(pageData.get(UserFormFields.USER_ID.getPropertyKey()));
-            logger.info(pageData.get(UserFormFields.USER_ID.getPropertyKey()));
-
-        } else if("update".equals(action)) {
-            logger.info("Update action triggered");
-            validateFormFields(pageData, errors, List.of(UserFormFields.USER_ID));
-            if(!ValidationUtil.isNullOrBlank(pageData.get(UserFormFields.PASSWORD.getPropertyKey()))){
-                validateFormFields(pageData, errors, List.of(UserFormFields.PASSWORD));
-            } else {
-                pageData.put(UserFormFields.PASSWORD.getPropertyKey(), null);
-            }
-
-            if(ValidationUtil.isNullOrBlank(pageData.get(UserFormFields.FULL_NAME.getPropertyKey()))) pageData.put(UserFormFields.FULL_NAME.getPropertyKey(), null);
-
-            if(!ValidationUtil.isNullOrBlank(pageData.get(UserFormFields.EMAIL.getPropertyKey()))){
-                validateFormFields(pageData, errors, List.of(UserFormFields.EMAIL));
-            } else {
-                pageData.put(UserFormFields.EMAIL.getPropertyKey(), null);
-            }
-            logger.info("Data validation completed");
-
-            if(errors.isEmpty()) {
-                userService.update(
-                        pageData.get(UserFormFields.USER_ID.getPropertyKey()),
-                        PasswordHasher.hash(pageData.get(UserFormFields.PASSWORD.getPropertyKey())),
-                        pageData.get(UserFormFields.FULL_NAME.getPropertyKey()),
-                        pageData.get(UserFormFields.EMAIL.getPropertyKey()),
-                        pageData.get(UserFormFields.ROLE.getPropertyKey()));
-                ServletUtil.clearFieldData(pageData, UserFormFields.class);
-            }
-
-        } else if("reset".equals((action))) {
-            ServletUtil.clearFieldData(pageData, UserFormFields.class);
-        }
-
-        session.setAttribute("errors", errors);
-        session.setAttribute("pageData", pageData);
-        resp.sendRedirect("/admin/users");
     }
+
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    }
+
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    }
+
 
     private void validateFormFields(Map<String, String> pageData, Map<String, String> errors) {
         validateFormFields(pageData, errors, List.of(UserFormFields.values()));

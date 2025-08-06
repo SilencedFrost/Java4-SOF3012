@@ -48,7 +48,24 @@ public class HomePageServlet extends HttpServlet {
             videoList = videoService.findAll();
         }
 
+        //Sort
         videoList.sort(Comparator.comparingLong(VideoDTO::getViews).reversed());
+
+        //Paginate
+        int itemsPerPage = 12;
+
+        req.setAttribute("pageCount", (int) Math.ceil((double) videoList.size() / itemsPerPage));
+
+        String pageString = req.getParameter("page");
+        int page = 1;
+        if(pageString != null) {
+            page = Integer.parseInt(pageString);
+        }
+
+        int startIndex = (page - 1) * itemsPerPage;
+        int endIndex = Math.min(startIndex + itemsPerPage, videoList.size());
+
+        videoList = videoList.subList(startIndex, endIndex);
 
         for(VideoDTO videoDTO : videoList) {
             if(videoDTO.getActive()){

@@ -20,7 +20,27 @@
                 <%@ include file="components/videoElement.jsp" %>
             </c:forEach>
         </div>
+        <div class="text-center mt-2">
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-primary" onclick="goToPage(1)">&laquo;&laquo;</button>
+                <button class="btn btn-outline-primary" onclick="goToPage(${param.page != null ? param.page - 1 : 0})">&laquo;</button>
+                <button class="btn btn-outline-primary" onclick="goToPage(${param.page != null ? param.page + 1 : 2})">&raquo;</button>
+                <button class="btn btn-outline-primary" onclick="goToPage(${requestScope.pageCount})">&raquo;&raquo;</button>
+            </div>
+        </div>
     </div>
+    <script>
+    const pageCount = ${requestScope.pageCount};
+
+    function goToPage(page) {
+        if (page < 1) page = 1;
+        if (page > pageCount) page = pageCount;
+
+        const url = new URL(window.location);
+        url.searchParams.set('page', page);
+        window.location.href = url.toString();
+    }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

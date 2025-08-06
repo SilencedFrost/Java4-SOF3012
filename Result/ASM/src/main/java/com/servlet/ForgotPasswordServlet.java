@@ -77,9 +77,7 @@ public class ForgotPasswordServlet extends HttpServlet {
 
         // Extraction of form fields
         String userId = reqMap.get(UserFormFields.USER_ID.getPropertyKey());
-        String fullName = reqMap.get(UserFormFields.FULL_NAME.getPropertyKey());
         String email = reqMap.get(UserFormFields.EMAIL.getPropertyKey());
-        String password = reqMap.get(UserFormFields.PASSWORD.getPropertyKey());
 
         // Service initialization late down the chain to save resource
         UserService userService = new UserService();
@@ -88,16 +86,6 @@ public class ForgotPasswordServlet extends HttpServlet {
         // UserId
         if(ValidationUtil.isNullOrBlank(userId)) {
             errors.put(UserFormFields.USER_ID.getErrorKey(), "User Id cannot be empty!");
-        } else if (
-                userService.findById(userId) != null ||
-                        userService.findByEmail(userId) != null ||
-                        ValidationUtil.isValidEmail(userId)) {
-            errors.put(UserFormFields.USER_ID.getErrorKey(), "Invalid user ID");
-        }
-
-        // Full name
-        if(ValidationUtil.isNullOrBlank(fullName)) {
-            errors.put(UserFormFields.FULL_NAME.getErrorKey(), "Full name cannot be empty!");
         }
 
         // Email
@@ -105,38 +93,31 @@ public class ForgotPasswordServlet extends HttpServlet {
             errors.put(UserFormFields.EMAIL.getErrorKey(), "Email cannot be empty!");
         } else if (!ValidationUtil.isValidEmail(email)) {
             errors.put(UserFormFields.EMAIL.getErrorKey(), "Email is invalid!");
-        } else if (userService.findByEmail(email) != null) {
-            errors.put(UserFormFields.EMAIL.getErrorKey(), "Email already taken");
-        }
-
-        // Password
-        if(ValidationUtil.isNullOrBlank(password)){
-            errors.put(UserFormFields.PASSWORD.getErrorKey(), "Password cannot be empty!");
-        } else if (!ValidationUtil.isValidPassword(password)) {
-            errors.put(UserFormFields.PASSWORD.getErrorKey(), "8-32 characters with uppercase, lowercase, number & special character");
         }
 
         if(errors.isEmpty()) {
-            if(userService.create(userId, PasswordHasher.hash(password), fullName, email, "User")) {
-                EmailSender.sendEmail(email, "Thank you for registering to PolyOE Online Entertainment", "Dear " + fullName + " thank you for registering to PolyOE Online Entertainment, your user ID is" + userId + ".Please remember this so you can login later, cheers!");
-                ServletUtil.sendJsonRedirect(resp, "/login");
-            } else {
-                // If failed user creation
-                errors.put("specialError", "User creation failed");
-
-                // Reload CSRF token
-                String csrfToken = UUID.randomUUID().toString();
-                session.setAttribute("csrfToken", csrfToken);
-                respMap.put("csrfToken", csrfToken);
-
-                // Send response back
-                respMap.put("errors", errors);
-
-                String json = mapper.writeValueAsString(respMap);
-
-                ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_BAD_REQUEST);
-                return;
+            // Check for credentials
+            if(userService.findById(userId.toLowerCase().trim()).getEmail().equals(email.toLowerCase().trim())){
+                // Update password to DefaultP4$$
+                if(userService.update(userId, PasswordHasher.hash("DefaultP4$$$"), null, null, null)) {
+                    EmailSender.sendEmail(email, "PolyOE Online Entertainment password reset", "Due to a request, your password have been reset to DefaultP4$$, please login with this password and change it as soon as possible");
+                }
             }
+            // Notification
+            errors.put("specialError", "request sent, if your credentials are valid, you will receive an email");
+
+            // Reload CSRF token
+            String csrfToken = UUID.randomUUID().toString();
+            session.setAttribute("csrfToken", csrfToken);
+            respMap.put("csrfToken", csrfToken);
+
+            // Send response back
+            respMap.put("errors", errors);
+
+            String json = mapper.writeValueAsString(respMap);
+
+            ServletUtil.sendJsonResp(resp, json, HttpServletResponse.SC_BAD_REQUEST);
+            return;
         } else {
             // If failed blank field validation
             // Reload CSRF token

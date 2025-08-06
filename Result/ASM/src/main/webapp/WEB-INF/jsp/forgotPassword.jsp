@@ -16,7 +16,7 @@
         <div class="card p-3 shadow-sm" style="width: 300px;">
             <h3 class="text-center">Forgot password</h3>
             <hr>
-            <%@ include file="components/form.jsp" %>
+            <%@ include file="components/formAsync.jsp" %>
         </div>
     </div>
 

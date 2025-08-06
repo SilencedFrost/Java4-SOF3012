@@ -148,14 +148,14 @@ public class UserService implements Service<UserDTO, String>{
                 User existingUser = em.find(User.class, userDTO.getUserId());
                 if (existingUser != null) {
                     tx.begin();
-                    if (!ValidationUtil.isNullOrBlank(userDTO.getFullName())) existingUser.setFullName(userDTO.getFullName());
-                    if (!ValidationUtil.isNullOrBlank(userDTO.getPasswordHash())) existingUser.setPasswordHash(userDTO.getPasswordHash());
-                    if (!ValidationUtil.isNullOrBlank(userDTO.getEmail()) || ValidationUtil.isValidEmail(userDTO.getEmail())) existingUser.setEmail(userDTO.getEmail());
-
-                    Role role = RoleService.findByRoleName(em, userDTO.getRoleName());
-                    if (role == null) role = em.find(Role.class, 1);
-                    role.addUser(existingUser);
-
+                    if(!ValidationUtil.isNullOrBlank(userDTO.getFullName())) existingUser.setFullName(userDTO.getFullName());
+                    if(!ValidationUtil.isNullOrBlank(userDTO.getPasswordHash())) existingUser.setPasswordHash(userDTO.getPasswordHash());
+                    if(!ValidationUtil.isNullOrBlank(userDTO.getEmail()) || ValidationUtil.isValidEmail(userDTO.getEmail())) existingUser.setEmail(userDTO.getEmail());
+                    if(!ValidationUtil.isNullOrBlank(userDTO.getRoleName())) {
+                        Role role = RoleService.findByRoleName(em, userDTO.getRoleName());
+                        if (role == null) role = em.find(Role.class, 1);
+                        role.addUser(existingUser);
+                    }
                     tx.commit();
                     logger.info("User with id " + userDTO.getUserId() + " updated successfully.");
                     return true;

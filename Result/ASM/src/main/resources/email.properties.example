@@ -1,0 +1,7 @@
+email.username=polyoe.test@hotmail.com
+email.password=
+smtp.host=smtp.office365.com
+smtp.port=587
+smtp.auth=true
+smtp.starttls.enable=true
+smtp.ssl.trust=smtp.office365.com

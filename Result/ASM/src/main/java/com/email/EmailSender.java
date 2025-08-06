@@ -44,12 +44,4 @@ public class EmailSender {
             logger.log(Level.SEVERE, "Failed to send email: " + e.getMessage(), e);
         }
     }
-
-    public static void main(String[] args) {
-        sendEmail(
-                "thnrgbefv0987@gmail.com",
-                "Test Subject",
-                "This is a test email sent from Java!"
-        );
-    }
 }

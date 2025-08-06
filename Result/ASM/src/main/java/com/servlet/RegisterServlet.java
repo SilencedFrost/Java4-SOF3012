@@ -4,6 +4,7 @@ import com.constants.ButtonFormFields;
 import com.constants.CustomFormFields;
 import com.constants.UserFormFields;
 import com.dto.UserDTO;
+import com.email.EmailSender;
 import com.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.PasswordHasher;
@@ -115,6 +116,7 @@ public class RegisterServlet extends HttpServlet {
 
         if(errors.isEmpty()) {
             if(userService.create(userId, PasswordHasher.hash(password), fullName, email, "User")) {
+                EmailSender.sendEmail(email, "Thank you for registering to PolyOE Online Entertainment", "Dear " + fullName + " thank you for registering to PolyOE Online Entertainment, your user ID is" + userId + ".Please remember this so you can login later, cheers!");
                 ServletUtil.sendJsonRedirect(resp, "/login");
             } else {
                 // If failed user creation

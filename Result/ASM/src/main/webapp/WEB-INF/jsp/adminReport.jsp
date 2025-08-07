@@ -34,14 +34,16 @@
                 <div class="p-3">
                     <%@ include file="components/searchbar.jsp" %>
                     <hr class="my-2">
-                    <%@ include file="components/table1.jsp" %>
+                    <c:set var="index" value="1" />
+                    <%@ include file="components/table.jsp" %>
                 </div>
             </div>
             <div class="tab-pane fade" id="shares" role="tabpanel" aria-labelledby="shares-tab">
                 <div class="p-3">
                     <%@ include file="components/searchbar.jsp" %>
                     <hr class="my-2">
-                    <%@ include file="components/table2.jsp" %>
+                    <c:set var="index" value="2" />
+                    <%@ include file="components/table.jsp" %>
                 </div>
             </div>
         </div>

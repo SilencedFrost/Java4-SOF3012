@@ -99,15 +99,13 @@ public class HomePageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String favourite = req.getParameter("favourite");
         String unfavourite = req.getParameter("unfavourite");
-        String share = req.getParameter("share");
-        String email = req.getParameter("email");
 
         HttpSession session = req.getSession(false);
         if(session == null) {resp.sendRedirect("/home"); return;}
 
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
 
-        if((!ValidationUtil.isNullOrBlank(favourite) || !ValidationUtil.isNullOrBlank(unfavourite) || !ValidationUtil.isNullOrBlank(share)) && userDTO == null) {
+        if((!ValidationUtil.isNullOrBlank(favourite) || !ValidationUtil.isNullOrBlank(unfavourite)) && userDTO == null) {
             resp.sendRedirect("/login");
             return;
         }
@@ -116,9 +114,6 @@ public class HomePageServlet extends HttpServlet {
             new FavouriteService().create(userDTO.getUserId(), favourite);
         } else if(!ValidationUtil.isNullOrBlank(unfavourite)) {
             new FavouriteService().delete(userDTO.getUserId(), unfavourite);
-        } else if(!ValidationUtil.isNullOrBlank(share) && ValidationUtil.isValidEmail(email)) {
-            new ShareService().create(userDTO.getUserId(), share, email);
-            EmailSender.sendEmail(email, "PolyOE Online Entertainment share", userDTO.getFullName() + " shared this video with you, check it out here: http://silencedfrost.freeddns.org:25595/video/watch?id=" + share);
         }
 
         resp.sendRedirect("/home");

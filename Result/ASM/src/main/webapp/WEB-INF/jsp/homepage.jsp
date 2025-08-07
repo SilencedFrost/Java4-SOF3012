@@ -8,6 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Homepage</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        html {
+            overflow-y: scroll;
+        }
+    </style>
 </head>
 
 <body class="container-fluid p-0">
@@ -15,11 +20,17 @@
     <div class="container-fluid p-3">
         <%@ include file="components/searchbar.jsp" %>
         <hr class="py-2">
+
         <div class="row g-2 p-0">
             <c:forEach var="video" items="${dataList}">
                 <%@ include file="components/videoElement.jsp" %>
             </c:forEach>
         </div>
+
+        <c:forEach var="video" items="${dataList}">
+            <%@ include file="components/shareModal.jsp" %>
+        </c:forEach>
+
         <div class="text-center mt-2">
             <div class="btn-group" role="group">
                 <button class="btn btn-outline-primary" onclick="goToPage(1)">&laquo;&laquo;</button>
@@ -29,6 +40,7 @@
             </div>
         </div>
     </div>
+
     <script>
     const pageCount = ${requestScope.pageCount};
 
@@ -41,13 +53,8 @@
         window.location.href = url.toString();
     }
     </script>
+    <script src="/assets/js/shareJs.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
-
-<style>
-    html {
-        overflow-y: scroll;
-    }
-</style>

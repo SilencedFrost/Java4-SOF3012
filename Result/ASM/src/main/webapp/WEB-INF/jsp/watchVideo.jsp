@@ -7,6 +7,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>${video.title}</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            html {
+                overflow-y: scroll;
+            }
+        </style>
     </head>
 
     <body class="container-fluid p-0">
@@ -24,12 +29,8 @@
             </div>
         </div>
         <%@ include file="components/shareModal.jsp" %>
+
+        <script src="/assets/js/shareJs.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
-
-<style>
-    html {
-        overflow-y: scroll;
-    }
-</style>

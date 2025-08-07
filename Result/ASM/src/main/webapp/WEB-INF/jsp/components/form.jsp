@@ -201,6 +201,7 @@
                 </c:if>
             </c:forEach>
             data["csrfToken"] = form.csrfToken.value;
+            data["targetUrl"] = form.targetUrl.value;
             data["action"] = submitter.value;
 
             const response = await fetch(form.getAttribute('action') || window.location.pathname, {
@@ -284,6 +285,5 @@
         </c:forEach>
         clearAllErrors();
     }
-
-    <%@ include file="fieldErrorJs.jsp" %>
 </script>
+<script src="assets/js/fieldErrorJs.js" defer></script>

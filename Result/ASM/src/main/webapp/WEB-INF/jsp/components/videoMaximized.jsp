@@ -12,8 +12,8 @@
   <form action="" method="post" class="d-flex flex-row ms-auto">
     <button name="favourite" value="${video.videoId}" class="btn btn-success m-1 ${video.isFavourited != null ? 'd-none' : 'd-block'}">Favourite</button>
     <button name="unfavourite" value="${video.videoId}" class="btn btn-danger m-1 ${video.isFavourited != null ? 'd-block' : 'd-none'}">Unfavourite</button>
-    <button type="button" class="btn btn-warning m-1" data-bs-toggle="modal" data-bs-target="#myModal">Share</button>
   </form>
+  <button type="button" class="btn btn-warning m-1" data-bs-toggle="modal" data-bs-target="#videoModal-${video.videoId}">Share</button>
 </div>
 <hr class="p-2">
 <p>${video.description}</p>

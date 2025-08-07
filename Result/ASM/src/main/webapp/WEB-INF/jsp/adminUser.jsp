@@ -16,7 +16,7 @@
         <div class="row g-2 p-2">
             <div class="col-12 col-lg-4">
                 <div class="card card-border p-2 shadow-sm">
-                    <%@ include file="components/formAsync.jsp" %>
+                    <%@ include file="components/form.jsp" %>
                 </div>
             </div>
             <div class="col-12 col-lg-8">

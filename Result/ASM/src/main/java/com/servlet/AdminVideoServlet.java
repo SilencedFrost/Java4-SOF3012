@@ -24,7 +24,7 @@ public class AdminVideoServlet extends HttpServlet {
         List<VideoDTO> videoList = new VideoService().findAll();
 
         ServletUtil.setTableData(req, videoList, VideoFormFields.VIDEO_ID, VideoFormFields.TITLE, VideoFormFields.VIEWS, VideoFormFields.ACTIVE);
-        ServletUtil.constructForm(req, VideoFormFields.VIDEO_ID, VideoFormFields.TITLE, VideoFormFields.VIEWS, VideoFormFields.ACTIVE, VideoFormFields.DESCRIPTION);
+        ServletUtil.constructForm(req, "/api/video",  VideoFormFields.VIDEO_ID, VideoFormFields.TITLE, VideoFormFields.VIEWS, VideoFormFields.ACTIVE, VideoFormFields.DESCRIPTION);
         ServletUtil.populateButtons(req, ButtonFormFields.CREATE, ButtonFormFields.UPDATE, ButtonFormFields.DELETE, ButtonFormFields.RESET);
 
         req.getRequestDispatcher("/WEB-INF/jsp/adminVideo.jsp").forward(req, resp);

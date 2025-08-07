@@ -43,7 +43,7 @@ public class AdminUserServlet extends HttpServlet {
 
         ServletUtil.constructForm(req, "/api/user", UserFormFields.class);
         ServletUtil.populateButtons(req, ButtonFormFields.CREATE, ButtonFormFields.DELETE, ButtonFormFields.UPDATE, ButtonFormFields.RESET);
-        ServletUtil.setTableData(req, users, UserFormFields.class);
+        ServletUtil.setTableData(req, users, UserFormFields.USER_ID, UserFormFields.EMAIL, UserFormFields.FULL_NAME, UserFormFields.ROLE);
 
         req.getRequestDispatcher("/WEB-INF/jsp/adminUser.jsp").forward(req, resp);
     }

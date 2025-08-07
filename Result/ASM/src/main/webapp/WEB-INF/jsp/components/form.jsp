@@ -88,6 +88,85 @@
     </div>
 </form>
 <script>
+    // getData function to fetch and populate form with data by ID
+    async function getData(id) {
+        if (!id) {
+            console.warn('getData: No ID provided');
+            return;
+        }
+
+        const form = document.getElementById('${structureKey}');
+        const formAction = form.getAttribute('action') || window.location.pathname;
+        const getUrl = formAction + '/' + id;
+
+        try {
+            // Clear any existing errors
+            clearAllErrors();
+
+            const response = await fetch(getUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Response is not JSON');
+            }
+
+            const data = await response.json();
+
+            // Populate form fields with received data
+            <c:forEach var="field" items="${resolvedFieldStructure}">
+                <c:if test="${field.fieldType != 'link'}">
+                    if (data.hasOwnProperty('${field.propertyKey}')) {
+                        const fieldValue = data['${field.propertyKey}'];
+
+                        <c:choose>
+                            <c:when test="${field.fieldType == 'radio'}">
+                                // Handle radio buttons
+                                const radioButtons = form.querySelectorAll('input[name="${field.propertyKey}"]');
+                                radioButtons.forEach(radio => {
+                                    radio.checked = (radio.value === fieldValue);
+                                });
+                            </c:when>
+                            <c:when test="${field.fieldType == 'combobox'}">
+                                // Handle select/combobox
+                                const select = form.${field.propertyKey};
+                                if (select) {
+                                    select.value = fieldValue;
+                                }
+                            </c:when>
+                            <c:otherwise>
+                                // Handle text, email, password, textarea, id fields
+                                const fieldElement = form.${field.propertyKey};
+                                if (fieldElement) {
+                                    fieldElement.value = fieldValue || '';
+                                }
+                            </c:otherwise>
+                        </c:choose>
+                    }
+                </c:if>
+            </c:forEach>
+
+            // Update CSRF token if provided in response
+            if (data.csrfToken) {
+                form.csrfToken.value = data.csrfToken;
+            }
+
+            console.log('Form populated successfully with data for ID:', id);
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            showFieldError('specialError', `Failed to load data: ${error.message}`);
+        }
+    }
+
     document.getElementById('${structureKey}').addEventListener('submit', async function(e) {
         e.preventDefault();
 

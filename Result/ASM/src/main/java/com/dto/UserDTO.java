@@ -1,29 +1,11 @@
 package com.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class UserDTO {
-    private String userId;
-    private String passwordHash;
-    private String fullName;
-    private String email;
-    private String roleName;
-    private LocalDateTime creationDate;
-
-    public UserDTO(String userId, String passwordHash, String fullName, String email, String roleName) {
-        this.userId = userId;
-        this.passwordHash = passwordHash;
-        this.fullName = fullName;
-        this.email = email;
-        this.roleName = roleName;
-    }
+public interface UserDTO {
+    public String getUserId();
+    public String getFullName();
+    public String getEmail();
+    public String getRoleName();
+    public LocalDateTime getCreationDate();
 }

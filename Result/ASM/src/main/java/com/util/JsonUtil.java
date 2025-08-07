@@ -23,7 +23,7 @@ public class JsonUtil {
 
     public static void sendJsonRedirect(HttpServletResponse resp, String targetUrl) throws IOException {
         resp.setContentType("application/json");
-        resp.setStatus(HttpServletResponse.SC_FOUND);
+        resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
         String json = mapper.writeValueAsString(Map.of("redirect", targetUrl));
         resp.getWriter().write(json);
         resp.flushBuffer();

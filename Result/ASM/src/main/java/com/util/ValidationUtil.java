@@ -26,10 +26,7 @@ public class ValidationUtil {
     public static void validateUserId(String userId, Map<String, String> errors) {
         if(ValidationUtil.isNullOrBlank(userId)) {
             errors.put(UserFormFields.USER_ID.getErrorKey(), "User Id cannot be empty!");
-        } else if (
-                userService.findById(userId) != null ||
-                        userService.findByEmail(userId) != null ||
-                        ValidationUtil.isValidEmail(userId)) {
+        } else if (userService.findById(userId) != null || userService.findByEmail(userId) != null || ValidationUtil.isValidEmail(userId)) {
             errors.put(UserFormFields.USER_ID.getErrorKey(), "Invalid user ID");
         }
     }

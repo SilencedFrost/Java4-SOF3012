@@ -138,11 +138,11 @@
             if (contentType && contentType.includes('application/json')) {
                 const result = await response.json();
                 switch (response.status) {
-                    case 302:
-                        if (result.redirect) {
+                    case 303:
+                        if (result.redirect && result.redirect.trim()) {
                             window.location.href = result.redirect;
                         } else {
-                            console.log("Request successful, but no redirect specified.");
+                            window.location.reload();
                         }
                         break;
                     case 400:

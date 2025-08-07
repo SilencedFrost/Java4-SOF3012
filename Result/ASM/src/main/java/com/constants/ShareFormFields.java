@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public enum ShareFormFields implements Automatable {
-    SHARE_ID("shareId", "Share ID", "text", null),
+    SHARE_ID("shareId", "Share ID", "id", null),
     USER_ID("userId", "User ID", "text", null),
     Video_ID("videoId", "Video ID", "text", null),
     RECEIVER_EMAIL("receiverEmail", "Receiver Email", "text", null),

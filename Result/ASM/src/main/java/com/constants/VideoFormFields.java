@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public enum VideoFormFields implements Automatable {
-    VIDEO_ID("videoId", "Video ID", "text", null),
+    VIDEO_ID("videoId", "Video ID", "id", null),
     TITLE("title", "Title", "text", null),
     POSTER("poster", "Poster", "text", null),
     LINK("link", "Link", "text", null),

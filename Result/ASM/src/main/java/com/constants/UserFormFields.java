@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public enum UserFormFields implements Automatable {
-    USER_ID("userId", "User ID", "text", UserValidationError.USER_ID_REQUIRED, null, null),
+    USER_ID("userId", "User ID", "id", UserValidationError.USER_ID_REQUIRED, null, null),
     PASSWORD("passwordHash", "Password", "password", UserValidationError.PASSWORD_REQUIRED, UserValidationError.PASSWORD_INCORRECT_FORMAT, null),
     FULL_NAME("fullName", "Full Name", "text", UserValidationError.FULL_NAME_REQUIRED, null, null),
     EMAIL("email", "Email", "email", UserValidationError.EMAIL_REQUIRED, UserValidationError.EMAIL_INCORRECT_FORMAT, null),

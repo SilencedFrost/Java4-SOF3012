@@ -15,10 +15,10 @@
     <input type="hidden" id="csrfToken" name="csrfToken" value="${csrfToken}"/>
     <c:forEach var="field" items="${resolvedFieldStructure}">
         <c:choose>
-            <c:when test="${field.fieldType == 'text' || field.fieldType == 'email' || field.fieldType == 'password'}">
+            <c:when test="${field.fieldType == 'text' || field.fieldType == 'email' || field.fieldType == 'password' || field.fieldType == 'id'}">
                 <div class="mb-3">
                     <label for="${field.propertyKey}" class="form-label">${field.label}</label>
-                    <input type="${field.fieldType}" class="form-control shadow-sm"
+                    <input type="${field.fieldType != 'id' ? field.fieldType : 'text'}" class="form-control shadow-sm"
                            id="${field.propertyKey}" name="${field.propertyKey}"
                            placeholder="Enter ${field.label.toLowerCase()}">
                     <div id="${field.errorKey}" class="my-2 form-text ps-2 text-danger d-none form-error"></div>
@@ -203,7 +203,6 @@
                 </c:choose>
             </c:if>
         </c:forEach>
-
         clearAllErrors();
     }
 

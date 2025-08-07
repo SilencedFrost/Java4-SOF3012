@@ -4,7 +4,6 @@ import com.constants.ButtonFormFields;
 import com.constants.CustomFormFields;
 import com.constants.UserFormFields;
 import com.dto.UserDTO;
-import com.security.PasswordHasher;
 import com.service.UserService;
 import com.util.JsonUtil;
 import com.util.ServletUtil;
@@ -24,6 +23,7 @@ import java.util.logging.Logger;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(LoginServlet.class.getName());
+    private static final UserService userService = new UserService();
     private static final CustomFormFields userIdOrEmail = new CustomFormFields("userIdOrEmail", "User ID or Email", "text", null);
     private static final CustomFormFields forgotPasswordLink = new CustomFormFields("/forgot-password", "forgot password?", "link", null);
     private static final CustomFormFields registerLink = new CustomFormFields("/register", "don't have an account?", "link", null);
@@ -64,7 +64,7 @@ public class LoginServlet extends HttpServlet {
             // Check if user exists and password matches
             if(errors.isEmpty()) {
                 UserDTO userDTO = new UserService().findByIdOrEmail(idOrEmail);
-                if(userDTO != null && PasswordHasher.verify(password, userDTO.getPasswordHash())) {
+                if(userDTO != null && userService.validateUser(password, userDTO.getUserId())) {
                     session.setAttribute("user", userDTO);
 
                     if(!ValidationUtil.isNullOrBlank(targetUrl)){

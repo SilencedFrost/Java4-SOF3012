@@ -1,5 +1,6 @@
 package com.service;
 
+import com.dto.InboundUserDTO;
 import com.dto.UserDTO;
 import com.dto.VideoDTO;
 import com.entity.Role;
@@ -7,6 +8,7 @@ import com.entity.User;
 import com.entity.Video;
 import com.mapper.UserMapper;
 import com.mapper.VideoMapper;
+import com.security.PasswordHasher;
 import com.util.ValidationUtil;
 import jakarta.persistence.*;
 import com.util.EntityManagerUtil;
@@ -93,14 +95,41 @@ public class UserService implements Service<UserDTO, String>{
         }
     }
 
+    public boolean validateUser(String password, String userId) {
+        if (ValidationUtil.isNullOrBlank(userId)) {
+            throw new IllegalArgumentException("ID cannot be null or empty");
+        }
+
+        User user = null;
+        try (EntityManager em = EntityManagerUtil.getEntityManager()) {
+            user = em.find(User.class, userId.toLowerCase().trim());
+            logger.info("User with id " + userId + (user != null ? " found." : " not found."));
+        } catch (PersistenceException e) {
+            logger.log(Level.SEVERE, "Error finding user by ID", e);
+        }
+        if(user != null) {
+            return PasswordHasher.verify(password, user.getPasswordHash());
+        } else {
+            return false;
+        }
+    }
+
     // Manual creation method
     public boolean create(String userId, String password, String fullName, String email, String roleName) {
-        return create(new UserDTO(userId, password, fullName, email, roleName));
+        return create(new InboundUserDTO(userId, password, fullName, email, roleName));
+    }
+
+    @Override
+    public boolean create(UserDTO userDTO) {
+        if (!(userDTO instanceof InboundUserDTO)) {
+            logger.warning("Create requires InboundUserDTO for security reasons");
+            return false;
+        }
+        return create((InboundUserDTO) userDTO);
     }
 
     // Object creation method
-    @Override
-    public boolean create(UserDTO userDTO) {
+    public boolean create(InboundUserDTO userDTO) {
         if (userDTO == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
@@ -131,12 +160,20 @@ public class UserService implements Service<UserDTO, String>{
     }
 
     public boolean update(String userId, String password, String fullName, String email, String roleName) {
-        return update(new UserDTO(userId, password, fullName, email, roleName));
+        return update(new InboundUserDTO(userId, password, fullName, email, roleName));
+    }
+
+    @Override
+    public boolean update(UserDTO userDTO) {
+        if (!(userDTO instanceof InboundUserDTO)) {
+            logger.warning("Update requires InboundUserDTO for security reasons");
+            return false;
+        }
+        return update((InboundUserDTO) userDTO);
     }
 
     // Object update method
-    @Override
-    public boolean update(UserDTO userDTO) {
+    public boolean update(InboundUserDTO userDTO) {
         if (userDTO == null || ValidationUtil.isNullOrBlank(userDTO.getUserId())) {
             logger.warning("User or User ID cannot be null or empty");
             return false;

@@ -1,5 +1,7 @@
 package com.mapper;
 
+import com.dto.InboundUserDTO;
+import com.dto.OutboundUserDTO;
 import com.dto.UserDTO;
 import com.entity.Role;
 import com.entity.User;
@@ -14,9 +16,8 @@ public class UserMapper {
         if (user == null) {
             return null;
         }
-        return new UserDTO(
+        return new OutboundUserDTO(
                 user.getUserId(),
-                user.getPasswordHash(),
                 user.getFullName(),
                 user.getEmail(),
                 user.getRole() != null ? user.getRole().getRoleName() : "null",
@@ -24,7 +25,7 @@ public class UserMapper {
         );
     }
 
-    public static User toEntity(UserDTO userDTO, Role role) {
+    public static User toEntity(InboundUserDTO userDTO, Role role) {
         if (userDTO == null) {
             return null;
         }

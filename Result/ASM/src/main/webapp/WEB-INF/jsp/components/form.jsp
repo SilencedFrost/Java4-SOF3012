@@ -286,4 +286,4 @@
         clearAllErrors();
     }
 </script>
-<script src="assets/js/fieldErrorJs.js" defer></script>
+<script src="/assets/js/fieldErrorJs.js" defer></script>

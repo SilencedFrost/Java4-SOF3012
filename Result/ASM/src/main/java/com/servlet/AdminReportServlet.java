@@ -78,6 +78,7 @@ public class AdminReportServlet extends HttpServlet {
         for(FavouriteDTO favouriteDTO : favouriteList) {
             Map<String, String> dataMap = new HashMap<>();
 
+            dataMap.put(VideoFormFields.VIDEO_ID.getPropertyKey(), favouriteDTO.getVideoId());
             dataMap.put(VideoFormFields.TITLE.getPropertyKey(), new VideoService().findById(favouriteDTO.getVideoId()).getTitle());
             UserDTO userDTO = new UserService().findById(favouriteDTO.getUserId());
             dataMap.put(UserFormFields.FULL_NAME.getPropertyKey(), userDTO.getFullName());

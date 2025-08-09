@@ -6,11 +6,17 @@
     </div>
     <div class="col-lg-7 d-lg d-none d-lg-block">
         <h6 class="mt-2">${video.title}</h6>
-        <small>Views: ${video.views}</small>
+        <div class="d-flex gap-2">
+            <small>Views: ${video.views}</small>
+            <small>Favourites: ${video.favourites}</small>
+        </div>
     </div>
     <div class="d-block d-lg-none">
         <h4 class="mt-2">${video.title}</h4>
-        <small>Views: ${video.views}</small>
+        <div class="d-flex gap-2">
+            <small>Views: ${video.views}</small>
+            <small>Favourites: ${video.favourites}</small>
+        </div>
     </div>
     
 </div>

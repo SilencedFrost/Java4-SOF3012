@@ -8,7 +8,10 @@
 </div>
 <h3 class="mt-2">${video.title}</h3>
 <div class="d-flex">
-  <div class="text-secondary">Views: ${video.views}</div>
+    <div class="d-flex gap-2">
+      <div class="text-secondary">Views: ${video.views}</div>
+      <div class="text-secondary">Favourites: ${video.favourites}</div>
+  </div>
   <form action="" method="post" class="d-flex flex-row ms-auto">
     <button name="favourite" value="${video.videoId}" class="btn btn-success m-1 ${video.isFavourited != null ? 'd-none' : 'd-block'}">Favourite</button>
     <button name="unfavourite" value="${video.videoId}" class="btn btn-danger m-1 ${video.isFavourited != null ? 'd-block' : 'd-none'}">Unfavourite</button>

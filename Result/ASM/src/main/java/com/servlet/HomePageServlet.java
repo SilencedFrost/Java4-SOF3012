@@ -88,6 +88,7 @@ public class HomePageServlet extends HttpServlet {
             dataMap.put(VideoFormFields.TITLE.getPropertyKey(), videoDTO.getTitle());
             dataMap.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getThumbnail());
             dataMap.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
+            dataMap.put("favourites", (new VideoService().findFavouriteCount(videoDTO.getVideoId())).toString());
 
             dataList.add(dataMap);
         }

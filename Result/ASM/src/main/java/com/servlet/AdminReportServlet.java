@@ -10,6 +10,7 @@ import com.service.ShareService;
 import com.service.UserService;
 import com.service.VideoService;
 import com.util.ServletUtil;
+import com.util.ValidationUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -72,44 +73,83 @@ public class AdminReportServlet extends HttpServlet {
     private void buildForm2(HttpServletRequest req) {
         List<FavouriteDTO> favouriteList =  new FavouriteService().findAll();
         List<Map<String, String>> dataList = new ArrayList<>();
+        List<Map<String, String>> cboList = new ArrayList<>();
+        String searchVideoId = req.getParameter("videoId");
 
         if(favouriteList == null) favouriteList = List.of();
 
         for(FavouriteDTO favouriteDTO : favouriteList) {
-            Map<String, String> dataMap = new HashMap<>();
+            if (ValidationUtil.isNullOrBlank(searchVideoId) || (!ValidationUtil.isNullOrBlank(searchVideoId) && searchVideoId.equals(favouriteDTO.getVideoId()))) {
+                Map<String, String> dataMap = new HashMap<>();
 
-            dataMap.put(VideoFormFields.VIDEO_ID.getPropertyKey(), favouriteDTO.getVideoId());
-            dataMap.put(VideoFormFields.TITLE.getPropertyKey(), new VideoService().findById(favouriteDTO.getVideoId()).getTitle());
-            UserDTO userDTO = new UserService().findById(favouriteDTO.getUserId());
-            dataMap.put(UserFormFields.FULL_NAME.getPropertyKey(), userDTO.getFullName());
-            dataMap.put(UserFormFields.EMAIL.getPropertyKey(), userDTO.getEmail());
-            dataMap.put(FavouriteFormFields.FAVOURITE_DATE.getPropertyKey(), favouriteDTO.getFavouriteDate().format(formatter));
+                UserDTO userDTO = new UserService().findById(favouriteDTO.getUserId());
+                dataMap.put(UserFormFields.FULL_NAME.getPropertyKey(), userDTO.getFullName());
+                dataMap.put(UserFormFields.EMAIL.getPropertyKey(), userDTO.getEmail());
+                dataMap.put(FavouriteFormFields.FAVOURITE_DATE.getPropertyKey(), favouriteDTO.getFavouriteDate().format(formatter));
 
-            dataList.add(dataMap);
+                dataList.add(dataMap);
+            }
+
+            Map<String, String> cboEntry = new HashMap<>();
+
+            boolean found = false;
+            for(Map<String, String> cboEntity : cboList) {
+                String videoId = cboEntity.get(VideoFormFields.VIDEO_ID.getPropertyKey());
+                if(videoId != null && videoId.equals(favouriteDTO.getVideoId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) {
+                cboEntry.put(VideoFormFields.VIDEO_ID.getPropertyKey(), favouriteDTO.getVideoId());
+                cboEntry.put(VideoFormFields.TITLE.getPropertyKey(), new VideoService().findById(favouriteDTO.getVideoId()).getTitle());
+                cboList.add(cboEntry);
+            }
         }
 
+        req.setAttribute("cboList1", cboList);
         ServletUtil.setTableData(req, 1, dataList, UserFormFields.FULL_NAME, UserFormFields.EMAIL, FavouriteFormFields.FAVOURITE_DATE);
     }
 
     private void buildForm3(HttpServletRequest req) {
         List<ShareDTO> shareList =  new ShareService().findAll();
         List<Map<String, String>> dataList = new ArrayList<>();
+        List<Map<String, String>> cboList = new ArrayList<>();
+        String searchVideoId = req.getParameter("videoId1");
 
         if(shareList == null) shareList = List.of();
 
         for(ShareDTO shareDTO : shareList) {
-            Map<String, String> dataMap = new HashMap<>();
+            if (ValidationUtil.isNullOrBlank(searchVideoId) || (!ValidationUtil.isNullOrBlank(searchVideoId) && searchVideoId.equals(shareDTO.getVideoId()))) {
+                Map<String, String> dataMap = new HashMap<>();
 
-            dataMap.put(VideoFormFields.TITLE.getPropertyKey(), new VideoService().findById(shareDTO.getVideoId()).getTitle());
-            UserDTO userDTO = new UserService().findById(shareDTO.getUserId());
-            dataMap.put(UserFormFields.FULL_NAME.getPropertyKey(), userDTO.getFullName());
-            dataMap.put(UserFormFields.EMAIL.getPropertyKey(), userDTO.getEmail());
-            dataMap.put(ShareFormFields.RECEIVER_EMAIL.getPropertyKey(), shareDTO.getReceiveEmail());
-            dataMap.put(ShareFormFields.SHARE_DATE.getPropertyKey(), shareDTO.getShareDate().format(formatter));
+                UserDTO userDTO = new UserService().findById(shareDTO.getUserId());
+                dataMap.put(UserFormFields.FULL_NAME.getPropertyKey(), userDTO.getFullName());
+                dataMap.put(UserFormFields.EMAIL.getPropertyKey(), userDTO.getEmail());
+                dataMap.put(ShareFormFields.RECEIVER_EMAIL.getPropertyKey(), shareDTO.getReceiveEmail());
+                dataMap.put(ShareFormFields.SHARE_DATE.getPropertyKey(), shareDTO.getShareDate().format(formatter));
 
-            dataList.add(dataMap);
+                dataList.add(dataMap);
+            }
+
+            Map<String, String> cboEntry = new HashMap<>();
+
+            boolean found = false;
+            for(Map<String, String> cboEntity : cboList) {
+                String videoId = cboEntity.get(VideoFormFields.VIDEO_ID.getPropertyKey());
+                if(videoId != null && videoId.equals(shareDTO.getVideoId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) {
+                cboEntry.put(VideoFormFields.VIDEO_ID.getPropertyKey(), shareDTO.getVideoId());
+                cboEntry.put(VideoFormFields.TITLE.getPropertyKey(), new VideoService().findById(shareDTO.getVideoId()).getTitle());
+                cboList.add(cboEntry);
+            }
         }
 
+        req.setAttribute("cboList2", cboList);
         ServletUtil.setTableData(req, 2, dataList, UserFormFields.FULL_NAME, UserFormFields.EMAIL, ShareFormFields.RECEIVER_EMAIL, ShareFormFields.SHARE_DATE);
     }
 }

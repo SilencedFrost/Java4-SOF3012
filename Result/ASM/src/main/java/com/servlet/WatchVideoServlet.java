@@ -82,6 +82,7 @@ public class WatchVideoServlet extends HttpServlet {
                 dataMap.put(VideoFormFields.TITLE.getPropertyKey(), video.getTitle());
                 dataMap.put(VideoFormFields.POSTER.getPropertyKey(), video.getThumbnail());
                 dataMap.put(VideoFormFields.VIEWS.getPropertyKey(), video.getViews().toString());
+                dataMap.put("favourites", (new VideoService().findFavouriteCount(videoDTO.getVideoId())).toString());
 
                 dataList.add(dataMap);
             }
@@ -101,6 +102,8 @@ public class WatchVideoServlet extends HttpServlet {
         videoData.put(VideoFormFields.POSTER.getPropertyKey(), videoDTO.getThumbnail());
         videoData.put(VideoFormFields.VIEWS.getPropertyKey(), videoDTO.getViews().toString());
         videoData.put(VideoFormFields.DESCRIPTION.getPropertyKey(), videoDTO.getDescription());
+        videoData.put("favourites", (new VideoService().findFavouriteCount(videoDTO.getVideoId())).toString());
+
         return videoData;
     }
 

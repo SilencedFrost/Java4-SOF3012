@@ -4,30 +4,28 @@ go
 use testJava4
 go
 
-create table Categories(
-	CategoryId varchar(20) primary key,
-	CategoryName nvarchar(30) not null
+create table Authors(
+	AuthorId varchar(20) primary key,
+	AuthorName nvarchar(30) not null
 )
 go
 
-create table Products(
-	ProductId int primary key identity(1, 1),
-	ProductName varchar(20),
+create table Books(
+	BookId int primary key identity(1, 1),
+	Title nvarchar(30),
 	Price int,
-	CategoryId varchar(20),
-	foreign key (CategoryId) references Categories(CategoryId)
+	AuthorId varchar(20),
+	foreign key (AuthorId) references Authors(AuthorId)
 )
 go
 
-insert into Categories(CategoryId, CategoryName) values ('cat01', N'Điện tử');
-insert into Categories(CategoryId, CategoryName) values ('cat02', N'Thực phẩm');
-insert into Categories(CategoryId, CategoryName) values ('cat03', N'Đồ uống');
-insert into Categories(CategoryId, CategoryName) values ('cat04', N'Văn phòng phẩm');
+insert into Authors(AuthorId, AuthorName) values ('au01', N'Huy Cận');
+insert into Authors(AuthorId, AuthorName) values ('au02', N'Nguyễn Bính');
+insert into Authors(AuthorId, AuthorName) values ('au03', N'Nguyễn Nhật Ánh');
 go
 
-insert into Products(ProductName, Price, CategoryId) values ('Laptop', 350, 'cat01');
-insert into Products(ProductName, Price, CategoryId) values ('Iphone', 1350, 'cat01');
-insert into Products(ProductName, Price, CategoryId) values ('Tivi', 120, 'cat01');
-insert into Products(ProductName, Price, CategoryId) values ('Bia Tiger', 20000, 'cat03');
-insert into Products(ProductName, Price, CategoryId) values ('Pepsi', 5000, 'cat03');
+insert into Books(Title, Price, AuthorId) values (N'Đất nở hoa', 23000, 'au01');
+insert into Books(Title, Price, AuthorId) values (N'Trời mỗi ngày lại sáng', 45000, 'au01');
+insert into Books(Title, Price, AuthorId) values (N'Vũ trụ ca', 16700, 'au01');
+insert into Books(Title, Price, AuthorId) values (N'Kính Vạn Hoa', 22000, 'au03');
 go
